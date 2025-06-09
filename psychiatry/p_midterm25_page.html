@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ====== SUBJECT PAGE SHORTCUT SETTINGS ====== -->
+<script>
+/*
+    ====== EDIT ONLY THIS BLOCK FOR NEW SUBJECTS ======
+    Change these variables for each new subject page.
+*/
+window.SUBJECT_SETTINGS = {
+    PAGE_ID: 'p_midterm25_mcqs', // Unique localStorage key for this subject
+    PAGE_TITLE: 'Qbank - TUCOM -  Midterm 25', // Title for this subject page
+    HOME_LINK: 'psychiatry_qbank.html', // Home button link for this subject
+};
+</script>
+<!-- ====== END SHORTCUT SETTINGS ====== -->
+
+<title id="dynamic-title"></title>
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+/* 2. (Optional) Edit styles for your subject */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin-top: 70px;
+    padding: 20px;
+    background-color: #f4f4f4;
+    padding-bottom: 100px;
+}
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #17202a;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+    z-index: 1000;
+    border-bottom: 3px solid #3498db;
+}
+.fixed-header .made-by-prefix { color: #cccccc; }
+.fixed-header a { color: #3498db; text-decoration: none; font-weight: bold; }
+.fixed-header a:hover { text-decoration: underline; }
+.section {
+    margin-bottom: 40px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.section-title {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+.question-container {
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+}
+.question-container.answered { background-color: #f9f9f9; }
+.question-number { font-weight: bold; color: #555; margin-right: 5px; }
+.question-text { font-size: 1.1em; color: #333; margin-bottom: 15px; }
+ul.options { list-style: none; padding: 0; margin: 0; }
+li.option {
+    background-color: #f1f1f1;
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: 1px solid #ccc;
+    position: relative;
+    user-select: none;
+}
+li.option:hover:not(.answered li.option) { background-color: #e0e0e0; }
+.question-container.answered li.option:hover { background-color: #f1f1f1; }
+li.option.correct:hover { background-color: #d4edda !important; }
+li.option.incorrect:hover { background-color: #f8d7da !important; }
+li.option.reveal-correct:hover { background-color: #d4edda !important; }
+li.option.correct {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+    font-weight: bold;
+}
+li.option.incorrect {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+    font-weight: bold;
+}
+.feedback { display: none; font-weight: bold; margin-left: 10px; }
+li.option.correct .feedback,
+li.option.incorrect .feedback { display: inline; }
+.correct .feedback { color: #155724; }
+.incorrect .feedback { color: #721c24; }
+li.option.reveal-correct {
+    background-color: #d4edda !important;
+    border-color: #c3e6cb !important;
+    color: #155724 !important;
+    font-weight: bold !important;
+}
+.explanation {
+    display: none;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    color: #495057;
+    font-size: 0.95em;
+}
+.section-score {
+    margin-top: 30px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    padding: 10px;
+    background-color: #e7f3ff;
+    border: 1px solid #b3d7ff;
+    border-radius: 5px;
+}
+.bottom-nav-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    display: flex;
+    gap: 15px;
+}
+.main-button {
+    background-color: #3498db;
+    color: #fff;
+    padding: 8px 16px;
+    font-size: 0.9em;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 25px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-button i { margin-right: 8px; }
+.main-button:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.25); }
+a.main-button:hover { background-color: #2980b9; }
+#reset-button { background-color: #e74c3c; }
+#reset-button:hover { background-color: #c0392b; }
+</style>
+</head>
+<body>
+<div class="fixed-header">
+    <span class="made-by-prefix">Made by </span><a href="https://t.me/s/Ali_dicaprio" target="_blank">Ali Hussein</a>
+</div>
+
+<!-- 
+3. COPY/EDIT: Add your sections and questions below.
+   - Each section needs a unique data-section-id (e.g., 1, 2, 3, ...)
+   - Each question-container needs a unique data-question-id within its section.
+   - Edit section titles and questions for your subject.
+-->
+   
+<div class="section" data-section-id="1">
+    <h2 class="section-title">Psychiatry Questions</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q1">
+        <p class="question-text"><span class="question-number">1.</span> Which of the following is a positive symptom of schizophrenia?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Hallucination</li>
+            <li class="option" data-correct="false">B. Delusion</li>
+            <li class="option" data-correct="true">C. A&b</li>
+            <li class="option" data-correct="false">D. Social isolation</li>
+            <li class="option" data-correct="false">E. Anhedonia</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Hallucination: Correct. Hallucinations (e.g., auditory, visual) are perceptions experienced without external stimuli and are considered positive symptoms of schizophrenia.<br>
+            b. Delusion: Correct. Delusions are fixed, false beliefs that are not amenable to change in light of conflicting evidence and are considered positive symptoms of schizophrenia.<br>
+            c. A&b: Correct. Since both hallucinations (A) and delusions (B) are positive symptoms of schizophrenia, this option is the most comprehensive correct answer.<br>
+            d. Social isolation: Incorrect. Social isolation is typically considered a negative symptom of schizophrenia, reflecting diminished social drive or engagement.<br>
+            e. Anhedonia: Incorrect. Anhedonia, the inability to experience pleasure, is a negative symptom of schizophrenia.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q2">
+        <p class="question-text"><span class="question-number">2.</span> The primary treatment for schizophrenia involves:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Antidepressants</li>
+            <li class="option" data-correct="true">B. Antipsychotic medications</li>
+            <li class="option" data-correct="false">C. Benzodiazepines</li>
+            <li class="option" data-correct="false">D. Stimulants</li>
+            <li class="option" data-correct="false">E. Anticonvulsants</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Antidepressants: Incorrect. Antidepressants may be used adjunctively for comorbid depression in schizophrenia but are not the primary treatment for psychosis.<br>
+            b. Antipsychotic medications: Correct. Antipsychotic medications are the cornerstone and primary pharmacological treatment for schizophrenia, targeting positive symptoms and helping prevent relapse.<br>
+            c. Benzodiazepines: Incorrect. Benzodiazepines may be used for agitation or anxiety in schizophrenia but are not the primary treatment.<br>
+            d. Stimulants: Incorrect. Stimulants are generally contraindicated or used with extreme caution in schizophrenia as they can exacerbate psychosis.<br>
+            e. Anticonvulsants: Incorrect. Some anticonvulsants are used as mood stabilizers or for aggression, but they are not the primary treatment for the core symptoms of schizophrenia.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q3">
+        <p class="question-text"><span class="question-number">3.</span> DSM 5 criteria for diagnosing generalized anxiety disorder is</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. 2 years</li>
+            <li class="option" data-correct="true">B. 6 months</li>
+            <li class="option" data-correct="false">C. 3 months</li>
+            <li class="option" data-correct="false">D. 1 month</li>
+            <li class="option" data-correct="false">E. Non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. 2 years: Incorrect. This duration is too long for the primary diagnostic criterion of GAD.<br>
+            b. 6 months: Correct. According to DSM-5, the excessive anxiety and worry associated with Generalized Anxiety Disorder (GAD) must be present more days than not for at least 6 months.<br>
+            c. 3 months: Incorrect. This duration is too short.<br>
+            d. 1 month: Incorrect. This duration is too short; 1 month is more aligned with acute stress disorder or criteria for other conditions.<br>
+            e. Non of the above: Incorrect, as 6 months is the correct duration.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q4">
+        <p class="question-text"><span class="question-number">4.</span> Which of the following traits is present in paranoid personality disorder:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. seek for perfectionism</li>
+            <li class="option" data-correct="false">B. Rapid shifting of emotion</li>
+            <li class="option" data-correct="false">C. unstable relationships</li>
+            <li class="option" data-correct="true">D. general mistrust to others</li>
+            <li class="option" data-correct="false">E. Non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. seek for perfectionism: Incorrect. Seeking perfectionism is more characteristic of Obsessive-Compulsive Personality Disorder (OCPD).<br>
+            b. Rapid shifting of emotion: Incorrect. Rapid shifting of emotion (emotional lability) is more characteristic of Borderline Personality Disorder.<br>
+            c. unstable relationships: Incorrect. Unstable interpersonal relationships are a key feature of Borderline Personality Disorder.<br>
+            d. general mistrust to others: Correct. Paranoid Personality Disorder is characterized by a pervasive distrust and suspiciousness of others, interpreting their motives as malevolent.<br>
+            e. Non of the above: Incorrect, as general mistrust is a core trait.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">5.</span> The duration treatment of the 1st major depressive episode is</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. 2 years</li>
+            <li class="option" data-correct="true">B. 09-12 months</li>
+            <li class="option" data-correct="false">C. A&B</li>
+            <li class="option" data-correct="false">D. all of the above</li>
+            <li class="option" data-correct="false">E. non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. 2 years: Incorrect. While maintenance treatment can last for years for recurrent or chronic depression, for a first episode, continuation treatment is typically shorter.<br>
+            b. 09-12 months: Correct. After achieving remission from a first major depressive episode, continuation pharmacotherapy is typically recommended for 6-12 months (or 4-9 months depending on guidelines) to prevent relapse. 9-12 months falls within this common recommendation.<br>
+            c. A&B: Incorrect, as 2 years is generally not the standard for a first episode's initial post-remission phase.<br>
+            d. all of the above: Incorrect.<br>
+            e. non of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">6.</span> Which of the following is negative psychotic feature;</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Delusion</li>
+            <li class="option" data-correct="false">B. auditory hallucination</li>
+            <li class="option" data-correct="false">C. .Disorganized speech</li>
+            <li class="option" data-correct="true">D. Anhedonia</li>
+            <li class="option" data-correct="false">E. Disorganized behavior</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Delusion: Incorrect. Delusions are positive symptoms of psychosis.<br>
+            b. auditory hallucination: Incorrect. Auditory hallucinations are positive symptoms of psychosis.<br>
+            c. .Disorganized speech: Incorrect. Disorganized speech (e.g., formal thought disorder) is typically classified as a disorganized symptom, sometimes grouped with positive symptoms, but distinct from negative symptoms.<br>
+            d. Anhedonia: Correct. Anhedonia (diminished ability to experience pleasure) is a classic negative symptom of schizophrenia and other psychotic disorders.<br>
+            e. Disorganized behavior: Incorrect. Disorganized behavior is classified as a disorganized symptom.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">7.</span> The most important feature ( key ) to diagnose manic episode is?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Anhedonia</li>
+            <li class="option" data-correct="false">B. Low mood</li>
+            <li class="option" data-correct="true">C. Elevated mood</li>
+            <li class="option" data-correct="false">D. all of the above</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Anhedonia: Incorrect. Anhedonia is characteristic of depression.<br>
+            b. Low mood: Incorrect. Low mood is characteristic of depression.<br>
+            c. Elevated mood: Correct. A distinct period of abnormally and persistently elevated, expansive, or irritable mood is the cardinal symptom of a manic episode according to DSM-5.<br>
+            d. all of the above: Incorrect.<br>
+            e. None of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q8">
+        <p class="question-text"><span class="question-number">8.</span> Trichotillomania disorder is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. skin picking</li>
+            <li class="option" data-correct="true">B. Hair pulling</li>
+            <li class="option" data-correct="false">C. hoarding disorder</li>
+            <li class="option" data-correct="false">D. .body dysmorphic disorder</li>
+            <li class="option" data-correct="false">E. . All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. skin picking: Incorrect. Pathological skin picking is classified as Excoriation Disorder.<br>
+            b. Hair pulling: Correct. Trichotillomania is characterized by the recurrent pulling out of one's own hair.<br>
+            c. hoarding disorder: Incorrect. Hoarding disorder is characterized by persistent difficulty discarding possessions, regardless of their actual value.<br>
+            d. .body dysmorphic disorder: Incorrect. Body dysmorphic disorder involves preoccupation with perceived flaws in physical appearance.<br>
+            e. . All of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">9.</span> No purging (use of laxatives or induced vomiting) in</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Anorexia nervosa</li>
+            <li class="option" data-correct="false">B. Bulimia nervosa</li>
+            <li class="option" data-correct="true">C. Binge eating disorder</li>
+            <li class="option" data-correct="false">D. all of above</li>
+            <li class="option" data-correct="false">E. non of above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Anorexia nervosa: Incorrect. Anorexia nervosa has a binge-eating/purging type, where purging behaviors are present. Only the restricting type of anorexia nervosa lacks purging.<br>
+            b. Bulimia nervosa: Incorrect. Bulimia nervosa is characterized by recurrent episodes of binge eating followed by inappropriate compensatory behaviors, which often include purging.<br>
+            c. Binge eating disorder: Correct. Binge Eating Disorder is characterized by recurrent episodes of binge eating without the regular use of inappropriate compensatory behaviors (such as purging, misuse of laxatives, fasting, or excessive exercise).<br>
+            d. all of above: Incorrect.<br>
+            e. non of above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q10">
+        <p class="question-text"><span class="question-number">10.</span> Body mass index in anorexia nervosa is</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Within average range</li>
+            <li class="option" data-correct="false">B. above average range</li>
+            <li class="option" data-correct="true">C. below average range</li>
+            <li class="option" data-correct="false">D. all of the above</li>
+            <li class="option" data-correct="false">E. A&B</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Within average range: Incorrect. A core criterion for anorexia nervosa is significantly low body weight.<br>
+            b. above average range: Incorrect.<br>
+            c. below average range: Correct. Individuals with anorexia nervosa restrict energy intake, leading to a body weight that is significantly below what is minimally normal or expected for their age, sex, developmental trajectory, and physical health (often defined as BMI < 18.5 kg/m ² in adults or equivalent in children/adolescents).<br>
+            d. all of the above: Incorrect.<br>
+            e. A&B: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q11">
+        <p class="question-text"><span class="question-number">11.</span> Which of the following disorders is an anxiety disorder ?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Anorexia nervosa</li>
+            <li class="option" data-correct="false">B. Major depressive episode</li>
+            <li class="option" data-correct="false">C. social phobia</li>
+            <li class="option" data-correct="false">D. panic disorder</li>
+            <li class="option" data-correct="true">E. C&D</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Anorexia nervosa: Incorrect. Anorexia nervosa is an eating disorder.<br>
+            b. Major depressive episode: Incorrect. This describes a component of mood disorders like Major Depressive Disorder.<br>
+            c. social phobia: Correct. Social phobia (now more commonly known as Social Anxiety Disorder) is an anxiety disorder.<br>
+            d. panic disorder: Correct. Panic disorder is an anxiety disorder.<br>
+            e. C&D: Correct. Since both social phobia (C) and panic disorder (D) are anxiety disorders, this option is the most complete answer.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q12">
+        <p class="question-text"><span class="question-number">12.</span> No psychotic features at all in ?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Mania</li>
+            <li class="option" data-correct="false">B. Schizophrenia</li>
+            <li class="option" data-correct="true">C. Hypomania</li>
+            <li class="option" data-correct="false">D. A&B</li>
+            <li class="option" data-correct="false">E. non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Mania: Incorrect. Severe manic episodes can include psychotic features (e.g., delusions, hallucinations).<br>
+            b. Schizophrenia: Incorrect. Psychotic features are defining characteristics of schizophrenia.<br>
+            c. Hypomania: Correct. By definition in DSM-5, a hypomanic episode is not severe enough to cause marked impairment or necessitate hospitalization, and there are no psychotic features. If psychotic features are present, the episode is manic.<br>
+            d. A&B: Incorrect.<br>
+            e. non of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q13">
+        <p class="question-text"><span class="question-number">13.</span> What are the clinical features of panic disorder?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. tachycardia</li>
+            <li class="option" data-correct="false">B. shortness of breath</li>
+            <li class="option" data-correct="false">C. Fear of dying</li>
+            <li class="option" data-correct="true">D. all of the above</li>
+            <li class="option" data-correct="false">E. Non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. tachycardia: Correct. Tachycardia (rapid heart rate or palpitations) is a common symptom of a panic attack, which is the core feature of panic disorder.<br>
+            b. shortness of breath: Correct. Shortness of breath or a sensation of smothering is a common symptom of a panic attack.<br>
+            c. Fear of dying: Correct. An intense fear of dying is a common cognitive symptom during a panic attack.<br>
+            d. all of the above: Correct. All listed symptoms are characteristic features experienced during panic attacks.<br>
+            e. Non of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q14">
+        <p class="question-text"><span class="question-number">14.</span> Which of the following is a hallmark feature of Autism Spectrum Disorder (ASD)?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Social deficit</li>
+            <li class="option" data-correct="false">B. Low IQ</li>
+            <li class="option" data-correct="false">C. Lack of interest in physical appearance</li>
+            <li class="option" data-correct="false">D. Obsessive-compulsive traits</li>
+            <li class="option" data-correct="false">E. Language impairment</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Social deficit: Correct. Persistent deficits in social communication and social interaction across multiple contexts are core, defining features of Autism Spectrum Disorder.<br>
+            b. Low IQ: Incorrect. While intellectual disability can co-occur with ASD, it is not a universal or hallmark feature; individuals with ASD can have any level of intellectual ability.<br>
+            c. Lack of interest in physical appearance: Incorrect. This is not a specific or hallmark feature of ASD.<br>
+            d. Obsessive-compulsive traits: Incorrect. Restricted, repetitive patterns of behavior, interests, or activities are a core feature of ASD, which can include obsessive-like behaviors, but "social deficit" is more encompassing of the primary diagnostic area.<br>
+            e. Language impairment: Incorrect. Language impairment can co-occur and is a common specifier in ASD, but it's not universally present, nor is it considered the hallmark feature over social deficits.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q15">
+        <p class="question-text"><span class="question-number">15.</span> Which of the following is NOT included in the diagnostic criteria for ASD?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Persistent deficits in social communication</li>
+            <li class="option" data-correct="false">B. Repetitive behaviors or restricted interests</li>
+            <li class="option" data-correct="true">C. Language delay should be present</li>
+            <li class="option" data-correct="false">D. Symptoms must be present in early developmental period</li>
+            <li class="option" data-correct="false">E. Affect functioning</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Persistent deficits in social communication: Incorrect. This is a core diagnostic criterion for ASD (Criterion A in DSM-5).<br>
+            b. Repetitive behaviors or restricted interests: Incorrect. This is a core diagnostic criterion for ASD (Criterion B in DSM-5).<br>
+            c. Language delay should be present: Correct. While language delay is common in ASD and can be specified, it is NOT a mandatory criterion for diagnosis. ASD can be diagnosed in individuals with no language delay or even with superior language skills.<br>
+            d. Symptoms must be present in early developmental period: Incorrect. This is a diagnostic criterion for ASD (Criterion C in DSM-5).<br>
+            e. Affect functioning: Incorrect. Deficits in social-emotional reciprocity, which includes aspects of affect (e.g., reduced sharing of emotions or affect), are part of Criterion A for ASD. Therefore, impaired affect functioning is implicitly included.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q16">
+        <p class="question-text"><span class="question-number">16.</span> The core symptoms of ADHD include:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Social communication impairment</li>
+            <li class="option" data-correct="true">B. Impulsivity, hyperactivity, and inattention</li>
+            <li class="option" data-correct="false">C. Repetitive behaviors and restricted interests</li>
+            <li class="option" data-correct="false">D. Hallucinations and delusions</li>
+            <li class="option" data-correct="false">E. Anxiety and depression</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Social communication impairment: Incorrect. This is a core feature of Autism Spectrum Disorder.<br>
+            b. Impulsivity, hyperactivity, and inattention: Correct. ADHD is characterized by a persistent pattern of inattention and/or hyperactivity-impulsivity that interferes with functioning or development.<br>
+            c. Repetitive behaviors and restricted interests: Incorrect. These are core features of Autism Spectrum Disorder.<br>
+            d. Hallucinations and delusions: Incorrect. These are psychotic symptoms, not core features of ADHD.<br>
+            e. Anxiety and depression: Incorrect. While these can be comorbid with ADHD, they are not its core defining symptoms.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q17">
+        <p class="question-text"><span class="question-number">17.</span> At what age must symptoms of ADHD typically begin for a diagnosis to be made?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Before the age of 5 years</li>
+            <li class="option" data-correct="true">B. Before the age of 12 years</li>
+            <li class="option" data-correct="false">C. Before the age of 18 years</li>
+            <li class="option" data-correct="false">D. At any age</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Before the age of 5 years: Incorrect. While symptoms often appear early, the DSM-5 criterion is broader.<br>
+            b. Before the age of 12 years: Correct. According to DSM-5, several inattentive or hyperactive-impulsive symptoms must have been present prior to age 12 years for a diagnosis of ADHD.<br>
+            c. Before the age of 18 years: Incorrect. This is too late for the onset criterion.<br>
+            d. At any age: Incorrect. There is a specific age-of-onset criterion.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q18">
+        <p class="question-text"><span class="question-number">18.</span> The first-line pharmacological treatment for ADHD is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Antidepressants</li>
+            <li class="option" data-correct="true">B. Stimulants such as methylphenidate</li>
+            <li class="option" data-correct="false">C. Antipsychotics</li>
+            <li class="option" data-correct="false">D. Benzodiazepines</li>
+            <li class="option" data-correct="false">E. Antiepileptics</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Antidepressants: Incorrect. Some non-stimulant medications like atomoxetine (an NRI) or certain antidepressants (e.g., bupropion, TCAs) are second-line or alternative treatments but not typically first-line over stimulants.<br>
+            b. Stimulants such as methylphenidate: Correct. Stimulant medications (e.g., methylphenidate, amphetamine derivatives) are widely recognized as the most effective and first-line pharmacological treatment for ADHD in most age groups.<br>
+            c. Antipsychotics: Incorrect. Antipsychotics are not used for core ADHD symptoms; they might be used for severe aggression or comorbid conditions.<br>
+            d. Benzodiazepines: Incorrect. Benzodiazepines are anxiolytics and not used to treat core ADHD symptoms; they can worsen inattention.<br>
+            e. Antiepileptics: Incorrect. Antiepileptics are not a treatment for ADHD.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q19">
+        <p class="question-text"><span class="question-number">19.</span> Adaptive functioning deficits in Intellectual Disability include difficulties in:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Social, conceptual, and practical domains</li>
+            <li class="option" data-correct="false">B. Only cognitive domains</li>
+            <li class="option" data-correct="false">C. Only academic performance</li>
+            <li class="option" data-correct="false">D. Emotional regulation</li>
+            <li class="option" data-correct="false">E. Non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Social, conceptual, and practical domains: Correct. Intellectual Disability (Intellectual Developmental Disorder) is characterized by deficits in general mental abilities (intellectual functioning) AND impairment in adaptive functioning across three domains: conceptual (e.g., academic skills), social (e.g., social judgment, interpersonal skills), and practical (e.g., personal care, occupational skills).<br>
+            b. Only cognitive domains: Incorrect. Adaptive functioning deficits are also required.<br>
+            c. Only academic performance: Incorrect. Academic performance falls under the conceptual domain, but deficits must also be present in social and practical domains, and intellectual functioning itself.<br>
+            d. Emotional regulation: Incorrect. While emotional regulation difficulties can be present, the core adaptive functioning domains are conceptual, social, and practical.<br>
+            e. Non of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q20">
+        <p class="question-text"><span class="question-number">20.</span> Which of the following is a common feature of OCD?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Persistent hallucinations</li>
+            <li class="option" data-correct="true">B. Intrusive and distressing thoughts</li>
+            <li class="option" data-correct="false">C. Persistent mood swings</li>
+            <li class="option" data-correct="false">D. Paranoid delusions</li>
+            <li class="option" data-correct="false">E. Memory loss</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Persistent hallucinations: Incorrect. Hallucinations are characteristic of psychotic disorders, not OCD.<br>
+            b. Intrusive and distressing thoughts: Correct. Recurrent and persistent thoughts, urges, or images that are experienced as intrusive and unwanted, and cause marked anxiety or distress (obsessions), are a core feature of OCD.<br>
+            c. Persistent mood swings: Incorrect. Mood swings are more characteristic of mood disorders (like bipolar disorder) or some personality disorders.<br>
+            d. Paranoid delusions: Incorrect. Delusions are characteristic of psychotic disorders.<br>
+            e. Memory loss: Incorrect. Memory loss is not a primary feature of OCD.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q21">
+        <p class="question-text"><span class="question-number">21.</span> In OCD, compulsions are:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Irrational fears</li>
+            <li class="option" data-correct="false">B. Physical symptoms of anxiety</li>
+            <li class="option" data-correct="true">C. Repetitive behaviors aimed at reducing distress</li>
+            <li class="option" data-correct="false">D. Fixed false beliefs</li>
+            <li class="option" data-correct="false">E. Sudden mood changes</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Irrational fears: Incorrect. Irrational fears can be part of obsessions or phobias, but compulsions are the responses to them.<br>
+            b. Physical symptoms of anxiety: Incorrect. Anxiety is often the driver or consequence of obsessions, but compulsions are the acts performed.<br>
+            c. Repetitive behaviors aimed at reducing distress: Correct. Compulsions are repetitive behaviors (e.g., hand washing, ordering, checking) or mental acts (e.g., praying, counting, repeating words silently) that the individual feels driven to perform in response to an obsession or according to rules that must be applied rigidly, aimed at preventing or reducing anxiety or distress.<br>
+            d. Fixed false beliefs: Incorrect. These are delusions, characteristic of psychotic disorders.<br>
+            e. Sudden mood changes: Incorrect. Not a defining feature of compulsions.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q22">
+        <p class="question-text"><span class="question-number">22.</span> Which of the following criteria is NOT part of diagnosing substance use disorder according to DSM-5?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Tolerance</li>
+            <li class="option" data-correct="false">B. Withdrawal symptoms</li>
+            <li class="option" data-correct="false">C. Continued use despite health consequences</li>
+            <li class="option" data-correct="true">D. Experiencing euphoria</li>
+            <li class="option" data-correct="false">E. Spending significant time obtaining the substance</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Tolerance: Incorrect. Tolerance is a pharmacological criterion for SUD in DSM-5.<br>
+            b. Withdrawal symptoms: Incorrect. Withdrawal is a pharmacological criterion for SUD in DSM-5.<br>
+            c. Continued use despite health consequences: Incorrect. This falls under the "risky use" or "impaired control" criteria clusters for SUD.<br>
+            d. Experiencing euphoria: Correct. While many substances produce euphoria, the subjective experience of euphoria itself is not a diagnostic criterion for a Substance Use Disorder. The criteria focus on the problematic pattern of use and its consequences.<br>
+            e. Spending significant time obtaining the substance: Incorrect. A great deal of time spent in activities necessary to obtain the substance, use the substance, or recover from its effects is a criterion under "impaired control."<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q23">
+        <p class="question-text"><span class="question-number">23.</span> Which of the following is the most common sleep disorder in the general population?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Narcolepsy</li>
+            <li class="option" data-correct="false">B. Obstructive Sleep Apnea (OSA)</li>
+            <li class="option" data-correct="true">C. Insomnia</li>
+            <li class="option" data-correct="false">D. Restless Legs Syndrome (RLS)</li>
+            <li class="option" data-correct="false">E. Parasomnias</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Narcolepsy: Incorrect. Narcolepsy is relatively rare.<br>
+            b. Obstructive Sleep Apnea (OSA): Incorrect. OSA is common, but insomnia disorder is generally reported as more prevalent in terms of patient complaints.<br>
+            c. Insomnia: Correct. Insomnia disorder (difficulty initiating or maintaining sleep, or early-morning awakening with inability to return to sleep) is the most prevalent sleep disorder.<br>
+            d. Restless Legs Syndrome (RLS): Incorrect. RLS is less common than insomnia.<br>
+            e. Parasomnias: Incorrect. Parasomnias (e.g., sleepwalking, night terrors) are less common than insomnia.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q24">
+        <p class="question-text"><span class="question-number">24.</span> Normal sleep requirement is</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. 10 hr</li>
+            <li class="option" data-correct="false">B. 12 hr</li>
+            <li class="option" data-correct="false">C. A or B</li>
+            <li class="option" data-correct="true">D. 7.5 hr</li>
+            <li class="option" data-correct="false">E. non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. 10 hr: Incorrect. While some adults may need this much, it's above the average range for most. More typical for adolescents.<br>
+            b. 12 hr: Incorrect. This is significantly above the average for adults and more typical for younger children.<br>
+            c. A or B: Incorrect.<br>
+            d. 7.5 hr: Correct. For adults, the general recommendation for sleep is 7-9 hours per night. 7.5 hours falls within this range and is often cited as an average.<br>
+            e. non of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q25">
+        <p class="question-text"><span class="question-number">25.</span> Which of the following best describes the current perspective of homosexuality in psychiatry according to the DSM-5?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Homosexuality is classified as a mental disorder.</li>
+            <li class="option" data-correct="true">B. Homosexuality is considered a normal variation of human sexuality.</li>
+            <li class="option" data-correct="false">C. Homosexuality is categorized as a personality disorder.</li>
+            <li class="option" data-correct="false">D. Homosexuality is associated with psychosis.</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Homosexuality is classified as a mental disorder: Incorrect. Homosexuality was removed from the DSM in 1973.<br>
+            b. Homosexuality is considered a normal variation of human sexuality: Correct. Current psychiatric understanding, reflected in the DSM-5 and by major medical and psychological organizations, is that homosexuality is a normal variant of human sexuality and not a mental illness.<br>
+            c. Homosexuality is categorized as a personality disorder: Incorrect.<br>
+            d. Homosexuality is associated with psychosis: Incorrect. There is no such association.<br>
+            e. None of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q26">
+        <p class="question-text"><span class="question-number">26.</span> Suicide attempts are more common in ?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Males</li>
+            <li class="option" data-correct="true">B. Females</li>
+            <li class="option" data-correct="false">C. Males and females have equal risk</li>
+            <li class="option" data-correct="false">D. non of the above</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Males: Incorrect. Males have higher rates of completed suicide.<br>
+            b. Females: Correct. Females report more suicide attempts than males.<br>
+            c. Males and females have equal risk: Incorrect. There are gender differences in rates of attempts versus completions.<br>
+            d. non of the above: Incorrect.<br>
+            e. All of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q27">
+        <p class="question-text"><span class="question-number">27.</span> Which of the following is a core symptom of major depressive disorder?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Elevated mood</li>
+            <li class="option" data-correct="true">B. Low mood</li>
+            <li class="option" data-correct="false">C. Increased energy</li>
+            <li class="option" data-correct="false">D. Delusions and hallucinations</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Elevated mood: Incorrect. Elevated mood is characteristic of mania or hypomania.<br>
+            b. Low mood: Correct. Depressed mood (low mood) most of the day, nearly every day, is one of the two cardinal symptoms required for a diagnosis of major depressive disorder. The other is anhedonia.<br>
+            c. Increased energy: Incorrect. Decreased energy or fatigue is typical of depression.<br>
+            d. Delusions and hallucinations: Incorrect. While psychotic features like delusions and hallucinations can occur in severe major depressive disorder, they are not considered the most fundamental core symptom like low mood or anhedonia.<br>
+            e. All of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q28">
+        <p class="question-text"><span class="question-number">28.</span> Which of the following is NOT a common symptom of major depressive disorder?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Suicidal ideation</li>
+            <li class="option" data-correct="false">B. Anhedonia</li>
+            <li class="option" data-correct="false">C. Low energy</li>
+            <li class="option" data-correct="true">D. High mood</li>
+            <li class="option" data-correct="false">E. Feelings of guilt</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Suicidal ideation: Incorrect. Suicidal thoughts or ideation are common symptoms of MDD.<br>
+            b. Anhedonia: Incorrect. Anhedonia (loss of interest or pleasure) is a core symptom of MDD.<br>
+            c. Low energy: Incorrect. Fatigue or loss of energy is a common symptom of MDD.<br>
+            d. High mood: Correct. High mood (elevated or euphoric mood) is characteristic of mania or hypomania, the opposite of what is seen in depression.<br>
+            e. Feelings of guilt: Incorrect. Feelings of worthlessness or excessive/inappropriate guilt are common symptoms of MDD.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q29">
+        <p class="question-text"><span class="question-number">29.</span> Which of the following is a potential complication of untreated depression?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Enhanced cognitive function</li>
+            <li class="option" data-correct="false">B. Improved relationships</li>
+            <li class="option" data-correct="true">C. Increased risk of suicide</li>
+            <li class="option" data-correct="false">D. Enhanced immune function</li>
+            <li class="option" data-correct="false">E. Decreased pain sensitivity</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Enhanced cognitive function: Incorrect. Depression often impairs cognitive functions like concentration and memory.<br>
+            b. Improved relationships: Incorrect. Depression typically strains relationships.<br>
+            c. Increased risk of suicide: Correct. Untreated depression is a major risk factor for suicidal ideation, attempts, and completion.<br>
+            d. Enhanced immune function: Incorrect. Chronic stress and depression are often associated with dysregulation of the immune system, potentially impairing it.<br>
+            e. Decreased pain sensitivity: Incorrect. Depression can sometimes be associated with increased pain sensitivity or somatic complaints.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q30">
+        <p class="question-text"><span class="question-number">30.</span> A 25-year-old woman presents to your clinic complaining of intense fear and anxiety in social situations, especially when she has to speak in front of groups. She worries excessively about being judged or embarrassed, leading her to avoid social gatherings. She has experienced these symptoms for several years. Based on this description, which of the following is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Generalized Anxiety Disorder</li>
+            <li class="option" data-correct="true">B. Social Anxiety Disorder (Social Phobia)</li>
+            <li class="option" data-correct="false">C. Panic Disorder</li>
+            <li class="option" data-correct="false">D. Obsessive compulsive disorder</li>
+            <li class="option" data-correct="false">E. Major Depressive Disorder</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Generalized Anxiety Disorder: Incorrect. GAD involves excessive worry about multiple topics, not primarily focused on social situations.<br>
+            b. Social Anxiety Disorder (Social Phobia): Correct. The patient's symptoms – intense fear of social situations (especially performance situations like speaking in groups), fear of being judged or embarrassed, avoidance of social gatherings, and chronicity – are classic features of Social Anxiety Disorder.<br>
+            c. Panic Disorder: Incorrect. Panic disorder involves recurrent, unexpected panic attacks and worry about future attacks, which is not the primary description here.<br>
+            d. Obsessive compulsive disorder: Incorrect. OCD involves obsessions and compulsions, which are not described.<br>
+            e. Major Depressive Disorder: Incorrect. While social withdrawal can occur in depression, the core feature described is anxiety related to social scrutiny.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q31">
+        <p class="question-text"><span class="question-number">31.</span> A 35-year-old woman presents with a 2-month history of low mood, anhedonia, fatigue, difficulty concentrating, and early morning awakening. She has lost 5 kg unintentionally and describes feelings of worthlessness. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Bipolar disorder</li>
+            <li class="option" data-correct="true">B. Major depressive episode</li>
+            <li class="option" data-correct="false">C. Generalized anxiety disorder</li>
+            <li class="option" data-correct="false">D. Adjustment disorder</li>
+            <li class="option" data-correct="false">E. panic disorder</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Bipolar disorder: Incorrect. While this could be a depressive episode within bipolar disorder, there's no information about past manic or hypomanic episodes. Based purely on the current symptoms, MDD is most direct.<br>
+            b. Major depressive episode: Correct. The constellation of symptoms (low mood, anhedonia, fatigue, poor concentration, early morning awakening, weight loss, feelings of worthlessness) for 2 months meets criteria for a major depressive episode.<br>
+            c. Generalized anxiety disorder: Incorrect. The primary symptoms are depressive, not anxiety-focused, although worry can co-occur.<br>
+            d. Adjustment disorder: Incorrect. Adjustment disorder involves distress following a stressor that is out of proportion, but the symptom cluster here is robust enough for MDD.<br>
+            e. panic disorder: Incorrect. No panic attacks are described.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q32">
+        <p class="question-text"><span class="question-number">32.</span> Which of the following is a core symptom required for a diagnosis of major depressive episode?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Anxiety</li>
+            <li class="option" data-correct="false">B. Psychomotor agitation</li>
+            <li class="option" data-correct="true">C. Depressed mood or loss of interest (anhedonia)</li>
+            <li class="option" data-correct="false">D. Poor concentration</li>
+            <li class="option" data-correct="false">E. sleep disturbance</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Anxiety: Incorrect. While often comorbid, anxiety is not a cardinal symptom required for the diagnosis of MDD.<br>
+            b. Psychomotor agitation: Incorrect. Psychomotor agitation or retardation is a symptom, but not one of the two essential core symptoms.<br>
+            c. Depressed mood or loss of interest (anhedonia): Correct. To diagnose a major depressive episode, at least one of these two symptoms (depressed mood or anhedonia) must be present nearly every day for at least two weeks.<br>
+            d. Poor concentration: Incorrect. Difficulty concentrating is a common symptom but not one of the two essential core symptoms.<br>
+            e. sleep disturbance: Incorrect. Sleep disturbance (insomnia or hypersomnia) is a common symptom but not one of the two essential core symptoms.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q33">
+        <p class="question-text"><span class="question-number">33.</span> A 22-year-old woman presents with sudden onset of palpitations, chest tightness, dizziness, and fear of dying. These episodes last 10-15 minutes and have occurred multiple times. Physical exams and ECG are normal. What is the likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Generalized anxiety disorder</li>
+            <li class="option" data-correct="true">B. Panic disorder</li>
+            <li class="option" data-correct="false">C. Cardiac arrhythmia</li>
+            <li class="option" data-correct="false">D. Social phobia</li>
+            <li class="option" data-correct="false">E. Obsessive compulsive disorder</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Generalized anxiety disorder: Incorrect. GAD is characterized by chronic, pervasive worry, not discrete, intense episodes like these.<br>
+            b. Panic disorder: Correct. The description is classic for recurrent panic attacks: sudden onset of intense fear accompanied by physical symptoms (palpitations, chest tightness, dizziness) and cognitive symptoms (fear of dying), with episodes being time-limited. Multiple occurrences suggest Panic Disorder if accompanied by worry about future attacks or maladaptive changes in behavior.<br>
+            c. Cardiac arrhythmia: Incorrect. While symptoms can mimic cardiac issues, the normal ECG and physical exam make this less likely as the primary psychiatric diagnosis, though cardiac causes should always be ruled out initially.<br>
+            d. Social phobia: Incorrect. Social phobia involves fear of social situations and scrutiny, not typically spontaneous attacks like these.<br>
+            e. Obsessive compulsive disorder: Incorrect. OCD involves obsessions and compulsions.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q34">
+        <p class="question-text"><span class="question-number">34.</span> 26-year-old man has paranoia, auditory hallucinations, and disorganized speech for 9 months. He believes the government is controlling his thoughts. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Mania</li>
+            <li class="option" data-correct="true">B. Schizophrenia</li>
+            <li class="option" data-correct="false">C. Delusional disorder</li>
+            <li class="option" data-correct="false">D. Brief psychotic disorder</li>
+            <li class="option" data-correct="false">E. Major depressive episode</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Mania: Incorrect. While mania can have psychotic features, the chronicity (9 months) and specific symptom cluster (paranoia, auditory hallucinations, disorganized speech, delusions of control) are more characteristic of schizophrenia.<br>
+            b. Schizophrenia: Correct. The presence of delusions (paranoia, thought control), hallucinations (auditory), disorganized speech, and a duration of 9 months (well over the 6-month criterion for schizophrenia) with significant dysfunction (implied) points to schizophrenia.<br>
+            c. Delusional disorder: Incorrect. Delusional disorder involves delusions but typically not prominent hallucinations or disorganized speech, and overall functioning apart from the delusion's impact is not as impaired as in schizophrenia.<br>
+            d. Brief psychotic disorder: Incorrect. Brief psychotic disorder lasts from 1 day to 1 month.<br>
+            e. Major depressive episode: Incorrect. While MDE can have psychotic features, the primary symptoms described are psychotic, not mood-related.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q35">
+        <p class="question-text"><span class="question-number">35.</span> Which symptom is most a positive psychotic feature of schizophrenia?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Depressed mood</li>
+            <li class="option" data-correct="false">B. Flight of ideas</li>
+            <li class="option" data-correct="true">C. Delusion</li>
+            <li class="option" data-correct="false">D. Panic attacks</li>
+            <li class="option" data-correct="false">E. Non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Depressed mood: Incorrect. Depressed mood is a mood symptom.<br>
+            b. Flight of ideas: Incorrect. Flight of ideas is a thought process abnormality, often seen in mania, characterized by rapid shifts in topics. While a type of disorganized thinking, delusions are more directly "positive" symptoms added to experience.<br>
+            c. Delusion: Correct. Delusions (fixed false beliefs) are a core positive symptom of schizophrenia.<br>
+            d. Panic attacks: Incorrect. Panic attacks are characteristic of anxiety disorders.<br>
+            e. Non of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q36">
+        <p class="question-text"><span class="question-number">36.</span> A 19-year-old woman has low BMI, fears weight gain, exercises excessively, and denies being underweight. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Bulimia nervosa</li>
+            <li class="option" data-correct="true">B. Anorexia nervosa</li>
+            <li class="option" data-correct="false">C. Binge eating disorder</li>
+            <li class="option" data-correct="false">D. Body dysmorphic disorder</li>
+            <li class="option" data-correct="false">E. Major depressive episode</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Bulimia nervosa: Incorrect. Individuals with bulimia nervosa are typically normal weight or overweight and engage in binge eating followed by compensatory behaviors. Low BMI is more characteristic of anorexia.<br>
+            b. Anorexia nervosa: Correct. The combination of low BMI, intense fear of gaining weight, excessive exercise (a behavior to prevent weight gain), and denial of the seriousness of being underweight are hallmark features of Anorexia Nervosa.<br>
+            c. Binge eating disorder: Incorrect. Binge eating disorder involves binge eating without compensatory behaviors and is often associated with being overweight or obese.<br>
+            d. Body dysmorphic disorder: Incorrect. BDD involves preoccupation with perceived flaws in appearance, not necessarily low BMI or the specific drive for thinness seen in AN.<br>
+            e. Major depressive episode: Incorrect. While MDD can co-occur, the primary symptoms described point to an eating disorder.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q37">
+        <p class="question-text"><span class="question-number">37.</span> A 4-year-old boy has poor eye contact, does not respond to his name, and is fixated on lining up toys, not playing with other children. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. language disorder</li>
+            <li class="option" data-correct="true">B. Autism spectrum disorder</li>
+            <li class="option" data-correct="false">C. ADHD</li>
+            <li class="option" data-correct="false">D. Selective mutism</li>
+            <li class="option" data-correct="false">E. Major depressive disorder</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. language disorder: Incorrect. While language issues can be present, the broader social deficits (poor eye contact, not responding to name) and restricted behaviors (fixation on lining up toys, atypical play) point beyond a primary language disorder.<br>
+            b. Autism spectrum disorder: Correct. The triad of deficits in social communication/interaction (poor eye contact, not responding to name, not playing with others) and restricted, repetitive patterns of behavior (fixation on lining up toys) are characteristic of ASD.<br>
+            c. ADHD: Incorrect. While some features might overlap (e.g., not responding if inattentive), the core social deficits and restricted behaviors are more indicative of ASD.<br>
+            d. Selective mutism: Incorrect. Selective mutism involves failure to speak in specific social situations despite speaking in others, not the broader pattern described.<br>
+            e. Major depressive disorder: Incorrect. MDD is rare in this presentation in young children and does not account for these specific developmental symptoms.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q38">
+        <p class="question-text"><span class="question-number">38.</span> What is a hallmark feature of autism spectrum disorder?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Social communication deficits</li>
+            <li class="option" data-correct="false">B. Mood instability</li>
+            <li class="option" data-correct="false">C. Hallucinations</li>
+            <li class="option" data-correct="false">D. Sleep disturbances</li>
+            <li class="option" data-correct="false">E. Eating disturbances</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Social communication deficits: Correct. Persistent deficits in social communication and social interaction across multiple contexts are a core, defining (hallmark) feature of ASD.<br>
+            b. Mood instability: Incorrect. While mood issues can co-occur, they are not a primary hallmark feature.<br>
+            c. Hallucinations: Incorrect. Hallucinations are not characteristic of ASD.<br>
+            d. Sleep disturbances: Incorrect. Common in ASD but not a defining hallmark feature.<br>
+            e. Eating disturbances: Incorrect. Feeding issues (e.g., selective eating) are common in ASD but not considered the primary hallmark over social communication deficits.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q39">
+        <p class="question-text"><span class="question-number">39.</span> A 20-year-old student avoids speaking in class and social events due to intense fear of embarrassment. He says he has had this fear since childhood. What is the likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Generalized anxiety disorder</li>
+            <li class="option" data-correct="true">B. Social anxiety disorder</li>
+            <li class="option" data-correct="false">C. Panic disorder</li>
+            <li class="option" data-correct="false">D. Agoraphobia</li>
+            <li class="option" data-correct="false">E. obsessive compulsive disorder</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Generalized anxiety disorder: Incorrect. GAD involves pervasive worry about multiple things, not specifically social situations.<br>
+            b. Social anxiety disorder: Correct. The core feature is intense fear or anxiety about social situations in which the individual may be scrutinized by others (e.g., speaking in class, social events), with fear of embarrassment. Onset in childhood is common.<br>
+            c. Panic disorder: Incorrect. No panic attacks are described as the primary issue.<br>
+            d. Agoraphobia: Incorrect. Agoraphobia is fear of situations where escape might be difficult if panic-like symptoms occur, not primarily fear of social judgment.<br>
+            e. obsessive compulsive disorder: Incorrect. No obsessions or compulsions are described.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q40">
+        <p class="question-text"><span class="question-number">40.</span> A 7-year-old boy is easily distracted, fidgety, and frequently interrupts conversations, hyperactive, not completing tasks at home and school. His symptoms have persisted for over 6 months. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Anxiety disorder</li>
+            <li class="option" data-correct="true">B. ADHD</li>
+            <li class="option" data-correct="false">C. Autism spectrum disorder</li>
+            <li class="option" data-correct="false">D. Intellectual disability</li>
+            <li class="option" data-correct="false">E. Non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Anxiety disorder: Incorrect. While anxiety can cause some restlessness, the full picture of distractibility, fidgetiness, interrupting, hyperactivity, and task incompletion across settings is more specific to ADHD.<br>
+            b. ADHD: Correct. The symptoms described (inattention – easily distracted, not completing tasks; hyperactivity – fidgety, hyperactive; impulsivity – interrupts conversations) are present for over 6 months and impact functioning in multiple settings (home and school), consistent with ADHD.<br>
+            c. Autism spectrum disorder: Incorrect. While some features like difficulty with social cues (interrupting) might overlap, the core is not social communication deficit or restricted/repetitive behaviors.<br>
+            d. Intellectual disability: Incorrect. While ID can affect attention, the primary symptoms point to ADHD. ID would involve broader cognitive and adaptive functioning deficits.<br>
+            e. Non of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q41">
+        <p class="question-text"><span class="question-number">41.</span> A 25-year-old man presents with 1 week of elevated mood, decreased need for sleep, grandiosity, and impulsivity. He has a history of depressive episodes. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Bipolar I disorder</li>
+            <li class="option" data-correct="false">B. Bipolar II disorder</li>
+            <li class="option" data-correct="false">C. Major Depressive episode</li>
+            <li class="option" data-correct="false">D. schizophrenia disorder</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Bipolar I disorder: Correct. The presence of at least one manic episode (1 week of elevated mood, decreased need for sleep, grandiosity, impulsivity, likely causing significant impairment or meeting criteria for mania) is sufficient for a diagnosis of Bipolar I Disorder. The history of depressive episodes is common but not required if a manic episode is established.<br>
+            b. Bipolar II disorder: Incorrect. Bipolar II disorder is characterized by at least one hypomanic episode AND at least one major depressive episode. The description suggests a full manic episode, not hypomania.<br>
+            c. Major Depressive episode: Incorrect. The current presentation is manic, not depressive.<br>
+            d. schizophrenia disorder: Incorrect. The symptoms described are primarily mood-related (mania), not characteristic of schizophrenia's core psychotic or negative symptoms.<br>
+            e. All of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q42">
+        <p class="question-text"><span class="question-number">42.</span> A 30-year-old woman reports excessive worry about multiple life events, muscle tension, restlessness, and difficulty sleeping for over 6 months. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Generalized anxiety disorder</li>
+            <li class="option" data-correct="false">B. Panic disorder</li>
+            <li class="option" data-correct="false">C. Social anxiety disorder</li>
+            <li class="option" data-correct="false">D. OCD</li>
+            <li class="option" data-correct="false">E. Major depressive episode</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Generalized anxiety disorder: Correct. The key features are excessive worry about multiple life events, occurring for more than 6 months, accompanied by associated symptoms like muscle tension, restlessness, and sleep difficulty. This is classic GAD.<br>
+            b. Panic disorder: Incorrect. No panic attacks are described.<br>
+            c. Social anxiety disorder: Incorrect. The worry is about multiple life events, not specifically social scrutiny.<br>
+            d. OCD: Incorrect. No obsessions or compulsions are described.<br>
+            e. Major depressive episode: Incorrect. While sleep difficulty and restlessness can be in MDD, the core is excessive worry, fitting GAD.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q43">
+        <p class="question-text"><span class="question-number">43.</span> A 10-year-old girl was involved in a car accident two months ago. Since then, she has had nightmares, avoids car rides, and becomes extremely anxious when she hears loud noises. Her school performance has declined, and she complains of stomachaches. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Generalized Anxiety Disorder</li>
+            <li class="option" data-correct="true">B. Post-Traumatic Stress Disorder</li>
+            <li class="option" data-correct="false">C. Adjustment Disorder</li>
+            <li class="option" data-correct="false">D. Acute Stress Disorder</li>
+            <li class="option" data-correct="false">E. Panic Disorder</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Generalized Anxiety Disorder: Incorrect. The anxiety is clearly linked to a specific traumatic event.<br>
+            b. Post-Traumatic Stress Disorder: Correct. The child experienced a traumatic event (car accident). Symptoms include re-experiencing (nightmares), avoidance (avoids car rides), hyperarousal (anxious with loud noises), and negative alterations in mood/cognition (school decline, stomachaches as somatic complaints). The duration is 2 months (more than 1 month), fitting PTSD.<br>
+            c. Adjustment Disorder: Incorrect. While an adjustment disorder involves distress following a stressor, PTSD criteria seem to be met here, and PTSD takes precedence if its criteria are fulfilled after a Criterion A trauma.<br>
+            d. Acute Stress Disorder: Incorrect. Acute Stress Disorder symptoms last from 3 days to 1 month after the trauma. These symptoms have persisted for 2 months.<br>
+            e. Panic Disorder: Incorrect. The anxiety is trauma-related, not characterized by unexpected panic attacks.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q44">
+        <p class="question-text"><span class="question-number">44.</span> A 6-year-old boy has difficulty with problem-solving, poor social skills, and struggles with daily activities such as dressing himself. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. intellectual disability</li>
+            <li class="option" data-correct="false">B. ADHD</li>
+            <li class="option" data-correct="false">C. selective mutism</li>
+            <li class="option" data-correct="false">D. Autism spectrum disorder</li>
+            <li class="option" data-correct="false">E. non of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. intellectual disability: Correct. The presentation suggests deficits in intellectual functioning (difficulty with problem-solving) and adaptive functioning in conceptual (implied if problem-solving affects learning), social (poor social skills), and practical domains (struggles with daily activities like dressing). This is consistent with Intellectual Disability.<br>
+            b. ADHD: Incorrect. While ADHD can affect functioning, the core description points more towards global deficits in intellectual and adaptive skills.<br>
+            c. selective mutism: Incorrect. This disorder is about failure to speak in specific situations.<br>
+            d. Autism spectrum disorder: Incorrect. While ASD involves social skill deficits and can have co-occurring intellectual disability, the primary description here fits ID more broadly without specific ASD features like restricted/repetitive behaviors being highlighted as core.<br>
+            e. non of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q45">
+        <p class="question-text"><span class="question-number">45.</span> A 17-year-old girl is brought to the ER after taking 20 tablets of paracetamol. She reports feeling overwhelmed by school stress but denies wanting to die. She expresses regret and requests help. What is the best term for this behavior?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Suicidal attempt</li>
+            <li class="option" data-correct="false">B. Impulsive aggression</li>
+            <li class="option" data-correct="true">C. Parasuicide / deliberate self harm</li>
+            <li class="option" data-correct="false">D. all of the above</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Suicidal attempt: Incorrect. A suicidal attempt typically implies intent to die, which she denies.<br>
+            b. Impulsive aggression: Incorrect. The act is self-directed harm, not aggression towards others.<br>
+            c. Parasuicide / deliberate self harm: Correct. This term describes acts of self-harm without lethal intent, often undertaken to cope with intense emotional distress, communicate distress, or influence others. Her denial of intent to die, expression of regret, and request for help are consistent with this.<br>
+            d. all of the above: Incorrect.<br>
+            e. None of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q46">
+        <p class="question-text"><span class="question-number">46.</span> Which of the following is the strongest predictor of future suicide attempt in an adolescent?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Family history of depression</li>
+            <li class="option" data-correct="true">B. Previous suicide attempt</li>
+            <li class="option" data-correct="false">C. Poor academic performance</li>
+            <li class="option" data-correct="false">D. Bullying at school</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Family history of depression: Incorrect. This is a risk factor, but not the strongest predictor compared to a personal history of attempts.<br>
+            b. Previous suicide attempt: Correct. A past suicide attempt is the single most significant risk factor and strongest predictor for future suicide attempts and completed suicide.<br>
+            c. Poor academic performance: Incorrect. This can be a stressor or correlate but not the strongest predictor.<br>
+            d. Bullying at school: Incorrect. Bullying is a significant risk factor but a prior attempt is stronger.<br>
+            e. None of the above: Incorrect.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q47">
+        <p class="question-text"><span class="question-number">47.</span> A 19-year-old woman presents with complaints of binge eating followed by self-induced vomiting. She is of normal weight but reports feeling "out of control" during eating episodes. On examination, she has swollen parotid glands and calluses on the back of her hand. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Anorexia nervosa</li>
+            <li class="option" data-correct="true">B. Bulimia nervosa</li>
+            <li class="option" data-correct="false">C. Binge-eating disorder</li>
+            <li class="option" data-correct="false">D. Body dysmorphic disorder</li>
+            <li class="option" data-correct="false">E. Avoidant/restrictive food intake disorder</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Anorexia nervosa: Incorrect. Individuals with anorexia nervosa are underweight. This patient is of normal weight.<br>
+            b. Bulimia nervosa: Correct. The features described – recurrent binge eating with a sense of loss of control, followed by inappropriate compensatory behavior (self-induced vomiting), being of normal weight, and physical signs like swollen parotids and Russell's sign (calluses on hand) – are classic for Bulimia Nervosa.<br>
+            c. Binge-eating disorder: Incorrect. Binge-eating disorder involves binge eating but without compensatory behaviors.<br>
+            d. Body dysmorphic disorder: Incorrect. This involves preoccupation with perceived appearance flaws.<br>
+            e. Avoidant/restrictive food intake disorder: Incorrect. This involves restricted food intake leading to nutritional deficiency or weight loss, but not typically bingeing and purging cycles.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q48">
+        <p class="question-text"><span class="question-number">48.</span> A 12-year-old boy spends hours washing his hands, fearing that he will contaminate his family with germs. He knows his fears are excessive but cannot stop. He is falling behind in school due to excessive rituals. What is the best first-line treatment?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Cognitive-behavioral therapy with exposure and response prevention</li>
+            <li class="option" data-correct="false">B. Antipsychotic medication</li>
+            <li class="option" data-correct="false">C. Psychoanalysis</li>
+            <li class="option" data-correct="false">D. Supportive therapy only</li>
+            <li class="option" data-correct="false">E. Benzodiazepines</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Cognitive-behavioral therapy with exposure and response prevention: Correct. The boy has clear symptoms of Obsessive-Compulsive Disorder (obsessions about contamination, compulsions of handwashing). Cognitive-Behavioral Therapy (CBT), specifically Exposure and Response Prevention (ERP), is a first-line, evidence-based treatment for OCD in children and adults.<br>
+            b. Antipsychotic medication: Incorrect. Not first-line for OCD, though may be used as augmentation in severe, refractory cases.<br>
+            c. Psychoanalysis: Incorrect. Not considered a first-line or evidence-based treatment for OCD.<br>
+            d. Supportive therapy only: Incorrect. While supportive, it's generally insufficient for OCD.<br>
+            e. Benzodiazepines: Incorrect. May temporarily reduce anxiety but do not treat core OCD symptoms and carry risks of dependence.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q49">
+        <p class="question-text"><span class="question-number">49.</span> A 26-year-old woman has recurrent intrusive thoughts about harming her child, which cause significant distress. She performs repetitive counting rituals to neutralize the thoughts. She has no history of acting on her thoughts. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Obsessive-compulsive disorder</li>
+            <li class="option" data-correct="false">B. Generalized anxiety disorder</li>
+            <li class="option" data-correct="false">C. Schizophrenia</li>
+            <li class="option" data-correct="false">D. Postpartum psychosis</li>
+            <li class="option" data-correct="false">E. Major depressive disorder</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Obsessive-compulsive disorder: Correct. The patient experiences recurrent intrusive thoughts (obsessions about harming her child) that cause distress, and she performs repetitive rituals (compulsions – counting) to neutralize these thoughts. This is characteristic of OCD. The thoughts are egodystonic (unwanted and distressing).<br>
+            b. Generalized anxiety disorder: Incorrect. GAD involves pervasive worry, not specific obsessions and compulsions.<br>
+            c. Schizophrenia: Incorrect. While thoughts of harm can occur, the pattern of intrusive thoughts neutralized by rituals is OCD, not typically schizophrenia unless other psychotic symptoms are prominent.<br>
+            d. Postpartum psychosis: Incorrect. While the content involves her child, this is described as intrusive thoughts with rituals, fitting OCD. Postpartum psychosis would involve more global psychotic symptoms like delusions or hallucinations related to the child, and often a more acute onset and disorganization.<br>
+            e. Major depressive disorder: Incorrect. While intrusive thoughts can occur in depression, the specific pattern of obsessions and compulsions points to OCD.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q50">
+        <p class="question-text"><span class="question-number">50.</span> Which of the following is NOT a DSM-5 criterion for Substance Use Disorder?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Persistent desire or unsuccessful efforts to cut down or control substance use</li>
+            <li class="option" data-correct="false">B. Recurrent substance use resulting in failure to fulfill major role obligations</li>
+            <li class="option" data-correct="false">C. Experiencing tolerance and withdrawal symptoms</li>
+            <li class="option" data-correct="true">D. Engaging in substance use only during periods of high stress</li>
+            <li class="option" data-correct="false">E. Continued substance use despite knowing it causes physical or psychological problems</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Persistent desire or unsuccessful efforts to cut down or control substance use: Incorrect. This is a criterion for SUD (under Impaired Control).<br>
+            b. Recurrent substance use resulting in failure to fulfill major role obligations: Incorrect. This is a criterion for SUD (under Social Impairment).<br>
+            c. Experiencing tolerance and withdrawal symptoms: Incorrect. These are pharmacological criteria for SUD.<br>
+            d. Engaging in substance use only during periods of high stress: Correct. While stress can be a trigger for substance use, this statement itself is NOT a diagnostic criterion for SUD. The criteria focus on the pattern and consequences of use, regardless of whether it's solely linked to stress.<br>
+            e. Continued substance use despite knowing it causes physical or psychological problems: Incorrect. This is a criterion for SUD (under Risky Use/Impaired Control).<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 50</div>
+</div>
+
+<div class="bottom-nav-container">
+    <a href="#" class="main-button" id="home-button">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <button id="reset-button" class="main-button">
+        <i class="fas fa-sync-alt"></i> Reset
+    </button>
+</div>
+
+<script>
+// ====== SUBJECT PAGE SHORTCUT LOGIC ======
+const PAGE_ID = window.SUBJECT_SETTINGS.PAGE_ID;
+const ANSWERS_KEY = `${PAGE_ID}_answers`;
+const SCORES_KEY = `${PAGE_ID}_scores`;
+
+// Set dynamic title and home button
+document.title = window.SUBJECT_SETTINGS.PAGE_TITLE;
+document.getElementById('dynamic-title')?.remove(); // Remove if exists
+const homeBtn = document.getElementById('home-button');
+if (homeBtn) homeBtn.href = window.SUBJECT_SETTINGS.HOME_LINK;
+
+// ...rest of your script (no changes needed below this line)...
+const sections = document.querySelectorAll('.section');
+let sectionScores = {};
+
+function saveState(sectionId, questionId, selectedOptionIndex, currentScore, totalQuestions) {
+    let answers = JSON.parse(localStorage.getItem(ANSWERS_KEY)) || {};
+    if (!answers[sectionId]) answers[sectionId] = {};
+    answers[sectionId][questionId] = {
+        selectedOptionIndex: selectedOptionIndex,
+        answered: true
+    };
+    localStorage.setItem(ANSWERS_KEY, JSON.stringify(answers));
+
+    let scores = JSON.parse(localStorage.getItem(SCORES_KEY)) || {};
+    scores[sectionId] = { score: currentScore, total: totalQuestions };
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+function applyOptionSelectionLogic(optionElement, questionContainer, isLoadTime = false) {
+    const explanation = questionContainer.querySelector('.explanation');
+    const allOptionsInQuestion = questionContainer.querySelectorAll('.option');
+    const section = questionContainer.closest('.section');
+    const sectionId = section.dataset.sectionId;
+    const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+    const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+
+    if (questionContainer.classList.contains('answered') && !isLoadTime) return;
+    questionContainer.classList.add('answered');
+
+    const isCorrect = optionElement.dataset.correct === 'true';
+
+    let feedbackSpan = optionElement.querySelector('.feedback');
+    if (!feedbackSpan) {
+        feedbackSpan = document.createElement('span');
+        feedbackSpan.className = 'feedback';
+        optionElement.appendChild(feedbackSpan);
+    }
+    feedbackSpan.style.display = 'inline';
+
+    if (isCorrect) {
+        optionElement.classList.add('correct');
+        feedbackSpan.textContent = ' ✓ Correct!';
+        if (!isLoadTime) sectionScores[sectionId]++;
+    } else {
+        optionElement.classList.add('incorrect');
+        feedbackSpan.textContent = ' ✗ Incorrect.';
+        allOptionsInQuestion.forEach(opt => {
+            if (opt.dataset.correct === 'true') {
+                opt.classList.add('reveal-correct');
+                let correctFeedback = opt.querySelector('.feedback');
+                if (!correctFeedback) {
+                    correctFeedback = document.createElement('span');
+                    correctFeedback.className = 'feedback';
+                    opt.appendChild(correctFeedback);
+                }
+                correctFeedback.textContent = ' ✓ Correct Answer';
+                correctFeedback.style.display = 'inline';
+            }
+        });
+    }
+
+    if (explanation) explanation.style.display = 'block';
+    allOptionsInQuestion.forEach(opt => { opt.style.cursor = 'default'; });
+
+    if (scoreDisplay) {
+        scoreDisplay.textContent = `Score: ${sectionScores[sectionId]} / ${totalQuestionsInSection}`;
+    }
+
+    if (!isLoadTime) {
+        const optionIndex = Array.from(allOptionsInQuestion).indexOf(optionElement);
+        saveState(sectionId, questionContainer.dataset.questionId, optionIndex, sectionScores[sectionId], totalQuestionsInSection);
+    }
+}
+
+function loadState() {
+    const savedAnswersData = JSON.parse(localStorage.getItem(ANSWERS_KEY));
+    const savedScoresData = JSON.parse(localStorage.getItem(SCORES_KEY));
+
+    sections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        sectionScores[sectionId] = (savedScoresData && savedScoresData[sectionId]) ? savedScoresData[sectionId].score : 0;
+
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: ${sectionScores[sectionId]} / ${totalQuestionsInSection}`;
+        }
+
+        if (savedAnswersData && savedAnswersData[sectionId]) {
+            const questionsInSection = section.querySelectorAll('.question-container');
+            questionsInSection.forEach(qc => {
+                const questionId = qc.dataset.questionId;
+                const qData = savedAnswersData[sectionId][questionId];
+                if (qData && qData.answered && typeof qData.selectedOptionIndex === 'number') {
+                    const optionsInQ = qc.querySelectorAll('.option');
+                    const selectedOptionEl = optionsInQ[qData.selectedOptionIndex];
+                    if (selectedOptionEl) {
+                        applyOptionSelectionLogic(selectedOptionEl, qc, true);
+                    }
+                }
+            });
+        }
+    });
+}
+
+function resetState() {
+    localStorage.removeItem(ANSWERS_KEY);
+    localStorage.removeItem(SCORES_KEY);
+
+    sections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0;
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+
+        section.querySelectorAll('.question-container').forEach(qc => {
+            qc.classList.remove('answered');
+            const explanation = qc.querySelector('.explanation');
+            if (explanation) explanation.style.display = 'none';
+
+            qc.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('correct', 'incorrect', 'reveal-correct');
+                opt.style.cursor = 'pointer';
+                const feedback = opt.querySelector('.feedback');
+                if (feedback) {
+                    feedback.textContent = '';
+                    feedback.style.display = 'none';
+                }
+            });
+        });
+
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: 0 / ${totalQuestionsInSection}`;
+        }
+    });
+}
+
+// Save total number of questions for summary use (main page)
+document.addEventListener('DOMContentLoaded', function() {
+    const totalQuestions = document.querySelectorAll('.question-container').length;
+    let scores = JSON.parse(localStorage.getItem(SCORES_KEY)) || {};
+    scores['all'] = scores['all'] || {};
+    scores['all'].total = totalQuestions;
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    sections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0;
+    });
+
+    loadState();
+
+    sections.forEach(section => {
+        const options = section.querySelectorAll('.option');
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                const questionContainer = this.closest('.question-container');
+                applyOptionSelectionLogic(this, questionContainer, false);
+            });
+        });
+    });
+
+    const resetButton = document.getElementById('reset-button');
+    if (resetButton) {
+        resetButton.addEventListener('click', resetState);
+    }
+});
+</script>
+
+</body>
+</html>
