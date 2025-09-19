@@ -420,27 +420,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const { attempted, total } = getPageProgress(subject.pageId);
 
-        if (total > 0) {
+        if (attempted === 0) {
+            progressElement.textContent = `Not Started`;
+        } else if (total > 0) {
             progressElement.textContent = `${attempted} / ${total}`;
-        } else {
-            progressElement.textContent = attempted > 0 ? `${attempted} / ?` : `Not Started`;
+        } else { // total is 0, but attempted > 0
+            progressElement.textContent = `${attempted} / ?`;
         }
     });
 
     function updateAndShowGroupSummary() {
-        let totalAttemptedInGroup = 0, totalQuestionsInGroup = 0;
+        let totalAttemptedInGroup = 0;
+        let totalQuestionsFromStartedSubjects = 0; // This will be the denominator
+
         subjectsConfig.forEach(subject => {
             const { attempted, total } = getPageProgress(subject.pageId);
-            totalAttemptedInGroup += attempted;
-            totalQuestionsInGroup += total;
+            totalAttemptedInGroup += attempted; // Always sum all attempted questions
+
+            if (attempted > 0) { // Only sum total questions from subjects that have been started
+                totalQuestionsFromStartedSubjects += total;
+            }
         });
 
-        localStorage.setItem(`${groupKey}_summary_scores`, JSON.stringify({ total: totalQuestionsInGroup }));
+        localStorage.setItem(`${groupKey}_summary_scores`, JSON.stringify({ total: totalQuestionsFromStartedSubjects })); // Store the new total
         localStorage.setItem(`${groupKey}_summary_answers`, JSON.stringify({ attempted: totalAttemptedInGroup }));
 
         const groupTotalProgressValueEl = document.getElementById('group-total-progress-value');
         if (groupTotalProgressValueEl) {
-            groupTotalProgressValueEl.textContent = `${totalAttemptedInGroup} / ${totalQuestionsInGroup}`;
+            if (totalAttemptedInGroup === 0) {
+                groupTotalProgressValueEl.textContent = `Not Started`;
+            } else {
+                groupTotalProgressValueEl.textContent = `${totalAttemptedInGroup} / ${totalQuestionsFromStartedSubjects}`;
+            }
         }
         const groupTotalProgressTitleEl = document.getElementById('group-total-progress-title');
          if (groupTotalProgressTitleEl) {
