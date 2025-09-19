@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ====== SUBJECT PAGE SHORTCUT SETTINGS ====== -->
+<script>
+/*
+    ====== EDIT ONLY THIS BLOCK FOR NEW SUBJECTS ======
+    Change these variables for each new subject page.
+*/
+window.SUBJECT_SETTINGS = {
+    PAGE_ID: 'r_chest_mcqs', // Unique localStorage key for this subject
+    PAGE_TITLE: 'Qbank - TUCOM -  Radiology', // Title for this subject page
+    HOME_LINK: 'radiology_qbank.html', // Home button link for this subject
+};
+</script>
+<!-- ====== END SHORTCUT SETTINGS ====== -->
+
+<title id="dynamic-title"></title>
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+/* 2. (Optional) Edit styles for your subject */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin-top: 70px;
+    padding: 20px;
+    background-color: #f4f4f4;
+    padding-bottom: 100px;
+}
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #17202a;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+    z-index: 1000;
+    border-bottom: 3px solid #3498db;
+}
+.fixed-header .made-by-prefix { color: #cccccc; }
+.fixed-header a { color: #3498db; text-decoration: none; font-weight: bold; }
+.fixed-header a:hover { text-decoration: underline; }
+.section {
+    margin-bottom: 40px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.section-title {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+.question-container {
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+}
+.question-container.answered { background-color: #f9f9f9; }
+.question-number { font-weight: bold; color: #555; margin-right: 5px; }
+.question-text { font-size: 1.1em; color: #333; margin-bottom: 15px; }
+ul.options { list-style: none; padding: 0; margin: 0; }
+li.option {
+    background-color: #f1f1f1;
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: 1px solid #ccc;
+    position: relative;
+    user-select: none;
+}
+li.option:hover:not(.answered li.option) { background-color: #e0e0e0; }
+.question-container.answered li.option:hover { background-color: #f1f1f1; }
+li.option.correct:hover { background-color: #d4edda !important; }
+li.option.incorrect:hover { background-color: #f8d7da !important; }
+li.option.reveal-correct:hover { background-color: #d4edda !important; }
+li.option.correct {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+    font-weight: bold;
+}
+li.option.incorrect {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+    font-weight: bold;
+}
+.feedback { display: none; font-weight: bold; margin-left: 10px; }
+li.option.correct .feedback,
+li.option.incorrect .feedback { display: inline; }
+.correct .feedback { color: #155724; }
+.incorrect .feedback { color: #721c24; }
+li.option.reveal-correct {
+    background-color: #d4edda !important;
+    border-color: #c3e6cb !important;
+    color: #155724 !important;
+    font-weight: bold !important;
+}
+.explanation {
+    display: none;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    color: #495057;
+    font-size: 0.95em;
+}
+.section-score {
+    margin-top: 30px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    padding: 10px;
+    background-color: #e7f3ff;
+    border: 1px solid #b3d7ff;
+    border-radius: 5px;
+}
+.bottom-nav-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    display: flex;
+    gap: 15px;
+}
+.main-button {
+    background-color: #3498db;
+    color: #fff;
+    padding: 8px 16px;
+    font-size: 0.9em;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 25px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-button i { margin-right: 8px; }
+.main-button:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.25); }
+a.main-button:hover { background-color: #2980b9; }
+#reset-button { background-color: #e74c3c; }
+#reset-button:hover { background-color: #c0392b; }
+</style>
+</head>
+<body>
+<div class="fixed-header">
+    <span class="made-by-prefix">Made by </span><a href="https://t.me/s/Ali_dicaprio" target="_blank">Ali Hussein</a>
+</div>
+
+<!-- 
+3. COPY/EDIT: Add your sections and questions below.
+   - Each section needs a unique data-section-id (e.g., 1, 2, 3, ...)
+   - Each question-container needs a unique data-question-id within its section.
+   - Edit section titles and questions for your subject.
+-->
+   
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">Chest Introduction</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q1">
+        <p class="question-text"><span class="question-number">1.</span> The chest x-ray is adequately imaged if: *</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. The diaphragm intersected by the 5th to 7th posterior ribs in the mid-clavicular line</li>
+            <li class="option" data-correct="false">B. The diaphragm intersected by the 6th to 8th anterior rib in the mid-clavicular line</li>
+            <li class="option" data-correct="false">C. Medial ends of the clavicle equidistant from the C4.</li>
+            <li class="option" data-correct="false">D. All of the above.</li>
+            <li class="option" data-correct="true">E. None of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect. This describes underinflation for posterior ribs; adequate inspiration usually shows 8-9 posterior ribs.<br>
+            b. Incorrect. This describes potential hyperinflation for anterior ribs; adequate inspiration usually shows 5-7 anterior ribs.<br>
+            c. Incorrect. Centering (rotation) is assessed by the medial ends of clavicles relative to a thoracic spinous process, not C4.<br>
+            d. Incorrect. Options A, B, and C are incorrect descriptions of adequate imaging.<br>
+            e. Correct. None of the options accurately describe universal criteria for adequate imaging (inspiration and centering).
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q2">
+        <p class="question-text"><span class="question-number">2.</span> In case of suspected inhaled foreign body, films are exposed in:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Inspiration ...</li>
+            <li class="option" data-correct="true">B. Expiration ...</li>
+            <li class="option" data-correct="false">C. All of the above..</li>
+            <li class="option" data-correct="false">D. Lordotic view...</li>
+            <li class="option" data-correct="false">E. Oblique with Ba. Swallow..</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect. Inspiratory films are baseline but expiratory films are crucial for this diagnosis.<br>
+            b. Correct. Expiratory films are essential to demonstrate air trapping due to an inhaled foreign body.<br>
+            c. Incorrect. Lordotic views and Barium swallows are not indicated for suspected *inhaled* foreign bodies.<br>
+            d. Incorrect. Lordotic view is primarily for lung apices.<br>
+            e. Incorrect. Oblique with Barium swallow is for evaluating the esophagus (ingested foreign bodies).
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q3">
+        <p class="question-text"><span class="question-number">3.</span> Inspiratory chest x-ray film indicated in: *</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Small pneumothorax.</li>
+            <li class="option" data-correct="true">B. Foreign body ingestion.</li>
+            <li class="option" data-correct="false">C. To demonstrate air trapping.</li>
+            <li class="option" data-correct="false">D. All of the above.</li>
+            <li class="option" data-correct="false">E. None of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect. While inspiratory films are standard, expiratory films can better demonstrate a small pneumothorax.<br>
+            b. Correct. An inspiratory CXR is a standard initial investigation for suspected foreign body ingestion (e.g., in esophagus) or aspiration.<br>
+            c. Incorrect. Expiratory films, not inspiratory, are specifically used to demonstrate air trapping.<br>
+            d. Incorrect. As option C is incorrect for an inspiratory film's specific purpose.<br>
+            e. Incorrect. Option B is a valid indication for an inspiratory film.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">5.</span> Chest film is well centered if :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Heart is in center of the film.</li>
+            <li class="option" data-correct="false">B. Trachea occupies central position.</li>
+            <li class="option" data-correct="true">C. Medial ends of the clavicle equidistant from the T4</li>
+            <li class="option" data-correct="false">D. Clavicle is declining downward</li>
+            <li class="option" data-correct="false">E. All of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect. The heart is normally more to the left; its position isn't a primary criterion for centering (rotation).<br>
+            b. Incorrect. While a central trachea is expected, it's an indirect sign and can be deviated by other causes; C is more direct.<br>
+            c. Correct. Equidistance of medial clavicular ends from a thoracic spinous process (like T4) is a key sign of good centering (no rotation).<br>
+            d. Incorrect. Clavicle declination relates to angulation (e.g., PA vs. lordotic), not centering (rotation).<br>
+            e. Incorrect. As options A, B, and D are not the primary or most accurate criteria for centering.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q30">
+        <p class="question-text"><span class="question-number">30.</span> Expiratory chest x-ray film indicated in all of the following except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Foreign body inhalation.</li>
+            <li class="option" data-correct="true">B. Tension pneumothorax.</li>
+            <li class="option" data-correct="false">C. Small pneumothorax.</li>
+            <li class="option" data-correct="false">D. To demonstrate air trapping.</li>
+            <li class="option" data-correct="false">E. gas trapping in COPD</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect. Expiratory films are indicated to demonstrate air trapping in foreign body inhalation.<br>
+            b. Correct. Tension pneumothorax is a medical emergency; expiratory films are not indicated and would delay urgent treatment.<br>
+            c. Incorrect. Expiratory films are indicated as they can make a small pneumothorax more conspicuous.<br>
+            d. Incorrect. Demonstrating air trapping is a primary indication for expiratory films.<br>
+            e. Incorrect. Expiratory films can demonstrate air trapping, which can be a feature of COPD, especially if focal.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q44">
+        <p class="question-text"><span class="question-number">44.</span> Chest film is well centered if -all are false except :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Heart is in center of the film.</li>
+            <li class="option" data-correct="false">B. Trachea occupies central position .</li>
+            <li class="option" data-correct="true">C. Medial ends of the clavicle equidistant from the T4.</li>
+            <li class="option" data-correct="false">D. Clavicle is declining downward.</li>
+            <li class="option" data-correct="false">E. Lateral ends of clavicle is equidistant from the T 4</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. False. The heart is predominantly in the left hemithorax.<br>
+            b. False (in the context of "all are false except"). While a central trachea is expected without pathology, C is the direct criterion for centering.<br>
+            c. True. This is a standard radiological criterion for assessing patient rotation (centering).<br>
+            d. False. Clavicle declination relates to the radiographic projection (angulation), not centering.<br>
+            e. False. The medial ends of the clavicles, not lateral, are compared to the spinous processes for centering.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q46">
+        <p class="question-text"><span class="question-number">46.</span> value of chest X-ray all true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Low cost.</li>
+            <li class="option" data-correct="false">B. Excellent productivity</li>
+            <li class="option" data-correct="true">C. Not sensitive.</li>
+            <li class="option" data-correct="false">D. Simple maneuver</li>
+            <li class="option" data-correct="false">E. available</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. True. Chest X-rays are relatively inexpensive.<br>
+            b. True. They allow for rapid examination of many patients.<br>
+            c. False (thus the correct answer for "except"). Chest X-rays are sensitive for many thoracic conditions; "Not sensitive" is an incorrect generalization.<br>
+            d. True. The procedure is generally simple to perform.<br>
+            e. True. Chest X-ray equipment is widely accessible.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q70">
+        <p class="question-text"><span class="question-number">70.</span> Expiratory chest x-ray film indicated in all of the following:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Foreign body inhalation.</li>
+            <li class="option" data-correct="true">B. Tension pneumothorax.</li>
+            <li class="option" data-correct="false">C. Small pneumothorax.</li>
+            <li class="option" data-correct="false">D. To demonstrate air trapping.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B (Interpreted as "indicated in all of the following EXCEPT:")<br>
+            a. Incorrect (as an exception). Expiratory film is indicated for foreign body inhalation to show air trapping.<br>
+            b. Correct (as an exception). Tension pneumothorax is a medical emergency; expiratory film is NOT indicated and can delay vital treatment.<br>
+            c. Incorrect (as an exception). Expiratory film is indicated to help visualize a small pneumothorax.<br>
+            d. Incorrect (as an exception). Expiratory film is indicated specifically to demonstrate air trapping.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 8</div>
+</div>
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">Pleural Effusion</h2>
+
+    <div class="question-container" data-question-id="q2">
+        <p class="question-text"><span class="question-number">2.</span> Regarding Pleural Effusion, the most appropriate answer is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Bilateral pleural effusions tend to be exudative.</li>
+            <li class="option" data-correct="false">B. Pancreatitis usually resulted in RT sided pleural effusion.</li>
+            <li class="option" data-correct="false">C. Ovarian tumors are usually associated with LT sided pleural effusion.</li>
+            <li class="option" data-correct="false">D. Lordotic view may be used for diagnosis.</li>
+            <li class="option" data-correct="true">E. None of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Bilateral pleural effusions are more commonly transudative (e.g., heart failure), though exudative causes can be bilateral.<br>
+            b. Pancreatitis more commonly causes left-sided pleural effusion due to inflammation spreading through the diaphragm.<br>
+            c. Ovarian tumors (Meigs' syndrome) are typically associated with right-sided pleural effusion.<br>
+            d. A lordotic view is primarily used to better visualize the lung apices, not typically for general diagnosis of pleural effusion; lateral decubitus views are best for detecting small effusions.<br>
+            e. Based on the analysis, none of the options A, B, C, or D are definitively correct statements regarding pleural effusion.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q2-1">
+        <p class="question-text"><span class="question-number">2-1.</span> The best radiographic view to detect minimal pleural effusion is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. AP view</li>
+            <li class="option" data-correct="false">B. PA view</li>
+            <li class="option" data-correct="false">C. Oblique view</li>
+            <li class="option" data-correct="true">D. Decubitus view</li>
+            </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. AP view is generally less optimal than PA for detecting small effusions.<br>
+            b. PA view is better than AP, but not the best for minimal effusions.<br>
+            c. Oblique views are not primarily used for detecting minimal pleural effusions.<br>
+            d. Lateral decubitus view (with the patient lying on their side) is the most sensitive view for detecting small pleural effusions, as fluid layers out along the dependent pleura.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">5.</span> Regarding Miliary TB, all true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Occur due to diffuse endobronchial spread of infection.</li>
+            <li class="option" data-correct="false">B. Characterized by focally distributed of tiny nodules.</li>
+            <li class="option" data-correct="false">C. Occur with primary TB.</li>
+            <li class="option" data-correct="false">D. Occur with reactivation TB.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Miliary TB results from massive hematogenous dissemination of mycobacteria, not primarily endobronchial spread.<br>
+            b. It is characterized by widespread, focally distributed tiny (1-5mm) nodules throughout the lung parenchyma.<br>
+            c. Miliary TB can develop as a complication of primary TB.<br>
+            d. Miliary TB can also occur due to reactivation of latent TB, especially in immunocompromised individuals.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">6.</span> Regarding pulmonary edema:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Kerley B lines are short lines in the periphery of upper lung zones.</li>
+            <li class="option" data-correct="true">B. Kerley C lines are course towards the hila.</li>
+            <li class="option" data-correct="false">C. Cardiomegaly seen in all types of pulmonary edema.</li>
+            <li class="option" data-correct="false">D. Pleural effusion not usually seen.</li>
+            <li class="option" data-correct="false">E. Kerley C lines are short lines, which do not reach the pleura.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Kerley B lines are short, horizontal lines in the periphery of the lower lung zones, not upper, indicating interstitial edema.<br>
+            b. Kerley C lines are reticular, coarse lines that represent peribronchovascular lymphatic engorgement and usually course towards the hila.<br>
+            c. Cardiomegaly is typically seen in cardiogenic pulmonary edema but not necessarily in all types (e.g., ARDS, high-altitude pulmonary edema).<br>
+            d. Pleural effusion is commonly seen in pulmonary edema, especially cardiogenic pulmonary edema.<br>
+            e. Kerley C lines are typically more coarse and reticular, extending towards the hila, unlike the short peripheral B lines.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">7.</span> In case of lobar pneumonia:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Multiple patchy areas of consolidation of a single lung.</li>
+            <li class="option" data-correct="false">B. It is usually non-bacterial in origin.</li>
+            <li class="option" data-correct="false">C. The larger bronchi usually collapsed.</li>
+            <li class="option" data-correct="false">D. It is the most common presentation of hospital-acquired pneumonia.</li>
+            <li class="option" data-correct="true">E. None of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Lobar pneumonia typically involves a contiguous consolidation of a single lobe, not multiple patchy areas. Patchy consolidation is more characteristic of bronchopneumonia.<br>
+            b. Lobar pneumonia is predominantly bacterial, most commonly caused by Streptococcus pneumoniae.<br>
+            c. In lobar pneumonia, the larger bronchi within the consolidated area remain patent, leading to the characteristic finding of air bronchograms. They do not usually collapse.<br>
+            d. Lobar pneumonia is more typically associated with community-acquired pneumonia (CAP), not the most common presentation of hospital-acquired pneumonia (HAP), which often presents as bronchopneumonia.<br>
+            e. Since all other options are incorrect, 'None of the above' is the correct answer.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q8">
+        <p class="question-text"><span class="question-number">8.</span> In case of lobar pneumonia, all are true Except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Air bronchogram is one of the most specific radiographic signs.</li>
+            <li class="option" data-correct="false">B. Usually, no volume loss in affected region.</li>
+            <li class="option" data-correct="false">C. The infection primarily involves the alveolus.</li>
+            <li class="option" data-correct="true">D. None of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. An air bronchogram (air-filled bronchi outlined by consolidated lung parenchyma) is a classic and specific radiographic sign of lobar pneumonia.<br>
+            b. Lobar pneumonia typically causes consolidation without significant volume loss. If volume loss is present, it might suggest atelectasis or other complications.<br>
+            c. Lobar pneumonia is an acute inflammation affecting a large, continuous area of a lobe, primarily involving the alveolar spaces.<br>
+            d. Since options A, B, and C are all true statements regarding lobar pneumonia, the correct exception is 'None of the above'.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">9.</span> Regarding primary TB:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Seen in immunocompromised patients.</li>
+            <li class="option" data-correct="false">B. Characterized by lymphadenopathy.</li>
+            <li class="option" data-correct="false">C. Pleural effusion could be present.</li>
+            <li class="option" data-correct="false">D. Radiological features are nonspecific.</li>
+            <li class="option" data-correct="true">E. All of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Primary TB can occur in anyone but is more common or severe in immunocompromised patients, so this statement is true.<br>
+            b. Lymphadenopathy (hilar or mediastinal) is a hallmark of primary TB, so this statement is true.<br>
+            c. Pleural effusion is a known complication of primary TB, especially in adolescents and young adults, so this statement is true.<br>
+            d. Radiological features can indeed be varied and sometimes non-specific, including patchy infiltrates, lymphadenopathy, or effusions, so this statement is true.<br>
+            e. All the statements A, B, C, and D are true characteristics or associations of primary TB.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q16">
+        <p class="question-text"><span class="question-number">16.</span> Regarding Pleural Effusion:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Normally there is less than 5 ml pleural fluid.</li>
+            <li class="option" data-correct="false">B. 50 – 100 ml accumulation is able to blunt the posterior costophrenic angle seen by lateral x-ray.</li>
+            <li class="option" data-correct="false">C. Lordotic view is essential in diagnosis.</li>
+            <li class="option" data-correct="false">D. 300-500 ml accumulation causing blunting the CP angle seen by frontal film.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Normally, the pleural space contains a small amount of fluid, typically less than 5-15 mL, which serves as a lubricant.<br>
+            b. A smaller amount, often around 75 mL, is sufficient to blunt the posterior costophrenic angle on a lateral chest X-ray. 50-100ml is generally enough, but this option isn't the most accurate compared to A, as 75ml is a more precise threshold often cited.<br>
+            c. A lordotic view is not essential for diagnosing pleural effusion; lateral decubitus views are superior for small effusions.<br>
+            d. On a frontal chest X-ray, typically around 200-300 mL of fluid is needed to blunt the costophrenic angle. While 300-500 ml would certainly cause blunting, 200-300ml is often the minimum cited. Option A is a more universally accepted baseline normal value.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q19">
+        <p class="question-text"><span class="question-number">19.</span> In case of lobar pneumonia:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Patchy consolidation of a single lobe</li>
+            <li class="option" data-correct="false">B. It is usually viral in origin</li>
+            <li class="option" data-correct="false">C. It is the most common presentation of community acquired pneumonia</li>
+            <li class="option" data-correct="true">D. The larger bronchi remain patent, causing air bronchogram</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Lobar pneumonia typically causes homogeneous consolidation of a single lobe, not patchy.<br>
+            b. Lobar pneumonia is predominantly bacterial in origin (e.g., S. pneumoniae), not usually viral.<br>
+            c. Lobar pneumonia is a common presentation of community-acquired pneumonia (CAP). While true, option D describes a specific radiographic feature.<br>
+            d. In lobar pneumonia, the larger bronchi within the consolidated area remain patent, which is why an air bronchogram is seen, making this a true and defining radiographic feature.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q42">
+        <p class="question-text"><span class="question-number">42.</span> Lobular pneumonia, all are true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Primarily affects the bronchi and adjacent alveoli.</li>
+            <li class="option" data-correct="false">B. Volume loss may be present as bronchi fill with exudate.</li>
+            <li class="option" data-correct="false">C. Bronchial spread results in multifocal patchy Opacities.</li>
+            <li class="option" data-correct="false">D. CT had no role in the diagnosis.</li>
+            <li class="option" data-correct="true">E. Consolidation of one or more lobes of the lung response to bacterial pneumonia.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Bronchopneumonia (lobular pneumonia) indeed primarily affects the bronchi and adjacent alveoli, so this is true.<br>
+            b. While bronchi fill with exudate, volume loss is not a typical feature; rather, it's patchy consolidation. However, it's less definitively false than E or D.<br>
+            c. Bronchial spread leads to the characteristic multifocal patchy opacities of bronchopneumonia, so this is true.<br>
+            d. CT has a significant role in diagnosing and characterizing pneumonia, so stating it has "no role" is false. This could also be an 'except' answer.<br>
+            e. Consolidation of one or more entire lobes is characteristic of lobar pneumonia, not lobular (bronchopneumonia), which presents as patchy consolidation. Therefore, this statement is false for lobular pneumonia and is the best 'except' answer among the choices.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q43">
+        <p class="question-text"><span class="question-number">43.</span> DDX of miliary shadow, all are except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Miliary TB</li>
+            <li class="option" data-correct="false">B. Silicosis</li>
+            <li class="option" data-correct="false">C. Coal worker pneumoconiosis</li>
+            <li class="option" data-correct="true">D. Pleural effusion</li>
+            <li class="option" data-correct="false">E. Sarcoidosis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Miliary TB is a classic cause of miliary shadows.<br>
+            b. Silicosis, especially chronic complicated silicosis, can present with miliary patterns.<br>
+            c. Coal worker pneumoconiosis can also cause diffuse small nodules, sometimes termed miliary.<br>
+            d. Pleural effusion is fluid in the pleural space; it does not cause miliary shadows in the lung parenchyma.<br>
+            e. Sarcoidosis, particularly in its disseminated form, can cause a miliary pattern.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 11</div>
+</div>
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">Pneumonia</h2>
+
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">5.</span> Regarding Miliary TB, all true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Occur due to diffuse endobronchial spread of infection.</li>
+            <li class="option" data-correct="false">B. Characterized by focally distributed of tiny nodules.</li>
+            <li class="option" data-correct="false">C. Occur with primary TB.</li>
+            <li class="option" data-correct="false">D. Occur with reactivation TB.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Miliary TB results from massive hematogenous dissemination of mycobacteria, not primarily endobronchial spread.<br>
+            b. It is characterized by widespread, focally distributed tiny (1-5mm) nodules throughout the lung parenchyma.<br>
+            c. Miliary TB can develop as a complication of primary TB.<br>
+            d. Miliary TB can also occur due to reactivation of latent TB, especially in immunocompromised individuals.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">6.</span> Regarding pulmonary edema:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Kerley B lines are short lines in the periphery of upper lung zones.</li>
+            <li class="option" data-correct="true">B. Kerley C lines are course towards the hila.</li>
+            <li class="option" data-correct="false">C. Cardiomegaly seen in all types of pulmonary edema.</li>
+            <li class="option" data-correct="false">D. Pleural effusion not usually seen.</li>
+            <li class="option" data-correct="false">E. Kerley C lines are short lines, which do not reach the pleura.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Kerley B lines are short, horizontal lines in the periphery of the lower lung zones, not upper, indicating interstitial edema.<br>
+            b. Kerley C lines are reticular, coarse lines that represent peribronchovascular lymphatic engorgement and usually course towards the hila.<br>
+            c. Cardiomegaly is typically seen in cardiogenic pulmonary edema but not necessarily in all types (e.g., ARDS, high-altitude pulmonary edema).<br>
+            d. Pleural effusion is commonly seen in pulmonary edema, especially cardiogenic pulmonary edema.<br>
+            e. Kerley C lines are typically more coarse and reticular, extending towards the hila, unlike the short peripheral B lines.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">7.</span> In case of lobar pneumonia:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Multiple patchy areas of consolidation of a single lung.</li>
+            <li class="option" data-correct="false">B. It is usually non-bacterial in origin.</li>
+            <li class="option" data-correct="false">C. The larger bronchi usually collapsed.</li>
+            <li class="option" data-correct="false">D. It is the most common presentation of hospital-acquired pneumonia.</li>
+            <li class="option" data-correct="true">E. None of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Lobar pneumonia typically involves a contiguous consolidation of a single lobe, not multiple patchy areas. Patchy consolidation is more characteristic of bronchopneumonia.<br>
+            b. Lobar pneumonia is predominantly bacterial, most commonly caused by Streptococcus pneumoniae.<br>
+            c. In lobar pneumonia, the larger bronchi within the consolidated area remain patent, leading to the characteristic finding of air bronchograms. They do not usually collapse.<br>
+            d. Lobar pneumonia is more typically associated with community-acquired pneumonia (CAP), not the most common presentation of hospital-acquired pneumonia (HAP), which often presents as bronchopneumonia.<br>
+            e. Since all other options are incorrect, 'None of the above' is the correct answer.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q8">
+        <p class="question-text"><span class="question-number">8.</span> In case of lobar pneumonia, all are true Except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Air bronchogram is one of the most specific radiographic signs.</li>
+            <li class="option" data-correct="false">B. Usually, no volume loss in affected region.</li>
+            <li class="option" data-correct="false">C. The infection primarily involves the alveolus.</li>
+            <li class="option" data-correct="true">D. None of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. An air bronchogram (air-filled bronchi outlined by consolidated lung parenchyma) is a classic and specific radiographic sign of lobar pneumonia.<br>
+            b. Lobar pneumonia typically causes consolidation without significant volume loss. If volume loss is present, it might suggest atelectasis or other complications.<br>
+            c. Lobar pneumonia is an acute inflammation affecting a large, continuous area of a lobe, primarily involving the alveolar spaces.<br>
+            d. Since options A, B, and C are all true statements regarding lobar pneumonia, the correct exception is 'None of the above'.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">9.</span> Regarding primary TB:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Seen in immunocompromised patients.</li>
+            <li class="option" data-correct="false">B. Characterized by lymphadenopathy.</li>
+            <li class="option" data-correct="false">C. Pleural effusion could be present.</li>
+            <li class="option" data-correct="false">D. Radiological features are nonspecific.</li>
+            <li class="option" data-correct="true">E. All of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Primary TB can occur in anyone but is more common or severe in immunocompromised patients, so this statement is true.<br>
+            b. Lymphadenopathy (hilar or mediastinal) is a hallmark of primary TB, so this statement is true.<br>
+            c. Pleural effusion is a known complication of primary TB, especially in adolescents and young adults, so this statement is true.<br>
+            d. Radiological features can indeed be varied and sometimes non-specific, including patchy infiltrates, lymphadenopathy, or effusions, so this statement is true.<br>
+            e. All the statements A, B, C, and D are true characteristics or associations of primary TB.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q19">
+        <p class="question-text"><span class="question-number">19.</span> In case of lobar pneumonia:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Patchy consolidation of a single lobe</li>
+            <li class="option" data-correct="false">B. It is usually viral in origin</li>
+            <li class="option" data-correct="false">C. It is the most common presentation of community acquired pneumonia</li>
+            <li class="option" data-correct="true">D. The larger bronchi remain patent, causing air bronchogram</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Lobar pneumonia typically causes homogeneous consolidation of a single lobe, not patchy.<br>
+            b. Lobar pneumonia is predominantly bacterial in origin (e.g., S. pneumoniae), not usually viral.<br>
+            c. Lobar pneumonia is a common presentation of community-acquired pneumonia (CAP). While true, option D describes a specific radiographic feature.<br>
+            d. In lobar pneumonia, the larger bronchi within the consolidated area remain patent, which is why an air bronchogram is seen, making this a true and defining radiographic feature.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q42">
+        <p class="question-text"><span class="question-number">42.</span> Lobular pneumonia, all are true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Primarily affects the bronchi and adjacent alveoli.</li>
+            <li class="option" data-correct="false">B. Volume loss may be present as bronchi fill with exudate.</li>
+            <li class="option" data-correct="false">C. Bronchial spread results in multifocal patchy Opacities.</li>
+            <li class="option" data-correct="false">D. CT had no role in the diagnosis.</li>
+            <li class="option" data-correct="true">E. Consolidation of one or more lobes of the lung response to bacterial pneumonia.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Bronchopneumonia (lobular pneumonia) indeed primarily affects the bronchi and adjacent alveoli, so this is true.<br>
+            b. While bronchi fill with exudate, volume loss is not a typical feature; rather, it's patchy consolidation. However, it's less definitively false than E or D.<br>
+            c. Bronchial spread leads to the characteristic multifocal patchy opacities of bronchopneumonia, so this is true.<br>
+            d. CT has a significant role in diagnosing and characterizing pneumonia, so stating it has "no role" is false. This could also be an 'except' answer.<br>
+            e. Consolidation of one or more entire lobes is characteristic of lobar pneumonia, not lobular (bronchopneumonia), which presents as patchy consolidation. Therefore, this statement is false for lobular pneumonia and is the best 'except' answer among the choices.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q43">
+        <p class="question-text"><span class="question-number">43.</span> DDX of miliary shadow, all are except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Miliary TB</li>
+            <li class="option" data-correct="false">B. Silicosis</li>
+            <li class="option" data-correct="false">C. Coal worker pneumoconiosis</li>
+            <li class="option" data-correct="true">D. Pleural effusion</li>
+            <li class="option" data-correct="false">E. Sarcoidosis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Miliary TB is a classic cause of miliary shadows.<br>
+            b. Silicosis, especially chronic complicated silicosis, can present with miliary patterns.<br>
+            c. Coal worker pneumoconiosis can also cause diffuse small nodules, sometimes termed miliary.<br>
+            d. Pleural effusion is fluid in the pleural space; it does not cause miliary shadows in the lung parenchyma.<br>
+            e. Sarcoidosis, particularly in its disseminated form, can cause a miliary pattern.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 8</div>
+</div>
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">Pumonary TB</h2>
+
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">6.</span> Regarding pulmonary edema:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Kerley B lines are short lines in the periphery of upper lung zones.</li>
+            <li class="option" data-correct="true">B. Kerley C lines are course towards the hila.</li>
+            <li class="option" data-correct="false">C. Cardiomegaly seen in all types of pulmonary edema.</li>
+            <li class="option" data-correct="false">D. Pleural effusion not usually seen.</li>
+            <li class="option" data-correct="false">E. Kerley C lines are short lines, which do not reach the pleura.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Kerley B lines are short, horizontal lines in the periphery of the lower lung zones, not upper, indicating interstitial edema.<br>
+            b. Kerley C lines are reticular, coarse lines that represent peribronchovascular lymphatic engorgement and usually course towards the hila.<br>
+            c. Cardiomegaly is typically seen in cardiogenic pulmonary edema but not necessarily in all types (e.g., ARDS, high-altitude pulmonary edema).<br>
+            d. Pleural effusion is commonly seen in pulmonary edema, especially cardiogenic pulmonary edema.<br>
+            e. Kerley C lines are typically more coarse and reticular, extending towards the hila, unlike the short peripheral B lines.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">9.</span> Regarding primary TB:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Seen in immunocompromised patients.</li>
+            <li class="option" data-correct="false">B. Characterized by lymphadenopathy.</li>
+            <li class="option" data-correct="false">C. Pleural effusion could be present.</li>
+            <li class="option" data-correct="false">D. Radiological features are nonspecific.</li>
+            <li class="option" data-correct="true">E. All of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Primary TB can occur in anyone but is more common or severe in immunocompromised patients, so this statement is true.<br>
+            b. Lymphadenopathy (hilar or mediastinal) is a hallmark of primary TB, so this statement is true.<br>
+            c. Pleural effusion is a known complication of primary TB, especially in adolescents and young adults, so this statement is true.<br>
+            d. Radiological features can indeed be varied and sometimes non-specific, including patchy infiltrates, lymphadenadenopathy, or effusions, so this statement is true.<br>
+            e. All the statements A, B, C, and D are true characteristics or associations of primary TB.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q43">
+        <p class="question-text"><span class="question-number">43.</span> DDX of miliary shadow, all are except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Miliary TB</li>
+            <li class="option" data-correct="false">B. Silicosis</li>
+            <li class="option" data-correct="false">C. Coal worker pneumoconiosis</li>
+            <li class="option" data-correct="true">D. Pleural effusion</li>
+            <li class="option" data-correct="false">E. Sarcoidosis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Miliary TB is a classic cause of miliary shadows.<br>
+            b. Silicosis, especially chronic complicated silicosis, can present with miliary patterns.<br>
+            c. Coal worker pneumoconiosis can also cause diffuse small nodules, sometimes termed miliary.<br>
+            d. Pleural effusion is fluid in the pleural space; it does not cause miliary shadows in the lung parenchyma.<br>
+            e. Sarcoidosis, particularly in its disseminated form, can cause a miliary pattern.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">5.</span> Regarding Miliary TB, all true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Occur due to diffuse endobronchial spread of infection.</li>
+            <li class="option" data-correct="false">B. Characterized by focally distributed of tiny nodules.</li>
+            <li class="option" data-correct="false">C. Occur with primary TB.</li>
+            <li class="option" data-correct="false">D. Occur with reactivation TB.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Miliary TB results from massive hematogenous dissemination of mycobacteria, not primarily endobronchial spread.<br>
+            b. It is characterized by widespread, focally distributed tiny (1-5mm) nodules throughout the lung parenchyma.<br>
+            c. Miliary TB can develop as a complication of primary TB.<br>
+            d. Miliary TB can also occur due to reactivation of latent TB, especially in immunocompromised individuals.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 4</div>
+</div>
+
+<div class="section" data-section-id="2">
+    <h2 class="section-title">Mediastnium</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">7.</span> Posterior mediastinal masses include all except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Neurogenic tumor.</li>
+            <li class="option" data-correct="true">B. Aortic arch aneurysm.</li>
+            <li class="option" data-correct="false">C. Paraspinal abscess.</li>
+            <li class="option" data-correct="false">D. Forgut duplication cyst</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Neurogenic tumor: Incorrect. Neurogenic tumors are common in the posterior mediastinum.<br>
+            b. Aortic arch aneurysm: Correct. Aneurysms of the aortic arch are primarily located in the superior and middle mediastinum, not typically the posterior mediastinum.<br>
+            c. Paraspinal abscess: Incorrect. Paraspinal abscesses occur adjacent to the spine in the posterior mediastinum.<br>
+            d. Forgut duplication cyst: Incorrect. Foregut duplication cysts can be found in the posterior mediastinum.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q8">
+        <p class="question-text"><span class="question-number">8.</span> Anterior mediastinal masses include all except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Retrosternal goiter.</li>
+            <li class="option" data-correct="true">B. Neurogenic tumor.</li>
+            <li class="option" data-correct="false">C. Teratoma.</li>
+            <li class="option" data-correct="false">D. Lymphoma.</li>
+            <li class="option" data-correct="false">E. Thymoma.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Retrosternal goiter: Incorrect. A goiter extending into the chest typically resides in the anterior mediastinum.<br>
+            b. Neurogenic tumor: Correct. Neurogenic tumors are characteristically found in the posterior mediastinum, not anterior.<br>
+            c. Teratoma: Incorrect. Teratomas and other germ cell tumors are common in the anterior mediastinum.<br>
+            d. Lymphoma: Incorrect. Lymphoma can occur in any mediastinal compartment but is frequently found in the anterior mediastinum.<br>
+            e. Thymoma: Incorrect. Thymomas arise from the thymus, which is located in the anterior mediastinum.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">9.</span> Middle mediastinal masses include all except :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Lymphadenopathy.</li>
+            <li class="option" data-correct="true">B. Descending aortic aneurysm.</li>
+            <li class="option" data-correct="false">C. Enlarged pulmonary artery.</li>
+            <li class="option" data-correct="false">D. Dilated SVC.</li>
+            <li class="option" data-correct="false">E. Bronchognic cyst.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Lymphadenopathy: Incorrect. Enlarged lymph nodes are a common cause of middle mediastinal masses.<br>
+            b. Descending aortic aneurysm: Correct. The descending aorta and aneurysms arising from it are located in the posterior mediastinum, not middle.<br>
+            c. Enlarged pulmonary artery: Incorrect. The main pulmonary artery is a middle mediastinal structure, and its enlargement constitutes a middle mediastinal mass.<br>
+            d. Dilated SVC: Incorrect. The superior vena cava (SVC) is a middle mediastinal structure, and its dilation can present as a mass.<br>
+            e. Bronchognic cyst: Incorrect. Bronchogenic cysts are typically found in the middle mediastinum.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q24">
+        <p class="question-text"><span class="question-number">24.</span> posterior mediastinal mass including all except :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. neurogenic tumor</li>
+            <li class="option" data-correct="true">B. aortic arch aneurysm</li>
+            <li class="option" data-correct="false">C. paraspinal abscess</li>
+            <li class="option" data-correct="false">D. forgut duplication cyst</li>
+            <li class="option" data-correct="false">E. extramedullary haematopoiesis.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. neurogenic tumor: Incorrect. Neurogenic tumors are the most common primary posterior mediastinal masses.<br>
+            b. aortic arch aneurysm: Correct. Aneurysms of the aortic arch are located in the superior and middle mediastinum, not posterior.<br>
+            c. paraspinal abscess: Incorrect. These abscesses are located adjacent to the vertebral column in the posterior mediastinum.<br>
+            d. forgut duplication cyst: Incorrect. These cysts are often found in the posterior mediastinum.<br>
+            e. extramedullary haematopoiesis: Incorrect. This can occur as paravertebral masses in the posterior mediastinum in patients with severe anemias.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-2">Score: 0 / 4</div>
+</div>
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">Pulmonary Edema</h2>
+
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">6.</span> Regarding pulmonary edema:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Kerley B lines are short lines in the periphery of upper lung zones.</li>
+            <li class="option" data-correct="true">B. Kerley C lines are course towards the hila.</li>
+            <li class="option" data-correct="false">C. Cardiomegaly seen in all types of pulmonary edema.</li>
+            <li class="option" data-correct="false">D. Pleural effusion not usually seen.</li>
+            <li class="option" data-correct="false">E. Kerley C lines are short lines, which do not reach the pleura.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Kerley B lines are short, horizontal lines in the periphery of the lower lung zones, not upper, indicating interstitial edema.<br>
+            b. Kerley C lines are reticular, coarse lines that represent peribronchovascular lymphatic engorgement and usually course towards the hila.<br>
+            c. Cardiomegaly is typically seen in cardiogenic pulmonary edema but not necessarily in all types (e.g., ARDS, high-altitude pulmonary edema).<br>
+            d. Pleural effusion is commonly seen in pulmonary edema, especially cardiogenic pulmonary edema.<br>
+            e. Kerley C lines are typically more coarse and reticular, extending towards the hila, unlike the short peripheral B lines.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 1</div>
+</div>
+
+
+<div class="section" data-section-id="4">
+    <h2 class="section-title">Pulmonary Neoplasim</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q10">
+        <p class="question-text"><span class="question-number">10.</span> Regarding malignant pulmonary nodule (SPN) except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. invariably have a doubling time of between 1 and 18 months.</li>
+            <li class="option" data-correct="false">B. typically have ill-defined margins which are irregular, spiculated, or lobulated.</li>
+            <li class="option" data-correct="true">C. size of the nodules is of great diagnostic value</li>
+            <li class="option" data-correct="false">D. may exhibit umbilication or a notch.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. invariably have a doubling time of between 1 and 18 months: Incorrect (this is a true statement about malignant nodules, not the exception). This is generally true for malignant nodules; very rapid (&lt;1 month) or very slow (&gt;18-24 months) growth suggests benign.<br>
+            b. typically have ill-defined margins which are irregular, spiculated, or lobulated: Incorrect (this is a true statement about malignant nodules, not the exception). These are characteristic features suggestive of malignancy.<br>
+            c. size of the nodules is of great diagnostic value: Correct (this is the 'except' statement). While size is an important risk factor, the provided lecture material states "Size: this is of little diagnostic value," making this statement the exception based on that perspective.<br>
+            d. may exhibit umbilication or a notch: Incorrect (this is a true statement about malignant nodules, not the exception). These features can be seen in malignant nodules.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q11">
+        <p class="question-text"><span class="question-number">11.</span> Regarding histological type of lung ca, of SPN except :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Adenocarcinoma is the most common type of the lung CA.</li>
+            <li class="option" data-correct="false">B. Squamous cell ca is the commonest tumour to cavitate.</li>
+            <li class="option" data-correct="false">C. Large cell ca presented with early significant mediastinal and hilar adenopathy.</li>
+            <li class="option" data-correct="true">D. A peripheral tumour usually presents as Collapse and/or consolidation of lung beyond the tumor.</li>
+            <li class="option" data-correct="false">E. Small cell ca is most aggressive histological type.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Adenocarcinoma is the most common type of the lung CA: Incorrect (this is a true statement, not the exception). Adenocarcinoma is the most prevalent histological type of lung cancer.<br>
+            b. Squamous cell ca is the commonest tumour to cavitate: Incorrect (this is a true statement, not the exception). Squamous cell carcinomas are known for their tendency to cavitate.<br>
+            c. Large cell ca presented with early significant mediastinal and hilar adenopathy: Incorrect (this is considered a true statement, not the exception, as per slide 13).<br>
+            d. A peripheral tumour usually presents as Collapse and/or consolidation of lung beyond the tumor: Correct (this is the 'except' statement because it's false). A peripheral tumor presents as a nodule or mass. Collapse and/or consolidation beyond a tumor are signs of post-obstructive changes, typically associated with central tumors.<br>
+            e. Small cell ca is most aggressive histological type: Incorrect (this is a true statement, not the exception). Small cell lung cancer is known for its rapid growth, early metastasis, and aggressive clinical course.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q20">
+        <p class="question-text"><span class="question-number">20.</span> Primary cancers that likely to metastasize to the lung:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Lung cancer</li>
+            <li class="option" data-correct="false">B. Renal cell carcinoma</li>
+            <li class="option" data-correct="false">C. Breast cancer</li>
+            <li class="option" data-correct="true">D. All of them</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Lung cancer: Incorrect (this option alone is not comprehensive). Lung cancer can metastasize to other parts of the lung.<br>
+            b. Renal cell carcinoma: Incorrect (this option alone is not comprehensive). Renal cell carcinoma frequently metastasizes to the lungs.<br>
+            c. Breast cancer: Incorrect (this option alone is not comprehensive). Breast cancer commonly metastasizes to the lungs.<br>
+            d. All of them: Correct. Lung cancer, renal cell carcinoma, and breast cancer are all primary cancers known to metastasize to the lungs.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q23">
+        <p class="question-text"><span class="question-number">23.</span> radiological signs of lung ca include all except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Pulmonary nodule /mass</li>
+            <li class="option" data-correct="false">B. Consolidation not responding to treatment</li>
+            <li class="option" data-correct="false">C. Pleural effusion</li>
+            <li class="option" data-correct="false">D. Chest wall invasion</li>
+            <li class="option" data-correct="true">E. thin walled cavitation</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Pulmonary nodule /mass: Incorrect (this is a true sign, not the exception). This is a primary radiological sign of lung cancer.<br>
+            b. Consolidation not responding to treatment: Incorrect (this is a true sign, not the exception). Persistent consolidation is suspicious for malignancy.<br>
+            c. Pleural effusion: Incorrect (this is a true sign, not the exception). This can be a sign of lung cancer.<br>
+            d. Chest wall invasion: Incorrect (this is a true sign, not the exception). Direct invasion of the chest wall is a sign of locally advanced lung cancer.<br>
+            e. thin walled cavitation: Correct (this is the 'except' statement). Malignant cavities are typically thick-walled and irregular. Thin-walled cavities are more commonly associated with benign conditions.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="qU1">
+        <p class="question-text"><span class="question-number">U1.</span> Regarding benign pulmonary nodule, all true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. invariably have a doubling time of &lt; 1 month or &gt; 18 months</li>
+            <li class="option" data-correct="false">B. a dense central nidus /laminated calcification indicates a granulomatous process</li>
+            <li class="option" data-correct="false">C. Irregular popcorn' calcification suggests a hamartoma</li>
+            <li class="option" data-correct="false">D. fat is virtually diagnostic of a hamartoma.</li>
+            <li class="option" data-correct="true">E. typically have ill-defined margins which are irregular, spiculated or lobulated</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. invariably have a doubling time of &lt; 1 month or &gt; 18 months: Incorrect (this is a true statement about benign nodules, not the exception). This is characteristic of benign nodules.<br>
+            b. a dense central nidus /laminated calcification indicates a granulomatous process: Incorrect (this is a true statement about benign nodules, not the exception). These are classic benign patterns of calcification.<br>
+            c. Irregular popcorn' calcification suggests a hamartoma: Incorrect (this is a true statement about benign nodules, not the exception). "Popcorn" calcification is pathognomonic for hamartoma.<br>
+            d. fat is virtually diagnostic of a hamartoma.: Incorrect (this is a true statement about benign nodules, not the exception). The presence of fat attenuation is highly specific for a hamartoma.<br>
+            e. typically have ill-defined margins which are irregular, spiculated or lobulated: Correct (this is the 'except' statement because it's false for benign nodules). These features are characteristic of malignant nodules, not typically benign ones.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="qU2">
+        <p class="question-text"><span class="question-number">U2.</span> Radiological signs of lung Ca include all except :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Pulmonary nodule /mass.</li>
+            <li class="option" data-correct="false">B. Consolidation not responding to treatment.</li>
+            <li class="option" data-correct="false">C. Pleural effusion.</li>
+            <li class="option" data-correct="true">D. Thin walled cavity.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Pulmonary nodule /mass.: Incorrect (this is a true sign, not the exception). This is a common radiological presentation of lung cancer.<br>
+            b. Consolidation not responding to treatment.: Incorrect (this is a true sign, not the exception). Persistent lung consolidation can indicate underlying lung cancer.<br>
+            c. Pleural effusion.: Incorrect (this is a true sign, not the exception). This can be associated with lung cancer.<br>
+            d. Thin walled cavity.: Correct (this is the 'except' statement). Cavitation in lung cancer is typically thick-walled and irregular; thin-walled cavities are less common in malignancy.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-4">Score: 0 / 6</div>
+</div>
+
+
+<div class="bottom-nav-container">
+    <a href="#" class="main-button" id="home-button">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <button id="reset-button" class="main-button">
+        <i class="fas fa-sync-alt"></i> Reset
+    </button>
+</div>
+
+<script>
+// ====== SUBJECT PAGE SHORTCUT LOGIC ======
+const PAGE_ID = window.SUBJECT_SETTINGS.PAGE_ID;
+const ANSWERS_KEY = `${PAGE_ID}_answers`;
+const SCORES_KEY = `${PAGE_ID}_scores`;
+
+// Set dynamic title and home button
+document.title = window.SUBJECT_SETTINGS.PAGE_TITLE;
+document.getElementById('dynamic-title')?.remove(); // Remove if exists
+const homeBtn = document.getElementById('home-button');
+if (homeBtn) homeBtn.href = window.SUBJECT_SETTINGS.HOME_LINK;
+
+// ...rest of your script (no changes needed below this line)...
+const sections = document.querySelectorAll('.section');
+let sectionScores = {};
+
+function saveState(sectionId, questionId, selectedOptionIndex, currentScore, totalQuestions) {
+    let answers = JSON.parse(localStorage.getItem(ANSWERS_KEY)) || {};
+    if (!answers[sectionId]) answers[sectionId] = {};
+    answers[sectionId][questionId] = {
+        selectedOptionIndex: selectedOptionIndex,
+        answered: true
+    };
+    localStorage.setItem(ANSWERS_KEY, JSON.stringify(answers));
+
+    let scores = JSON.parse(localStorage.getItem(SCORES_KEY)) || {};
+    scores[sectionId] = { score: currentScore, total: totalQuestions };
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+function applyOptionSelectionLogic(optionElement, questionContainer, isLoadTime = false) {
+    const explanation = questionContainer.querySelector('.explanation');
+    const allOptionsInQuestion = questionContainer.querySelectorAll('.option');
+    const section = questionContainer.closest('.section');
+    const sectionId = section.dataset.sectionId;
+    const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+    const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+
+    if (questionContainer.classList.contains('answered') && !isLoadTime) return;
+    questionContainer.classList.add('answered');
+
+    const isCorrect = optionElement.dataset.correct === 'true';
+
+    let feedbackSpan = optionElement.querySelector('.feedback');
+    if (!feedbackSpan) {
+        feedbackSpan = document.createElement('span');
+        feedbackSpan.className = 'feedback';
+        optionElement.appendChild(feedbackSpan);
+    }
+    feedbackSpan.style.display = 'inline';
+
+    if (isCorrect) {
+        optionElement.classList.add('correct');
+        feedbackSpan.textContent = ' ✓ Correct!';
+        if (!isLoadTime) sectionScores[sectionId]++;
+    } else {
+        optionElement.classList.add('incorrect');
+        feedbackSpan.textContent = ' ✗ Incorrect.';
+        allOptionsInQuestion.forEach(opt => {
+            if (opt.dataset.correct === 'true') {
+                opt.classList.add('reveal-correct');
+                let correctFeedback = opt.querySelector('.feedback');
+                if (!correctFeedback) {
+                    correctFeedback = document.createElement('span');
+                    correctFeedback.className = 'feedback';
+                    opt.appendChild(correctFeedback);
+                }
+                correctFeedback.textContent = ' ✓ Correct Answer';
+                correctFeedback.style.display = 'inline';
+            }
+        });
+    }
+
+    if (explanation) explanation.style.display = 'block';
+    allOptionsInQuestion.forEach(opt => { opt.style.cursor = 'default'; });
+
+    if (scoreDisplay) {
+        scoreDisplay.textContent = `Score: ${sectionScores[sectionId]} / ${totalQuestionsInSection}`;
+    }
+
+    if (!isLoadTime) {
+        const optionIndex = Array.from(allOptionsInQuestion).indexOf(optionElement);
+        saveState(sectionId, questionContainer.dataset.questionId, optionIndex, sectionScores[sectionId], totalQuestionsInSection);
+    }
+}
+
+function loadState() {
+    const savedAnswersData = JSON.parse(localStorage.getItem(ANSWERS_KEY));
+    const savedScoresData = JSON.parse(localStorage.getItem(SCORES_KEY));
+
+    sections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        sectionScores[sectionId] = (savedScoresData && savedScoresData[sectionId]) ? savedScoresData[sectionId].score : 0;
+
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: ${sectionScores[sectionId]} / ${totalQuestionsInSection}`;
+        }
+
+        if (savedAnswersData && savedAnswersData[sectionId]) {
+            const questionsInSection = section.querySelectorAll('.question-container');
+            questionsInSection.forEach(qc => {
+                const questionId = qc.dataset.questionId;
+                const qData = savedAnswersData[sectionId][questionId];
+                if (qData && qData.answered && typeof qData.selectedOptionIndex === 'number') {
+                    const optionsInQ = qc.querySelectorAll('.option');
+                    const selectedOptionEl = optionsInQ[qData.selectedOptionIndex];
+                    if (selectedOptionEl) {
+                        applyOptionSelectionLogic(selectedOptionEl, qc, true);
+                    }
+                }
+            });
+        }
+    });
+}
+
+function resetState() {
+    localStorage.removeItem(ANSWERS_KEY);
+    localStorage.removeItem(SCORES_KEY);
+
+    sections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0;
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+
+        section.querySelectorAll('.question-container').forEach(qc => {
+            qc.classList.remove('answered');
+            const explanation = qc.querySelector('.explanation');
+            if (explanation) explanation.style.display = 'none';
+
+            qc.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('correct', 'incorrect', 'reveal-correct');
+                opt.style.cursor = 'pointer';
+                const feedback = opt.querySelector('.feedback');
+                if (feedback) {
+                    feedback.textContent = '';
+                    feedback.style.display = 'none';
+                }
+            });
+        });
+
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: 0 / ${totalQuestionsInSection}`;
+        }
+    });
+}
+
+// Save total number of questions for summary use (main page)
+document.addEventListener('DOMContentLoaded', function() {
+    const totalQuestions = document.querySelectorAll('.question-container').length;
+    let scores = JSON.parse(localStorage.getItem(SCORES_KEY)) || {};
+    scores['all'] = scores['all'] || {};
+    scores['all'].total = totalQuestions;
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    sections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0;
+    });
+
+    loadState();
+
+    sections.forEach(section => {
+        const options = section.querySelectorAll('.option');
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                const questionContainer = this.closest('.question-container');
+                applyOptionSelectionLogic(this, questionContainer, false);
+            });
+        });
+    });
+
+    const resetButton = document.getElementById('reset-button');
+    if (resetButton) {
+        resetButton.addEventListener('click', resetState);
+    }
+});
+</script>
+
+</body>
+</html>

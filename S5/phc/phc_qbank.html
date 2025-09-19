@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ====== GROUP PAGE SHORTCUT SETTINGS ====== -->
+<script>
+/*
+    ====== EDIT ONLY THIS BLOCK FOR NEW GROUPS ======
+    Change these variables for each new group page.
+*/
+window.GROUP_SETTINGS = {
+    GROUP_NAME: 'PHC', // Displayed in title and summary
+    GROUP_KEY: 'phc',  // Used for localStorage summary keys
+    HOME_LINK: '../S5.html',      // Home button link
+    SUBJECTS: [
+        // name: Display name, link: subpage, colorClass: for .box CSS, pageId: must match subpage PAGE_ID
+        { name: 'Final 2021', link: 'phcfinal21_page.html', colorClass: 'phcfinal21', pageId: 'phcfinal21_mcqs' },
+{ name: 'Final 2024', link: 'phcfinal24_page.html', colorClass: 'phcfinal24', pageId: 'phcfinal24_mcqs' }
+
+        // Add more subjects here if needed
+    ]
+};
+</script>
+<!-- ====== END SHORTCUT SETTINGS ====== -->
+
+<title id="dynamic-title"></title>
+<!-- Google Fonts - Montserrat -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root {
+--primary-color: #007bff;
+--primary-hover-color: #0056b3;
+--secondary-color: #6c757d;
+--background-color: #f8f9fa;
+--card-background: #ffffff;
+--text-color: #343a40;
+--light-text-color: #ffffff;
+--header-bg: #343a40;
+--header-text: #f8f9fa;
+--header-link: #00aeff;
+--shadow-color: rgba(0, 0, 0, 0.1);
+--border-radius: 12px;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--background-color);
+    padding-top: 80px;
+    color: var(--text-color);
+}
+.page-title {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 25px; 
+    text-align: center;
+}
+.back-to-main-button {
+    display: inline-block;
+    margin-bottom: 30px;
+    padding: 12px 25px;
+    background-color: var(--secondary-color);
+    color: var(--light-text-color);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px var(--shadow-color);
+    cursor: pointer;
+}
+.back-to-main-button i {
+    margin-right: 8px;
+}
+.back-to-main-button:hover {
+    background-color: #545b62;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.18);
+}
+.container {
+    display: flex;
+    gap: 30px;
+    padding: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 1200px;
+    width: 100%;
+}
+.box {
+    width: 220px;
+    height: 180px;
+    color: var(--light-text-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.3em;
+    font-weight: bold;
+    text-align: center;
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 15px var(--shadow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 15px;
+    box-sizing: border-box;
+}
+.box .progress-display {
+    font-size: 0.8em;
+    font-weight: normal;
+    margin-top: 10px;
+    color: rgba(255, 255, 255, 0.85);
+    background-color: rgba(0,0,0,0.2);
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+.box:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--header-bg);
+    color: var(--header-text);
+    padding: 15px 0;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.fixed-header .made-by-prefix {
+    color: #adb5bd;
+}
+.fixed-header a {
+    color: var(--header-link);
+    text-decoration: none;
+    font-weight: bold;
+}
+.fixed-header a:hover {
+    text-decoration: underline;
+}
+/* Example subject-specific box colors */
+.box.phcfinal21 {
+    background-color: #007bff; /* Blue */
+}
+.box.phcfinal24 {
+    background-color: #28a745; /* Green */
+}
+
+
+
+</style>
+</head>
+<body>
+<div class="fixed-header">
+    <span class="made-by-prefix">Made by </span><a href="https://t.me/s/Ali_dicaprio" target="_blank">Ali Hussein</a>
+</div>
+
+<h1 class="page-title"></h1>
+
+<a href="#" class="back-to-main-button" id="main-home-link">
+    <i class="fas fa-arrow-left"></i> Back to Main Menu
+</a>
+
+<div class="container" id="subjects-container">
+    <!-- Subject boxes will be generated here by JavaScript -->
+</div>
+
+<script>
+// ====== GROUP PAGE SHORTCUT LOGIC ======
+const GROUP = window.GROUP_SETTINGS;
+document.title = `${GROUP.GROUP_NAME} QBank - TUCOM`;
+document.querySelector('.page-title').textContent = `${GROUP.GROUP_NAME} QBank`;
+document.getElementById('main-home-link').href = GROUP.HOME_LINK;
+
+const subjectsConfig = GROUP.SUBJECTS;
+const groupKey = GROUP.GROUP_KEY;
+
+const subjectsContainer = document.getElementById('subjects-container');
+
+// Generate subject boxes
+subjectsConfig.forEach(subject => {
+    const boxLink = document.createElement('a');
+    boxLink.href = subject.link;
+    boxLink.classList.add('box', subject.colorClass);
+
+    const subjectName = document.createTextNode(subject.name);
+    boxLink.appendChild(subjectName);
+
+    const progressSpan = document.createElement('span');
+    progressSpan.classList.add('progress-display');
+    progressSpan.id = `${subject.colorClass}-progress`;
+    progressSpan.textContent = 'Loading...';
+    boxLink.appendChild(progressSpan);
+
+    subjectsContainer.appendChild(boxLink);
+});
+
+// Helper to get attempted/total for a pageId
+function getPageProgress(pageId) {
+    let attempted = 0, total = 0;
+    const answersKey = `${pageId}_answers`;
+    const scoresKey = `${pageId}_scores`;
+    const savedAnswersData = localStorage.getItem(answersKey);
+    const savedScoresData = localStorage.getItem(scoresKey);
+
+    if (savedAnswersData) {
+        try {
+            const parsedAnswers = JSON.parse(savedAnswersData);
+            if (parsedAnswers && typeof parsedAnswers === 'object') {
+                for (const sectionId in parsedAnswers) {
+                    if (parsedAnswers.hasOwnProperty(sectionId)) {
+                        const sectionAnswers = parsedAnswers[sectionId];
+                        if (sectionAnswers && typeof sectionAnswers === 'object') {
+                            for (const questionId in sectionAnswers) {
+                                if (sectionAnswers.hasOwnProperty(questionId)) {
+                                    if (sectionAnswers[questionId].answered) {
+                                        attempted++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e) {}
+    }
+
+    if (savedScoresData) {
+        try {
+            const parsedScores = JSON.parse(savedScoresData);
+            if (parsedScores && parsedScores.all && typeof parsedScores.all.total === 'number') {
+                total = parsedScores.all.total;
+            } else if (parsedScores && typeof parsedScores === 'object') {
+                for (const sectionId in parsedScores) {
+                    if (parsedScores.hasOwnProperty(sectionId)) {
+                        const sectionScoreData = parsedScores[sectionId];
+                        if (sectionScoreData && typeof sectionScoreData.total === 'number') {
+                            total += sectionScoreData.total;
+                        }
+                    }
+                }
+            }
+        } catch (e) {}
+    }
+    if (total < attempted) total = attempted;
+    return { attempted, total };
+}
+
+// Show progress for each subject
+subjectsConfig.forEach(subject => {
+    const progressElement = document.getElementById(`${subject.colorClass}-progress`);
+    if (!progressElement) return;
+
+    const { attempted, total } = getPageProgress(subject.pageId);
+
+    if (total > 0) {
+        progressElement.textContent = `${attempted} / ${total}`;
+    } else {
+        progressElement.textContent = attempted > 0 ? `${attempted} / 0` : `Not Started`;
+    }
+});
+
+// GROUP summary for main page (all subjects combined)
+function updateAndShowGroupSummary() {
+    const groupPageIds = subjectsConfig.map(subject => subject.pageId);
+    let totalAttempted = 0, totalQuestions = 0;
+    groupPageIds.forEach(pid => {
+        const { attempted, total } = getPageProgress(pid);
+        totalAttempted += attempted;
+        totalQuestions += total;
+    });
+
+    // Save for main page (key is based on GROUP_KEY)
+    localStorage.setItem(`${groupKey}_qbank_summary_scores`, JSON.stringify({ total: totalQuestions }));
+    localStorage.setItem(`${groupKey}_qbank_summary_answers`, JSON.stringify({ attempted: totalAttempted }));
+
+    // Display
+    let groupTotalDiv = document.getElementById('group-total-progress');
+    if (!groupTotalDiv) {
+        groupTotalDiv = document.createElement('div');
+        groupTotalDiv.id = 'group-total-progress';
+        groupTotalDiv.style.cssText = "margin: 30px auto 10px auto; font-size: 1.3em; font-weight: bold; color: #175b88; text-align: center;";
+        document.body.insertBefore(groupTotalDiv, document.getElementById('subjects-container'));
+    }
+    groupTotalDiv.textContent = `${GROUP.GROUP_NAME} Total Progress: ${totalAttempted} / ${totalQuestions} questions`;
+}
+
+updateAndShowGroupSummary();
+</script>
+</body>
+</html>
+

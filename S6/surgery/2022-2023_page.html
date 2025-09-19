@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ====== SUBJECT PAGE SETTINGS ====== -->
+
+<script>
+/*
+    ====== EDIT ONLY THIS BLOCK FOR NEW SUBJECTS ======
+    Change these variables for each new subject page.
+*/
+(function() {
+    // Get filename without extension for PAGE_ID
+    const path = window.location.pathname;
+    const file = path.substring(path.lastIndexOf('/') + 1) || path.substring(path.lastIndexOf('\\') + 1);
+    const pageIdAuto = file.replace(/\.[^/.]+$/, ""); // Remove extension
+
+    window.SUBJECT_SETTINGS = {
+        
+
+
+        PAGE_TITLE: 'QBank - 2022-2023 MCQs', // <--- EDIT THIS: Title for this subject page.
+        HOME_LINK: 'surgery_qbank.html',      // <--- EDIT THIS: Link back to the group page or main.html.
+
+
+        PAGE_ID: pageIdAuto,      // Automatically set from filename
+    
+    
+    
+    };
+})();
+</script>
+
+<title id="dynamic-title-subject">Subject QBank</title>
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- Google Fonts - Open Sans (example, or keep Montserrat) -->
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Amiri Font for Arabic Text -->
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+
+
+
+<style>
+/* Styles for the question page */
+body {
+    font-family: 'Open Sans', Arial, sans-serif; /* Example: Changed font */
+    line-height: 1.7; /* Increased line height for readability */
+    margin: 0;
+    padding: 20px;
+    background-color: #eef1f5; /* Lighter background */
+    padding-top: 80px; /* Space for fixed header */
+    padding-bottom: 100px; /* Space for bottom nav */
+}
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50; /* Darker header */
+    color: #ecf0f1;
+    padding: 6px 0;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16); /* Softer shadow */
+}
+.fixed-header .made-by-prefix { color: #bdc3c7; } /* Lighter prefix text */
+.fixed-header a { color: #3498db; text-decoration: none; font-weight: bold; }
+.fixed-header a:hover { text-decoration: underline; color: #5dade2; }
+.fixed-header .quran-verse {
+    display: inline-block;
+    font-family: 'Amiri', 'Scheherazade', serif;
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #ffae00;
+    letter-spacing: 0.5px;
+    padding: 0.2em 1em;
+    border-radius: 8px;
+    margin-left: 10px;
+    margin-right: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    direction: rtl;
+}
+@media (max-width: 600px) {
+    .fixed-header .quran-verse {
+        font-size: 1em;
+        padding: 0.2em 0.5em;
+    }
+}
+
+.page-main-title {
+    font-size: 2.2em;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.section {
+    margin-bottom: 35px; /* Increased space between sections */
+    background-color: #ffffff;
+    padding: 25px; /* Increased padding */
+    border-radius: 10px; /* More rounded corners */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Softer, larger shadow */
+    max-width: 800px; /* Max width for content readability */
+    margin-left: auto;
+    margin-right: auto;
+}
+.section-title {
+    font-size: 1.6em; /* Adjusted size */
+    color: #34495e; /* Dark blue-gray */
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eaecee; /* Lighter border */
+    padding-bottom: 12px;
+    font-weight: 600;
+}
+.question-container {
+    margin-bottom: 30px; /* More space between questions */
+    padding: 20px;
+    border: 1px solid #dce4ec; /* Lighter border */
+    border-radius: 8px;
+    background-color: #fdfdfd; /* Very light background for question */
+    transition: box-shadow 0.3s ease;
+}
+.question-container:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.question-container.answered { background-color: #f8f9fa; }
+.question-number {
+    font-weight: 700; /* Bolder question number */
+    color: #007bff; /* Primary color for question number */
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+.question-text {
+    font-size: 1.1em;
+    color: #343a40; /* Standard text color */
+    margin-bottom: 18px; /* More space below question text */
+    line-height: 1.6;
+}
+ul.options { list-style: none; padding: 0; margin: 0; }
+li.option {
+    background-color: #f1f5f9; /* Light gray-blue for options */
+    margin-bottom: 12px; /* More space between options */
+    padding: 12px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-left 0.2s ease;
+    border: 1px solid #d1d9e2;
+    border-left: 4px solid transparent; /* For hover/selection indication */
+    position: relative;
+    user-select: none; /* Prevent text selection on click */
+    font-size: 1em;
+    color: #333;
+}
+li.option:hover:not(.answered li.option) {
+    background-color: #e4e9f0;
+    border-left-color: #007bff; /* Blue accent on hover */
+}
+.question-container.answered li.option { cursor: default; } /* No hover effect after answered */
+.question-container.answered li.option:hover { background-color: #f1f5f9; border-left-color: transparent; } /* Reset hover for answered */
+
+li.option.correct:hover, li.option.reveal-correct:hover { background-color: #d4edda !important; border-left-color: #28a745 !important; }
+li.option.incorrect:hover { background-color: #f8d7da !important; border-left-color: #dc3545 !important; }
+
+li.option.correct {
+    background-color: #d4edda !important; /* Ensure override */
+    border-color: #c3e6cb !important;
+    border-left: 4px solid #28a745 !important; /* Green for correct */
+    color: #155724;
+    font-weight: 600;
+}
+li.option.incorrect {
+    background-color: #f8d7da !important;
+    border-color: #f5c6cb !important;
+    border-left: 4px solid #dc3545 !important; /* Red for incorrect */
+    color: #721c24;
+    font-weight: 600;
+}
+.feedback { display: none; font-weight: bold; margin-left: 10px; }
+li.option.correct .feedback, li.option.incorrect .feedback { display: inline; }
+.correct .feedback { color: #155724; }
+.incorrect .feedback { color: #721c24; }
+
+li.option.reveal-correct { /* Style for showing the correct answer when user was wrong */
+    background-color: #d1ecf1 !important; /* Light info blue */
+    border-color: #bee5eb !important;
+    border-left: 4px solid #17a2b8 !important; /* Info blue */
+    color: #0c5460 !important;
+    font-weight: 600 !important;
+}
+.explanation {
+    display: none;
+    margin-top: 20px; /* More space above explanation */
+    padding: 15px;
+    background-color: #e9ecef; /* Slightly darker explanation background */
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    color: #495057;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+.explanation strong { color: #333; } /* Make "Correct answer:" part darker */
+
+.section-score {
+    margin-top: 30px;
+    font-size: 1.25em; /* Larger score text */
+    font-weight: bold;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    padding: 12px;
+    background-color: #e2f0fb; /* Light blue score background */
+    border: 1px solid #a8cff3; /* Softer blue border */
+    border-radius: 8px;
+}
+.bottom-nav-container {
+    position: fixed;
+    bottom: 0; /* Flush to bottom */
+    left: 0;
+    width: 100%;
+    background-color: #ffffff; /* White background for nav */
+    padding: 8px 0; /* Padding top/bottom */
+    z-index: 1001;
+    display: flex;
+    justify-content: center; /* Center buttons */
+    gap: 20px; /* Increased gap */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* Shadow at the top */
+    border-top: 1px solid #e0e0e0;
+}
+.main-button {
+    background-color: #007bff; /* Primary blue */
+    color: #ffffff;
+    padding: 10px 16px; /* Adjusted padding */
+    font-size: 1em; /* Standard font size */
+    text-decoration: none;
+    font-weight: 600; /* Bolder text */
+    border-radius: 25px; /* Pill shape */
+    box-shadow: 0 3px 7px rgba(0,123,255,0.3); /* Softer shadow related to button color */
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-button i { margin-right: 10px; font-size: 1.1em; } /* Slightly larger icon */
+.main-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,123,255,0.4);
+}
+a.main-button:hover { background-color: #0069d9; } /* Darker blue on hover */
+#reset-button { background-color: #e74c3c; box-shadow: 0 3px 7px rgba(231,76,60,0.3); } /* Red reset button */
+#reset-button:hover { background-color: #c0392b; box-shadow: 0 5px 10px rgba(192,57,43,0.4); }
+
+@media (max-width: 768px) {
+    body { padding: 15px; padding-top: 70px; padding-bottom: 90px; }
+    .page-main-title { font-size: 1.8em; }
+    .section { padding: 20px; }
+    .section-title { font-size: 1.4em; }
+    .question-text { font-size: 1em; }
+    li.option { padding: 10px 15px; font-size: 0.95em;}
+    .section-score { font-size: 1.15em; }
+}
+@media (max-width: 480px) {
+    body { padding: 10px; padding-top: 60px; padding-bottom: 80px; }
+    .page-main-title { font-size: 1.6em; margin-bottom: 20px;}
+    .section { padding: 15px; }
+    .section-title { font-size: 1.3em; margin-bottom: 20px; }
+    .question-container { padding: 15px; }
+    .question-text { font-size: 0.95em; }
+    li.option { padding: 10px 12px; font-size: 0.9em;}
+    .explanation { font-size: 0.9em; padding: 10px;}
+    .section-score { font-size: 1.1em; padding: 10px;}
+    .bottom-nav-container { padding: 10px 0; gap: 15px;}
+    .main-button { padding: 8px 16px; font-size: 0.9em;}
+}
+
+</style>
+</head>
+<body>
+<div class="fixed-header">
+    <span class="quran-verse">وَقُل رَّبِّ زِدْنِي عِلْمًا</span>
+</div>
+
+
+
+<h1 class="page-main-title" id="subject-page-title-display">Subject Questions</h1>
+
+
+<!--
+    ====== ADD YOUR QUESTIONS CONTENT BELOW ======
+    - Each section needs a unique data-section-id (e.g., "s1", "s2").
+      This ID is used for the score display (e.g., score-section-s1).
+    - Each question-container needs a unique data-question-id within its section (e.g., "q1", "q2").
+    - Mark the correct option with data-correct="true".
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Medical MCQs</title>
+</head>
+<body>
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">General Surgery Questions</h2>
+
+    <!-- Question 1 -->
+    <div class="question-container" data-question-id="q1">
+        <p class="question-text"><span class="question-number">1.</span> in infantile pyloric stenosis:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. The vomiting is billious.</li>
+            <li class="option" data-correct="false">B. Vomiting started from birth</li>
+            <li class="option" data-correct="false">C. Treated by antiemetic</li>
+            <li class="option" data-correct="true">D. Started in 2nd week after birth</li>
+            <li class="option" data-correct="false">E. Not affect weight</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: The vomiting is non-bilious because the obstruction is proximal to where bile enters the duodenum.<br>
+            b. Incorrect: Vomiting typically begins between 2 to 8 weeks of life, not immediately at birth.<br>
+            c. Incorrect: The treatment is surgical (Ramstedt pyloromyotomy), not antiemetics.<br>
+            d. Correct: The classic onset of symptoms is in the first few weeks of life.<br>
+            e. Incorrect: Persistent vomiting leads to weight loss or poor weight gain.<br>
+        </p>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="question-container" data-question-id="q2">
+        <p class="question-text"><span class="question-number">2.</span> The treatment of choice for neonates with uncomplicated meconium ileus is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Observation.</li>
+            <li class="option" data-correct="false">B. Emergency laparotomy, bowel resection, and Bishop-Koop enterostomy.</li>
+            <li class="option" data-correct="true">C. Intravenous hydration and a gastrograffin enema.</li>
+            <li class="option" data-correct="false">D. Emergency laparotomy, bowel resection, and anastomosis.</li>
+            <li class="option" data-correct="false">E. Intravenous antibiotics</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Meconium ileus is a complete bowel obstruction and requires intervention.<br>
+            b. Incorrect: Surgical intervention is for complicated cases (e.g., perforation, atresia).<br>
+            c. Correct: A hyperosmolar enema like Gastrografin is both diagnostic and therapeutic for uncomplicated cases.<br>
+            d. Incorrect: This surgical option is for complicated cases.<br>
+            e. Incorrect: Antibiotics are not the primary treatment for a mechanical obstruction.<br>
+        </p>
+    </div>
+    
+    <!-- Question 3 -->
+    <div class="question-container" data-question-id="q3">
+        <p class="question-text"><span class="question-number">3.</span> Regarding Spina bifida, all are true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. All are Neural tube defects.</li>
+            <li class="option" data-correct="false">B. Prenatal folate deficiency is an important etiology.</li>
+            <li class="option" data-correct="false">C. Anterior variety is asymptomatic.</li>
+            <li class="option" data-correct="false">D. Myelomeningocele variety is associated with pelvic organs & lower limbs paralysis.</li>
+            <li class="option" data-correct="true">E. Open defects can be treated conservatively</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. True: Spina bifida is a type of neural tube defect.<br>
+            b. True: Folate deficiency is a well-established risk factor.<br>
+            c. False: The anterior variety can be symptomatic due to compression of organs.<br>
+            d. True: Myelomeningocele involves the spinal cord and causes severe neurological deficits.<br>
+            e. False: Open defects require urgent surgical closure to prevent meningitis.<br>
+        </p>
+    </div>
+
+    <!-- Question 8 -->
+    <div class="question-container" data-question-id="q8">
+        <p class="question-text"><span class="question-number">8.</span> Regarding Infection in burn patients.</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. A rim of erythema surrounding the wound signals invasive burn wound infection.</li>
+            <li class="option" data-correct="false">B. A scheduled rotation of central line insertion sites significantly decreases the rate of catheter line sepsis.</li>
+            <li class="option" data-correct="false">C. Selective decontamination of digestive flora reduces systemic infection.</li>
+            <li class="option" data-correct="false">D. Gram-positive organisms are the most significant cause of delayed burn wound infection.</li>
+            <li class="option" data-correct="true">E. Invasive infection may convert second-degree burn wounds to full-thickness injury and necessitate skin grafting for closure.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect: A rim of erythema signifies burn wound cellulitis, not necessarily invasive infection.<br>
+            b. Incorrect: Evidence does not support scheduled rotation; catheters are changed when clinically indicated.<br>
+            c. Incorrect: The routine use of selective decontamination is debated.<br>
+            d. Incorrect: Delayed infections are more commonly caused by Gram-negative organisms and fungi.<br>
+            e. Correct: This is a classic sign of invasive infection, where partial-thickness burns become full-thickness.<br>
+        </p>
+    </div>
+
+    <!-- Question 11 -->
+    <div class="question-container" data-question-id="q11">
+        <p class="question-text"><span class="question-number">11.</span> Which of the following is true regarding umbilical hernias in adults?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Most are congenital.</li>
+            <li class="option" data-correct="false">B. Repair is contraindicated in patients with cirrhosis.</li>
+            <li class="option" data-correct="false">C. Strangulation is less common than in children.</li>
+            <li class="option" data-correct="true">D. Small, asymptomatic hernias can be clinically observed.</li>
+            <li class="option" data-correct="false">E. Primary closure has recurrence rates similar to those of mesh repair.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: Umbilical hernias in adults are typically acquired.<br>
+            b. Incorrect: Repair is not contraindicated but carries higher risk and requires medical optimization.<br>
+            c. Incorrect: The risk of strangulation is significantly higher in adults.<br>
+            d. Correct: Watchful waiting is a reasonable option for very small, asymptomatic hernias.<br>
+            e. Incorrect: Mesh repair has a significantly lower recurrence rate for defects >1-2 cm.<br>
+        </p>
+    </div>
+
+    <!-- Question 12 -->
+    <div class="question-container" data-question-id="q12">
+        <p class="question-text"><span class="question-number">12.</span> Jaundice with absent urine urobilinogen is most consistent with:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Hepatitis</li>
+            <li class="option" data-correct="false">B. Cirrhosis</li>
+            <li class="option" data-correct="false">C. Hemolysis</li>
+            <li class="option" data-correct="true">D. Biliary obstruction</li>
+            <li class="option" data-correct="false">E. Sepsis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: In hepatitis, some bilirubin reaches the gut, so urobilinogen is present.<br>
+            b. Incorrect: In cirrhosis, some bilirubin reaches the gut, so urobilinogen is present.<br>
+            c. Incorrect: In hemolysis, there is an excess of urobilinogen in the urine.<br>
+            d. Correct: With complete biliary obstruction, no bilirubin reaches the gut to be converted to urobilinogen.<br>
+            e. Incorrect: Sepsis rarely causes the complete obstruction needed for absent urobilinogen.<br>
+        </p>
+    </div>
+
+    <!-- Question 13 -->
+    <div class="question-container" data-question-id="q13">
+        <p class="question-text"><span class="question-number">13.</span> The most common benign tumor of the liver is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. FNH</li>
+            <li class="option" data-correct="false">B. Hepatic adenoma</li>
+            <li class="option" data-correct="true">C. Hemangioma</li>
+            <li class="option" data-correct="false">D. Mesenchymal hamartoma</li>
+            <li class="option" data-correct="false">E. inflammatory pseudotumor</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: FNH is the second most common benign liver tumor.<br>
+            b. Incorrect: Hepatic adenomas are less common than hemangiomas.<br>
+            c. Correct: Cavernous hemangioma is the most common benign liver tumor.<br>
+            d. Incorrect: Mesenchymal hamartoma is a rare tumor of infancy.<br>
+            e. Incorrect: Inflammatory pseudotumor is a rare, non-neoplastic lesion.<br>
+        </p>
+    </div>
+    
+    <!-- Question 19 -->
+    <div class="question-container" data-question-id="q19">
+        <p class="question-text"><span class="question-number">19.</span> Over the past 6 months, a 60-year-old woman with long standing duodenal ulcer disease has been complaining of anorexia, nausea, weight loss and repeated vomiting. She recognizes undigested food in the vomitus. Examination and workup reveal dehydration, hypokalemia, and hypochloremic alkalosis. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Carcinoma of the fundus</li>
+            <li class="option" data-correct="false">B. Penetrating ulcer</li>
+            <li class="option" data-correct="true">C. Pyloric obstruction due to cicatricial stenosis of the lumen of the duodenum</li>
+            <li class="option" data-correct="false">D. ZES (Zollinger Ellison Syndrome)</li>
+            <li class="option" data-correct="false">E. Anorexia nervosa</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Fundal carcinoma does not typically cause outlet obstruction.<br>
+            b. Incorrect: A penetrating ulcer usually causes a change in pain, not obstruction.<br>
+            c. Correct: This is a classic presentation of gastric outlet obstruction secondary to chronic peptic ulcer disease.<br>
+            d. Incorrect: While ZES can cause ulcers that lead to obstruction, the direct diagnosis is the obstruction itself.<br>
+            e. Incorrect: Anorexia nervosa is an eating disorder and does not cause mechanical obstruction.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 8</div>
+</div>
+
+<div class="section" data-section-id="2">
+    <h2 class="section-title">Neurosurgery Questions</h2>
+
+    <!-- Question 4 -->
+    <div class="question-container" data-question-id="q4">
+        <p class="question-text"><span class="question-number">4.</span> The investigation of choice for assessment of acute intracerebral hemorrhage is</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. skull x-ray</li>
+            <li class="option" data-correct="false">B. brain MRI</li>
+            <li class="option" data-correct="true">C. brain CT scan</li>
+            <li class="option" data-correct="false">D. CSF analysis</li>
+            <li class="option" data-correct="false">E. EEG</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Skull x-ray only shows bone, not brain tissue or hemorrhage.<br>
+            b. Incorrect: MRI is slower and less available in emergencies; CT is the standard.<br>
+            c. Correct: Non-contrast head CT is fast, available, and highly sensitive for acute blood.<br>
+            d. Incorrect: CSF analysis is contraindicated due to the risk of brain herniation.<br>
+            e. Incorrect: EEG measures electrical activity and is used for seizures, not imaging.<br>
+        </p>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">5.</span> Regarding Extradural hematoma, the following is NOT true</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Mostly is arterial in origin</li>
+            <li class="option" data-correct="true">B. Mostly is venous in origin</li>
+            <li class="option" data-correct="false">C. Could be due to dural sinus injury</li>
+            <li class="option" data-correct="false">D. Osmotic diuretics are contraindicated</li>
+            <li class="option" data-correct="false">E. Considered as a top emergency in head trauma</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. True: The classic cause is tearing of the middle meningeal artery.<br>
+            b. False: This is characteristic of a subdural hematoma; extradural hematomas are overwhelmingly arterial.<br>
+            c. True: Dural venous sinus injury is a less common cause.<br>
+            d. False: Osmotic diuretics like mannitol are a key part of emergency medical management.<br>
+            e. True: It can expand rapidly and requires urgent treatment.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-2">Score: 0 / 2</div>
+</div>
+
+<div class="section" data-section-id="3">
+    <h2 class="section-title">Plastic Surgery Questions</h2>
+
+    <!-- Question 6 -->
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">6.</span> Regarding malignant melanoma:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. The incidence is halving every 10 years</li>
+            <li class="option" data-correct="false">B. Lentigo maligna melanoma is the commonest clinico-pathological type</li>
+            <li class="option" data-correct="true">C. Tumor thickness is the most important prognostic indicator</li>
+            <li class="option" data-correct="false">D. Regional lymphadenectomy provides survival benefit in patients with 'thick' tumors</li>
+            <li class="option" data-correct="false">E. Acral lentiginous tumors are usually found on the trunk and proximal limbs</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: The incidence has been steadily increasing.<br>
+            b. Incorrect: Superficial spreading melanoma is the most common type.<br>
+            c. Correct: Breslow thickness is the single most important prognostic factor.<br>
+            d. Incorrect: Prophylactic lymphadenectomy has not shown a consistent survival benefit.<br>
+            e. Incorrect: "Acral" refers to the palms, soles, and under the nails.<br>
+        </p>
+    </div>
+
+    <!-- Question 7 -->
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">7.</span> Regarding keloid scar:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. It is preventable</li>
+            <li class="option" data-correct="false">B. It is most common on lower extremities, lower back and abdomen</li>
+            <li class="option" data-correct="false">C. Histologically, keloid and hypertrophic scars are no different</li>
+            <li class="option" data-correct="true">D. Collagen type I is the predominant type found in keloid scar</li>
+            <li class="option" data-correct="false">E. It is limited to the area of wound healing</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: Keloids cannot be reliably prevented in predisposed individuals.<br>
+            b. Incorrect: They are most common on the upper chest, shoulders, and earlobes.<br>
+            c. Incorrect: They are histologically distinct; keloids have thick, haphazard collagen bundles.<br>
+            d. Correct: Keloids have an overproduction of extracellular matrix, predominantly type I collagen.<br>
+            e. Incorrect: This describes a hypertrophic scar; keloids grow beyond the original wound boundaries.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-3">Score: 0 / 2</div>
+</div>
+
+<div class="section" data-section-id="4">
+    <h2 class="section-title">Vascular Surgery Questions</h2>
+    
+    <!-- Question 9 -->
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">9.</span> Regarding arterial injury:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. All arterial injuries are associated with absence of a palpable pulse.</li>
+            <li class="option" data-correct="false">B. Preoperative arteriography is required to diagnose an arterial injury.</li>
+            <li class="option" data-correct="false">C. The presence of Doppler signals indicates that an arterial injury has not occurred.</li>
+            <li class="option" data-correct="true">D. Patients with critical limb ischemia have paralysis and paresthesias.</li>
+            <li class="option" data-correct="false">E. In all patients with multiple trauma, arterial injuries should be repaired before other injuries are addressed.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: A pulse may still be palpable distal to a non-occlusive injury.<br>
+            b. Incorrect: CT Angiography is now the standard; patients with hard signs may go directly to surgery.<br>
+            c. Incorrect: A Doppler signal may be present, but its character (e.g., monophasic) can indicate injury.<br>
+            d. Correct: Paralysis and paresthesia are classic signs of nerve dysfunction due to critical ischemia.<br>
+            e. Incorrect: The principle is "life over limb"; life-threatening injuries are addressed first.<br>
+        </p>
+    </div>
+
+    <!-- Question 10 -->
+    <div class="question-container" data-question-id="q10">
+        <p class="question-text"><span class="question-number">10.</span> Regarding gas gangrene:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. It is due to Clostridium botulinum infection</li>
+            <li class="option" data-correct="false">B. Clostridial species are gram-negative spore forming anaerobes</li>
+            <li class="option" data-correct="false">C. The clinical features are due to the release of protein endotoxin</li>
+            <li class="option" data-correct="false">D. Gas is not invariably present in the muscle compartments</li>
+            <li class="option" data-correct="true">E. Surgical debridement and antibiotics are an essential part of treatment</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect: It is primarily caused by Clostridium perfringens.<br>
+            b. Incorrect: Clostridial species are Gram-positive.<br>
+            c. Incorrect: The features are due to potent exotoxins, not endotoxins.<br>
+            d. True but E is better: Gas may be absent early on, but its absence does not rule out the diagnosis.<br>
+            e. True: Aggressive surgical debridement and high-dose antibiotics are the cornerstones of treatment.<br>
+        </p>
+    </div>
+
+    <!-- Question 20 -->
+    <div class="question-container" data-question-id="q20">
+        <p class="question-text"><span class="question-number">20.</span> What is the initial test to establish the diagnosis of deep venous thrombosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Venography</li>
+            <li class="option" data-correct="true">B. Venous duplex ultrasound</li>
+            <li class="option" data-correct="false">C. Impedance plethysmography</li>
+            <li class="option" data-correct="false">D. Radio-labeled fibrinogen</li>
+            <li class="option" data-correct="false">E. Assay of fibrin/fibrinogen products</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Venography is the historical gold standard but is invasive and rarely used now.<br>
+            b. Correct: Venous duplex ultrasound is the non-invasive, accurate, and standard initial test of choice.<br>
+            c. Incorrect: This is an obsolete and less accurate test.<br>
+            d. Incorrect: This nuclear scan is rarely used for acute DVT diagnosis.<br>
+            e. Incorrect: This refers to D-dimer, which is used to rule out DVT but not to establish the diagnosis.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-4">Score: 0 / 3</div>
+</div>
+
+<div class="section" data-section-id="5">
+    <h2 class="section-title">Breast Surgery Questions</h2>
+
+    <!-- Question 14 -->
+    <div class="question-container" data-question-id="q14">
+        <p class="question-text"><span class="question-number">14.</span> A 36-year-old woman complains of a 3-month history of bloody discharge from the nipple. At examination, a small nodule is found, deep to the areola. Careful palpation of the nipple-areolar complex results in blood appearing at the 3 O'clock position. Mammogram findings are normal. What is the likeliest diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Intraductal papilloma</li>
+            <li class="option" data-correct="false">B. Breast cyst</li>
+            <li class="option" data-correct="false">C. Intraductal carcinoma</li>
+            <li class="option" data-correct="false">D. Carcinoma in situ</li>
+            <li class="option" data-correct="false">E. Fat necrosis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct: Solitary intraductal papilloma is the most common cause of spontaneous, unilateral, bloody nipple discharge.<br>
+            b. Incorrect: Cyst discharge is usually clear, yellow, or greenish, not bloody.<br>
+            c. Incorrect: Carcinoma is a possible but less common cause than a benign papilloma.<br>
+            d. Incorrect: Carcinoma in situ is a type of carcinoma; papilloma is more likely.<br>
+            e. Incorrect: Fat necrosis presents as a mass and does not cause nipple discharge.<br>
+        </p>
+    </div>
+    
+    <!-- Question 15 -->
+    <div class="question-container" data-question-id="q15">
+        <p class="question-text"><span class="question-number">15.</span> In Paget's disease of the nipple which of the following is TRUE?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Carcinoma of the breast is rarely found</li>
+            <li class="option" data-correct="false">B. Surgical therapy often fails to cure Paget's disease.</li>
+            <li class="option" data-correct="true">C. The diagnosis should be made by nipple biopsy when suspected.</li>
+            <li class="option" data-correct="false">D. The underlying carcinoma when present is very large.</li>
+            <li class="option" data-correct="false">E. Paget's disease of the bone is commonly encountered.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: An underlying carcinoma is found in over 95% of cases.<br>
+            b. Incorrect: Surgical therapy is the definitive and curative treatment.<br>
+            c. Correct: Any suspicious nipple lesion requires a full-thickness biopsy for diagnosis.<br>
+            d. Incorrect: The underlying carcinoma can be of any size and is often non-palpable DCIS.<br>
+            e. Incorrect: Paget's disease of the bone is a completely separate and unrelated disorder.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-5">Score: 0 / 2</div>
+</div>
+
+<div class="section" data-section-id="6">
+    <h2 class="section-title">Thoracic Surgery Questions</h2>
+
+    <!-- Question 16 -->
+    <div class="question-container" data-question-id="q16">
+        <p class="question-text"><span class="question-number">16.</span> An asymptomatic 56-year-old man is found on routine chest x-ray to have a 2-cm nodule-central tumor in the upper lobe of the right lung. The lesion is not calcified. No previous x-rays exist. What is the most appropriate initial step toward making a diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Fiberoptic bronchoscopy</li>
+            <li class="option" data-correct="false">B. Bone scan</li>
+            <li class="option" data-correct="false">C. Thoracotomy</li>
+            <li class="option" data-correct="false">D. Observation at follow-up examination in 6 months</li>
+            <li class="option" data-correct="false">E. Mediastinoscopy</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct: For a central lesion, bronchoscopy is the best initial step to obtain a tissue diagnosis.<br>
+            b. Incorrect: A bone scan is for staging after a diagnosis of cancer is confirmed.<br>
+            c. Incorrect: Thoracotomy is a major resection surgery, not a first-line diagnostic step.<br>
+            d. Incorrect: Observation is inappropriate for a new, suspicious 2-cm nodule in this age group.<br>
+            e. Incorrect: Mediastinoscopy is for staging lymph nodes, not diagnosing the primary lung lesion.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-6">Score: 0 / 1</div>
+</div>
+
+<div class="section" data-section-id="7">
+    <h2 class="section-title">Head and Neck Surgery Questions</h2>
+    
+    <!-- Question 17 -->
+    <div class="question-container" data-question-id="q17">
+        <p class="question-text"><span class="question-number">17.</span> What is most characteristic of branchial cleft cysts?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. They usually appear in the axilla.</li>
+            <li class="option" data-correct="true">B. They may become infected after an URTI.</li>
+            <li class="option" data-correct="false">C. They may be traced to the stomach.</li>
+            <li class="option" data-correct="false">D. They arise from endodermal tissue.</li>
+            <li class="option" data-correct="false">E. They frequently cause brachial plexus lesions.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: They characteristically appear on the lateral side of the neck.<br>
+            b. Correct: A common presentation is painful swelling precipitated by an upper respiratory tract infection.<br>
+            c. Incorrect: The tract of the most common type traces to the tonsillar fossa in the pharynx.<br>
+            d. Incorrect: They are lined by ectodermal derivatives (squamous epithelium).<br>
+            e. Incorrect: They are located anteriorly and do not typically involve the brachial plexus.<br>
+        </p>
+    </div>
+    
+    <!-- Question 18 -->
+    <div class="question-container" data-question-id="q18">
+        <p class="question-text"><span class="question-number">18.</span> What is true of cystic hygroma?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. It arises from sweat glands in the neck.</li>
+            <li class="option" data-correct="false">B. It is usually an anterior midline structure.</li>
+            <li class="option" data-correct="true">C. It may occur in the mediastinum.</li>
+            <li class="option" data-correct="false">D. Its lesions are usually easy to enucleate.</li>
+            <li class="option" data-correct="false">E. It is premalignant.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: It is a congenital malformation of the lymphatic system (lymphangioma).<br>
+            b. Incorrect: It is most commonly found in the posterior triangle of the neck.<br>
+            c. Correct: While most common in the neck, they can extend into or arise in the mediastinum.<br>
+            d. Incorrect: They are notoriously difficult to excise completely as they infiltrate normal tissues.<br>
+            e. Incorrect: It is a benign malformation with no malignant potential.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-7">Score: 0 / 2</div>
+</div>
+
+</body>
+</html>
+
+
+<!-- Add more sections here if needed, e.g. <div class="section" data-section-id="s2"> ... </div> -->
+
+
+
+
+
+
+
+
+
+<div class="bottom-nav-container">
+    <a href="#" class="main-button" id="home-button-subject">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <button id="reset-button" class="main-button">
+        <i class="fas fa-sync-alt"></i> Reset Progress
+    </button>
+</div>
+
+<script>
+// ====== SUBJECT PAGE LOGIC (DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING) ======
+const PAGE_ID = window.SUBJECT_SETTINGS.PAGE_ID;
+const ANSWERS_KEY = `${PAGE_ID}_answers`;
+const SCORES_KEY = `${PAGE_ID}_scores`;
+
+document.getElementById('dynamic-title-subject').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+document.getElementById('subject-page-title-display').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+const homeBtnSubject = document.getElementById('home-button-subject');
+if (homeBtnSubject) homeBtnSubject.href = window.SUBJECT_SETTINGS.HOME_LINK;
+
+const allSections = document.querySelectorAll('.section');
+let sectionScores = {};
+
+function saveState(sectionId, questionId, selectedOptionIndex, currentScore, totalQuestionsInSection) {
+    let answers = JSON.parse(localStorage.getItem(ANSWERS_KEY)) || {};
+    if (!answers[sectionId]) answers[sectionId] = {};
+    answers[sectionId][questionId] = {
+        selectedOptionIndex: selectedOptionIndex,
+        answered: true
+    };
+    localStorage.setItem(ANSWERS_KEY, JSON.stringify(answers));
+
+    let scores = JSON.parse(localStorage.getItem(SCORES_KEY)) || {};
+    if (!scores[sectionId]) scores[sectionId] = { score: 0, total: 0}; // Initialize if not exists
+    scores[sectionId] = { score: currentScore, total: totalQuestionsInSection };
+
+    // Update overall total for the page if not already set or if it changed
+    let overallTotal = 0;
+    allSections.forEach(sec => {
+        const secId = sec.dataset.sectionId;
+        const numQs = sec.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        // Ensure section total is also up-to-date in the scores object if initializing
+        if (!scores[secId] || scores[secId].total !== numQs) {
+             scores[secId] = scores[secId] || {score:0}; // preserve score if exists
+             scores[secId].total = numQs;
+        }
+    });
+    scores['all'] = scores['all'] || {};
+    scores['all'].total = overallTotal;
+
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+function applyOptionSelectionLogic(optionElement, questionContainer, isLoadTime = false) {
+    const explanation = questionContainer.querySelector('.explanation');
+    const allOptionsInQuestion = questionContainer.querySelectorAll('.option');
+    const section = questionContainer.closest('.section');
+    const sectionId = section.dataset.sectionId;
+    const scoreDisplay = section.querySelector(`#score-section-${sectionId}`); // Ensure ID matches
+    const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+
+    if (questionContainer.classList.contains('answered') && !isLoadTime) return; // Prevent re-answering
+
+    questionContainer.classList.add('answered');
+    const isCorrect = optionElement.dataset.correct === 'true';
+
+    let feedbackSpan = optionElement.querySelector('.feedback');
+    if (!feedbackSpan) {
+        feedbackSpan = document.createElement('span');
+        feedbackSpan.className = 'feedback';
+        optionElement.appendChild(feedbackSpan);
+    }
+    feedbackSpan.style.display = 'inline'; // Make sure it's visible
+
+    if (isCorrect) {
+        optionElement.classList.add('correct');
+        feedbackSpan.textContent = ' ✓ Correct!';
+        if (!isLoadTime) {
+            sectionScores[sectionId] = (sectionScores[sectionId] || 0) + 1;
+        }
+    } else {
+        optionElement.classList.add('incorrect');
+        feedbackSpan.textContent = ' ✗ Incorrect.';
+        allOptionsInQuestion.forEach(opt => {
+            if (opt.dataset.correct === 'true') {
+                opt.classList.add('reveal-correct'); // Use a distinct class for just revealing
+                let correctFeedback = opt.querySelector('.feedback');
+                if (!correctFeedback) {
+                    correctFeedback = document.createElement('span');
+                    correctFeedback.className = 'feedback';
+                    opt.appendChild(correctFeedback);
+                }
+                correctFeedback.textContent = ' (Correct Answer)'; // Simpler feedback
+                correctFeedback.style.display = 'inline';
+            }
+        });
+    }
+
+    if (explanation) explanation.style.display = 'block';
+    allOptionsInQuestion.forEach(opt => {
+        opt.style.cursor = 'default'; // Disable further clicks by changing cursor
+        // To truly disable, you might remove event listeners or set pointer-events: none
+    });
+
+    if (scoreDisplay) {
+        scoreDisplay.textContent = `Score: ${sectionScores[sectionId] || 0} / ${totalQuestionsInSection}`;
+    }
+
+    if (!isLoadTime) {
+        const optionIndex = Array.from(allOptionsInQuestion).indexOf(optionElement);
+        saveState(sectionId, questionContainer.dataset.questionId, optionIndex, sectionScores[sectionId] || 0, totalQuestionsInSection);
+    }
+}
+
+function loadState() {
+    const savedAnswersData = JSON.parse(localStorage.getItem(ANSWERS_KEY));
+    const savedScoresData = JSON.parse(localStorage.getItem(SCORES_KEY));
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        sectionScores[sectionId] = (savedScoresData && savedScoresData[sectionId]) ? savedScoresData[sectionId].score : 0;
+
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: ${sectionScores[sectionId]} / ${totalQuestionsInSection}`;
+        }
+
+        if (savedAnswersData && savedAnswersData[sectionId]) {
+            const questionsInSection = section.querySelectorAll('.question-container');
+            questionsInSection.forEach(qc => {
+                const questionId = qc.dataset.questionId;
+                const qData = savedAnswersData[sectionId][questionId];
+                if (qData && qData.answered && typeof qData.selectedOptionIndex === 'number') {
+                    const optionsInQ = qc.querySelectorAll('.option');
+                    if (qData.selectedOptionIndex >= 0 && qData.selectedOptionIndex < optionsInQ.length) {
+                        const selectedOptionEl = optionsInQ[qData.selectedOptionIndex];
+                        if (selectedOptionEl) {
+                           applyOptionSelectionLogic(selectedOptionEl, qc, true); // True for isLoadTime
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function resetState() {
+    localStorage.removeItem(ANSWERS_KEY);
+    localStorage.removeItem(SCORES_KEY); // Also remove scores to reset counts
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Reset internal score tracking
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+
+        section.querySelectorAll('.question-container').forEach(qc => {
+            qc.classList.remove('answered');
+            const explanation = qc.querySelector('.explanation');
+            if (explanation) explanation.style.display = 'none';
+
+            qc.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('correct', 'incorrect', 'reveal-correct');
+                opt.style.cursor = 'pointer'; // Re-enable cursor
+                const feedback = opt.querySelector('.feedback');
+                if (feedback) {
+                    feedback.textContent = '';
+                    feedback.style.display = 'none'; // Hide feedback
+                }
+            });
+        });
+
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: 0 / ${totalQuestionsInSection}`;
+        }
+    });
+    // After resetting, re-initialize the total questions for the page in localStorage
+    initializePageTotalQuestions();
+}
+
+function initializePageTotalQuestions() {
+    let overallTotal = 0;
+    const scores = {}; // Start with a fresh scores object for initialization
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const numQs = section.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        scores[sectionId] = { score: 0, total: numQs }; // Initialize section scores
+    });
+    scores['all'] = { total: overallTotal };
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize sectionScores for all sections on the page
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Initialize score to 0
+    });
+
+    // Attempt to load saved state
+    loadState();
+
+    // If no scores are loaded (e.g., first visit or after reset), initialize totals
+    if (!localStorage.getItem(SCORES_KEY)) {
+        initializePageTotalQuestions();
+    } else { // If scores exist, ensure 'all.total' is up-to-date
+        let existingScores = JSON.parse(localStorage.getItem(SCORES_KEY));
+        let currentOverallTotal = 0;
+        allSections.forEach(section => {
+            currentOverallTotal += section.querySelectorAll('.question-container').length;
+        });
+        if (!existingScores.all || existingScores.all.total !== currentOverallTotal) {
+            existingScores.all = existingScores.all || {};
+            existingScores.all.total = currentOverallTotal;
+            localStorage.setItem(SCORES_KEY, JSON.stringify(existingScores));
+        }
+    }
+
+
+    allSections.forEach(section => {
+        const options = section.querySelectorAll('.option');
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                const questionContainer = this.closest('.question-container');
+                if (!questionContainer.classList.contains('answered')) { // Only process if not answered
+                    applyOptionSelectionLogic(this, questionContainer, false); // False for isLoadTime
+                }
+            });
+        });
+    });
+
+    const resetButtonSubject = document.getElementById('reset-button');
+    if (resetButtonSubject) {
+        resetButtonSubject.addEventListener('click', resetState);
+    }
+});
+</script>
+<footer style="text-align: center; padding: 2em 1em 1em; font-size: 14px; color: #3a3a3a; width:100%; box-sizing:border-box;">
+    © <span id="currentYear"></span> Developed by
+    <a href="https://github.com/Philonoist7" target="_blank" class="footer-link">
+      <strong>Ali Hussein</strong>
+    </a>
+    <script>
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+    <style>
+      .footer-link {
+        color: #004992;
+        text-decoration: none;
+        transition: color 0.2s, border-bottom-color 0.2s;
+      }
+      .footer-link:hover {
+        color: #003366;
+        border-bottom: 1.5px solid #003366;
+      }
+    </style>
+    </footer>
+</body>
+</html>

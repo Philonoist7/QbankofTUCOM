@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ====== SUBJECT PAGE SHORTCUT SETTINGS ====== -->
+<script>
+/*
+    ====== EDIT ONLY THIS BLOCK FOR NEW SUBJECTS ======
+    Change these variables for each new subject page.
+*/
+window.SUBJECT_SETTINGS = {
+    PAGE_ID: 'r_abdomen_mcqs', // Unique localStorage key for this subject
+    PAGE_TITLE: 'Qbank - TUCOM -  Radiology', // Title for this subject page
+    HOME_LINK: 'Radiology_qbank.html', // Home button link for this subject
+};
+</script>
+<!-- ====== END SHORTCUT SETTINGS ====== -->
+
+<title id="dynamic-title"></title>
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+/* 2. (Optional) Edit styles for your subject */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin-top: 70px;
+    padding: 20px;
+    background-color: #f4f4f4;
+    padding-bottom: 100px;
+}
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #17202a;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+    z-index: 1000;
+    border-bottom: 3px solid #3498db;
+}
+.fixed-header .made-by-prefix { color: #cccccc; }
+.fixed-header a { color: #3498db; text-decoration: none; font-weight: bold; }
+.fixed-header a:hover { text-decoration: underline; }
+.section {
+    margin-bottom: 40px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.section-title {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+.question-container {
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+}
+.question-container.answered { background-color: #f9f9f9; }
+.question-number { font-weight: bold; color: #555; margin-right: 5px; }
+.question-text { font-size: 1.1em; color: #333; margin-bottom: 15px; }
+ul.options { list-style: none; padding: 0; margin: 0; }
+li.option {
+    background-color: #f1f1f1;
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: 1px solid #ccc;
+    position: relative;
+    user-select: none;
+}
+li.option:hover:not(.answered li.option) { background-color: #e0e0e0; }
+.question-container.answered li.option:hover { background-color: #f1f1f1; }
+li.option.correct:hover { background-color: #d4edda !important; }
+li.option.incorrect:hover { background-color: #f8d7da !important; }
+li.option.reveal-correct:hover { background-color: #d4edda !important; }
+li.option.correct {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+    font-weight: bold;
+}
+li.option.incorrect {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+    font-weight: bold;
+}
+.feedback { display: none; font-weight: bold; margin-left: 10px; }
+li.option.correct .feedback,
+li.option.incorrect .feedback { display: inline; }
+.correct .feedback { color: #155724; }
+.incorrect .feedback { color: #721c24; }
+li.option.reveal-correct {
+    background-color: #d4edda !important;
+    border-color: #c3e6cb !important;
+    color: #155724 !important;
+    font-weight: bold !important;
+}
+.explanation {
+    display: none;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    color: #495057;
+    font-size: 0.95em;
+}
+.section-score {
+    margin-top: 30px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    padding: 10px;
+    background-color: #e7f3ff;
+    border: 1px solid #b3d7ff;
+    border-radius: 5px;
+}
+.bottom-nav-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    display: flex;
+    gap: 15px;
+}
+.main-button {
+    background-color: #3498db;
+    color: #fff;
+    padding: 8px 16px;
+    font-size: 0.9em;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 25px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-button i { margin-right: 8px; }
+.main-button:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.25); }
+a.main-button:hover { background-color: #2980b9; }
+#reset-button { background-color: #e74c3c; }
+#reset-button:hover { background-color: #c0392b; }
+</style>
+</head>
+<body>
+<div class="fixed-header">
+    <span class="made-by-prefix">Made by </span><a href="https://t.me/s/Ali_dicaprio" target="_blank">Ali Hussein</a>
+</div>
+
+<!-- 
+3. COPY/EDIT: Add your sections and questions below.
+   - Each section needs a unique data-section-id (e.g., 1, 2, 3, ...)
+   - Each question-container needs a unique data-question-id within its section.
+   - Edit section titles and questions for your subject.
+-->
+   
+
+    <div class="section" data-section-id="1">
+    <h2 class="section-title">Acute Abdomen</h2>
+
+    <!-- Question 1 (Source: Question 2) -->
+    <div class="question-container" data-question-id="q1">
+        <p class="question-text"><span class="question-number">2.</span> Regarding acute abdomen the most appropriate answer</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. MRI contrast is the imaging modality of choice for the diagnosis of acute appendicitis</li>
+            <li class="option" data-correct="false">B. Supine plane abdominal x-ray for diagnosis of perforated viscus</li>
+            <li class="option" data-correct="true">C. Pelvic ultrasound or pelvic MRI for diagnosis of hemorrhagic ovarian cyst</li>
+            <li class="option" data-correct="false">D. X-ray for diagnosis of diverticulitis</li>
+            <li class="option" data-correct="false">E. Ultrasound is the imaging modality of choice for diagnosis of acute pancreatitis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect. Ultrasound or CT are primary for acute appendicitis; MRI is used in specific situations but not the general modality of choice.<br>
+            b. Incorrect. An erect chest X-ray or left lateral decubitus abdominal X-ray is better for detecting free air from a perforated viscus.<br>
+            c. Correct. Pelvic ultrasound is the primary imaging modality for ovarian cysts, including hemorrhagic ones; MRI can be used for further characterization.<br>
+            d. Incorrect. CT scan is the imaging modality of choice for diagnosing acute diverticulitis.<br>
+            e. Incorrect. Diagnosis of acute pancreatitis is often clinical/lab-based; CT is superior for imaging and severity assessment.
+        </p>
+    </div>
+
+    <!-- Question 2 (Source: Question 3 - CT scan wrong answer) -->
+    <div class="question-container" data-question-id="q2">
+        <p class="question-text"><span class="question-number">3.</span> Regarding CT scan the wrong answer is</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. CT is the imaging modality of choice for diagnosis of acute ischemic stroke</li>
+            <li class="option" data-correct="false">B. CT scan contrast is the imaging modality of choice for pulmonary embolism</li>
+            <li class="option" data-correct="false">C. CT scan with contrast for diagnosis of abdominal solid organ injury in trauma</li>
+            <li class="option" data-correct="false">D. CT scan for diagnosis of base of skull and pelvic bones fractures</li>
+            <li class="option" data-correct="false">E. CT is the imaging modality of choice for diagnosis of ureteric stone</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Incorrect statement (and thus the answer). While non-contrast CT rules out hemorrhage in acute stroke, MRI with DWI is superior for diagnosing acute ischemic stroke.<br>
+            b. Correct statement. CT Pulmonary Angiography (CTPA) is the gold standard for pulmonary embolism.<br>
+            c. Correct statement. Contrast-enhanced CT is standard for evaluating solid organ injuries in trauma.<br>
+            d. Correct statement. CT is excellent for detecting bone fractures, including base of skull and pelvic bones.<br>
+            e. Correct statement. Non-contrast CT KUB is the gold standard for ureteric stones.
+        </p>
+    </div>
+
+    <!-- Question 3 (Source: Question 3 - Gall bladder imaging) -->
+    <div class="question-container" data-question-id="q3">
+        <p class="question-text"><span class="question-number">3.</span> Regarding gall bladder imaging</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Acute cholecystitis best diagnosed by MRI</li>
+            <li class="option" data-correct="false">B. Normal wall thickness of the gall bladder 3mm</li>
+            <li class="option" data-correct="false">C. Acute cholecystitis could be calculus or acalculous</li>
+            <li class="option" data-correct="false">D. Patient should be in fasting condition to do proper ultrasound exam</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Incorrect statement (and thus the answer, assuming the question asks for the false statement). Ultrasound is primary for acute cholecystitis, not MRI.<br>
+            b. Correct statement. A gallbladder wall thickness of 3mm or less is generally considered normal.<br>
+            c. Correct statement. Acute cholecystitis can be caused by gallstones (calculous) or occur without gallstones (acalculous).<br>
+            d. Correct statement. Fasting is required for proper gallbladder ultrasound examination.
+        </p>
+    </div>
+
+    <!-- Question 4 (Source: Question 4 - CT scan correct answer) -->
+    <div class="question-container" data-question-id="q4">
+        <p class="question-text"><span class="question-number">4.</span> Regarding CT scan examination the correct answer is</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Motion artifacts are of more concern in CT scan than MRI.</li>
+            <li class="option" data-correct="false">B. Acute bleed is black.</li>
+            <li class="option" data-correct="false">C. Calcified lesions good visualized by MRI.</li>
+            <li class="option" data-correct="true">D. Air and fat appear black on CT</li>
+            <li class="option" data-correct="false">E. CT scan had no radiation</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. MRI scans are generally more susceptible to motion artifacts due to longer scan times.<br>
+            b. Incorrect. Acute hemorrhage typically appears hyperdense (white) on non-contrast CT.<br>
+            c. Incorrect. CT is far superior to MRI for visualizing calcifications.<br>
+            d. Correct. Air and fat are low-density tissues and appear dark (hypodense or black) on CT images.<br>
+            e. Incorrect. CT scans use ionizing X-ray radiation.
+        </p>
+    </div>
+
+    <!-- Question 5 (Source: Question 4 - Emergency radiology) -->
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">4.</span> Regarding emergency radiology :</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. CT scan of value in evaluation of spinal cord injury</li>
+            <li class="option" data-correct="false">B. MRI is the imaging modality of choice to evaluate ureteric stone</li>
+            <li class="option" data-correct="false">C. CT scan is the imaging modality of choice for testicular torsion</li>
+            <li class="option" data-correct="false">D. supine plane x-ray done to evaluate air under diaphragm</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct. CT is excellent for assessing bony spinal injuries, which can be associated with spinal cord injury.<br>
+            b. Incorrect. Non-contrast CT (CT KUB) is the imaging modality of choice for ureteric stones.<br>
+            c. Incorrect. Doppler ultrasound is the imaging modality of choice for suspected testicular torsion.<br>
+            d. Incorrect. An erect chest X-ray or left lateral decubitus abdominal X-ray is required to evaluate for free air under the diaphragm.
+        </p>
+    </div>
+
+    <!-- Question 6 (Source: Question 12 - Abdominal emergency) -->
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">12.</span> Regarding abdominal emergency all are true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Acute cholecystitis best diagnosed by ultrasound.</li>
+            <li class="option" data-correct="true">B. Acute pancreatitis best diagnosed by MRI.</li>
+            <li class="option" data-correct="false">C. Acute appendicitis diagnosed by ultrasound.</li>
+            <li class="option" data-correct="false">D. Perforated viscous diagnosed by CXR.</li>
+            <li class="option" data-correct="false">E. Intestinal obstruction by erect abdomen x-ray.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. True. Ultrasound is the primary imaging modality for acute cholecystitis.<br>
+            b. False. Diagnosis is often clinical/lab-based; CT is preferred over MRI for initial imaging of pancreatitis severity and complications if imaging is needed.<br>
+            c. True. Ultrasound is often the first-line imaging for acute appendicitis, especially in children.<br>
+            d. True. An erect chest X-ray (CXR) can show free air under the diaphragm from a perforated viscus.<br>
+            e. True. Erect abdominal X-rays can show air-fluid levels characteristic of intestinal obstruction.
+        </p>
+    </div>
+
+    <!-- Question 7 (Source: Question 14 - Acute appendicitis) -->
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">14.</span> Regarding acute appendicitis, all true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Common surgical condition.</li>
+            <li class="option" data-correct="false">B. Ultrasound is essential for diagnosis especially in pediatric age group.</li>
+            <li class="option" data-correct="false">C. CT scan is essential in diagnosis especially in retrocecal appendix.</li>
+            <li class="option" data-correct="true">D. MRI is best imaging modality.</li>
+            <li class="option" data-correct="false">E. Dilated appendix diameter more than 6mm and dirty fat seen by CT scan.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. True. Acute appendicitis is a common reason for emergency abdominal surgery.<br>
+            b. True. Ultrasound is often the preferred initial imaging modality in children.<br>
+            c. True. CT can be very helpful, particularly for atypical appendix locations or if ultrasound is equivocal.<br>
+            d. False. While MRI can diagnose appendicitis (e.g., in pregnancy), ultrasound and CT are more commonly primary and generally not considered universally "best" over them.<br>
+            e. True. Dilated appendix (>6mm) and periappendiceal fat stranding ("dirty fat") are common CT findings.
+        </p>
+    </div>
+
+    <!-- Question 8 (Source: Question 14 - Plane abdomen x-ray) -->
+    <div class="question-container" data-question-id="q8">
+        <p class="question-text"><span class="question-number">14.</span> Regarding role of plain abdomen x-ray in acute abdomen all true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Normal plain radiograph do not rule out ileus or other pathology</li>
+            <li class="option" data-correct="false">B. Of great value in case of hollow viscous perforation and intestinal obstruction.</li>
+            <li class="option" data-correct="false">C. Copula sign mean gas seen or accumulate under the central part of the tendon of the diaphragm.</li>
+            <li class="option" data-correct="true">D. Multiple air fluid levels in supine abdomen x-ray</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. True. A normal plain abdominal X-ray does not exclude significant pathology.<br>
+            b. True. Plain X-rays can show signs of perforation (free air on erect views) and obstruction (dilated loops, air-fluid levels on erect views).<br>
+            c. True. The cupola sign refers to free intraperitoneal gas seen under the central tendon of the diaphragm on an erect radiograph.<br>
+            d. False. Significant air-fluid levels, key for bowel obstruction, are best visualized on erect or decubitus abdominal X-rays, not supine.
+        </p>
+    </div>
+
+    <!-- Question 9 (Source: Question 15 - Acute cholecystitis) -->
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">15.</span> Regarding acute cholecystitis , all are true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Most common in fatty ,forty, fertile female.</li>
+            <li class="option" data-correct="false">B. Ultrasound is the best imaging modality for diagnosis</li>
+            <li class="option" data-correct="false">C. Increased wall thickness more than 3mm seen by us .</li>
+            <li class="option" data-correct="true">D. CT scan is the best imaging modality for diagnosis .</li>
+            <li class="option" data-correct="false">E. Could be calculus or acalculous cholecystitis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. True. These are classic risk factors for gallstones, leading to acute cholecystitis.<br>
+            b. True. Ultrasound is the primary and preferred imaging modality.<br>
+            c. True. Gallbladder wall thickening (>3mm) is a common ultrasound (us) finding.<br>
+            d. False. Ultrasound is superior to CT for the primary diagnosis of acute cholecystitis.<br>
+            e. True. Acute cholecystitis can be calculous (due to stones) or acalculous (without stones).
+        </p>
+    </div>
+
+    <!-- Question 10 (Source: Question 16 - Acute pancreatitis) -->
+    <div class="question-container" data-question-id="q10">
+        <p class="question-text"><span class="question-number">16.</span> Regarding acute pancreatitis ,all are true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. CT scan with contrast is the best imaging modality for diagnosis .</li>
+            <li class="option" data-correct="true">B. CT scan native is the best imaging modality for diagnosis</li>
+            <li class="option" data-correct="false">C. Enlarged pancreas and dirty fat planes seen by CT scan .</li>
+            <li class="option" data-correct="false">D. Patient presented with epigastric pain radiating to the back .</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. True. Contrast-enhanced CT is crucial for assessing severity, necrosis, and complications if imaging is performed.<br>
+            b. False. Non-contrast ("native") CT is less useful than contrast-enhanced CT for evaluating acute pancreatitis and its complications.<br>
+            c. True. Pancreatic enlargement and peripancreatic fat stranding ("dirty fat") are typical CT findings.<br>
+            d. True. Epigastric pain radiating to the back is the classic clinical presentation.
+        </p>
+    </div>
+
+    <!-- Question 11 (Source: Question 16 - Ultrasound in acute abdomen) -->
+    <div class="question-container" data-question-id="q11">
+        <p class="question-text"><span class="question-number">16.</span> Regarding ultrasound in acute abdomen all true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. The imaging modality of choice for diagnosis of acute pancreatitis</li>
+            <li class="option" data-correct="false">B. The imaging modality of choice in acute cholecystitis examinations</li>
+            <li class="option" data-correct="false">C. Of value in diagnosis of appendicitis</li>
+            <li class="option" data-correct="false">D. The modality of choice in hemorrhagic ovarian cyst</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. False. Diagnosis of acute pancreatitis is primarily clinical/biochemical; ultrasound is limited for direct pancreatic view, CT is superior for imaging the pancreas itself and complications.<br>
+            b. True. Ultrasound is the first-line and preferred imaging modality for suspected acute cholecystitis.<br>
+            c. True. Ultrasound is valuable as an initial imaging test for appendicitis, especially in certain populations.<br>
+            d. True. Ultrasound is the primary imaging modality for evaluating ovarian cysts, including hemorrhagic ones.
+        </p>
+    </div>
+
+    <!-- Question 12 (Source: Question 17 - MRI) -->
+    <div class="question-container" data-question-id="q12">
+        <p class="question-text"><span class="question-number">17.</span> Regarding MRI all true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Patient with pacemakers are not contraindications for MRI examination.</li>
+            <li class="option" data-correct="false">B. Used in the diagnosis of acute ischemic stroke by DWI sequence.</li>
+            <li class="option" data-correct="false">C. Used in the diagnosis of MS (multiple sclerosis).</li>
+            <li class="option" data-correct="false">D. Diagnosis muscle and tendons injuries.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. False. Traditional pacemakers are generally a strong contraindication for MRI due to safety risks, though MRI-conditional pacemakers exist.<br>
+            b. True. Diffusion-Weighted Imaging (DWI) on MRI is highly sensitive for detecting acute ischemic stroke.<br>
+            c. True. MRI is essential for diagnosing and monitoring multiple sclerosis.<br>
+            d. True. MRI is excellent for evaluating soft tissue injuries like muscle and tendon tears.
+        </p>
+    </div>
+
+    <!-- Question 13 (Source: Question 21 - Ultrasound and CT in acute abdomen) -->
+    <div class="question-container" data-question-id="q13">
+        <p class="question-text"><span class="question-number">21.</span> Regarding role of ultrasound and CT scan in acute abdomen</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. ultrasound is the imaging modality of choice for acute cholecystitis.</li>
+            <li class="option" data-correct="false">B. CT scan contrast is the imaging modality of choice for acute pancreatitis</li>
+            <li class="option" data-correct="false">C. MRCP is the imaging modality of choice (non invasive) for CBD stones</li>
+            <li class="option" data-correct="false">D. CT scan with contrast is the imaging modality of choice of suspected acute appendicitis in case non visualized by ultrasound.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct. Ultrasound is the established first-line imaging modality of choice for acute cholecystitis.<br>
+            b. Correct statement. CT scan with contrast is very important for acute pancreatitis, especially for assessing severity and complications.<br>
+            c. Correct statement. MRCP is an excellent non-invasive imaging modality of choice for CBD stones.<br>
+            d. Correct statement. CT scan with contrast is the imaging modality of choice for suspected acute appendicitis if ultrasound is non-diagnostic.
+        </p>
+    </div>
+
+    <!-- Question 14 (Source: Question 28 - Ultrasound and CT in acute abdomen, incorrect answer) -->
+    <div class="question-container" data-question-id="q14">
+        <p class="question-text"><span class="question-number">28.</span> Regarding role of ultrasound and CT scan in acute abdomen, choice incorrect answer.</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. CT scan is the imaging modality of choice for acute cholecystitis.</li>
+            <li class="option" data-correct="false">B. CT scan contrast is the imaging modality of choice for acute pancreatitis</li>
+            <li class="option" data-correct="false">C. MRCP is the imaging modality of choice (non invasive) for CBD stones</li>
+            <li class="option" data-correct="false">D. CT scan with contrast is the imaging modality of choice of suspected acute appendicitis in case non visualized by ultrasound.</li>
+            <li class="option" data-correct="false">E. CT scan is the imaging modality of choice for diagnosis of ureteric stone</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Incorrect statement. Ultrasound is the imaging modality of choice for acute cholecystitis, not CT scan.<br>
+            b. Correct statement. Contrast CT is key for evaluating severity and complications of acute pancreatitis.<br>
+            c. Correct statement. MRCP is a non-invasive choice for imaging CBD stones.<br>
+            d. Correct statement. CT with contrast is standard for suspected appendicitis if ultrasound is inconclusive.<br>
+            e. Correct statement. Non-contrast CT (CT KUB) is the imaging modality of choice for diagnosing ureteric stones.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 14</div>
+</div>
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">Bowel Obstruction</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q1">
+        <p class="question-text"><span class="question-number">1.</span> 40 years old male presented with gradually increased abdominal pain, associated with abdominal distention, nausea, 2 times of vomiting and constipation. He had history of anterior abdominal wall hernial repair surgery before 2 years. The most likely diagnosis is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Bowel perforation.</li>
+            <li class="option" data-correct="false">B. Cecal volvulus.</li>
+            <li class="option" data-correct="true">C. Intestinal obstruction.</li>
+            <li class="option" data-correct="false">D. Acute appendicitis.</li>
+            <li class="option" data-correct="false">E. Crohn's disease.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Bowel perforation: Incorrect. While a possible complication, the gradual onset and history point more directly to obstruction; perforation usually presents more acutely with signs of peritonitis.<br>
+            b. Cecal volvulus: Incorrect. This is possible but less likely than obstruction from adhesions in a patient with previous abdominal surgery. Cecal volvulus is more common in older, institutionalized patients.<br>
+            c. Intestinal obstruction: Correct. This is the most likely diagnosis given the symptoms (abdominal pain, distention, nausea, vomiting, constipation) and the history of previous abdominal surgery, which is a major risk factor for adhesions leading to obstruction.<br>
+            d. Acute appendicitis: Incorrect. The symptom complex, particularly the significant distension and history of prior surgery leading to likely adhesions, makes appendicitis less probable as the primary cause.<br>
+            e. Crohn's disease: Incorrect. Can cause obstruction due to strictures, but in this context with prior surgery, adhesion-related obstruction is more common.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">7.</span> Regarding bowel obstruction:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Laboratory investigations are often nonspecific.</li>
+            <li class="option" data-correct="false">B. Ultrasound is the imaging modality of choice for diagnosis of large bowel obstruction.</li>
+            <li class="option" data-correct="false">C. Ultrasound is the first imaging modality for intussusceptions.</li>
+            <li class="option" data-correct="false">D. Presence of a rim of air under the LT hemi-diaphragm is the sign of bowel perforation.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Laboratory investigations are often nonspecific: Correct. While there can be electrolyte disturbances, leukocytosis, or elevated lactate, these findings are not specific to bowel obstruction and can be seen in many other conditions.<br>
+            b. Ultrasound is the imaging modality of choice for diagnosis of large bowel obstruction: Incorrect. CT scan is generally preferred for diagnosing large bowel obstruction and identifying its cause. Plain X-rays are often the initial imaging.<br>
+            c. Ultrasound is the first imaging modality for intussusceptions: Incorrect in this context (though correct for pediatric intussusception). Option A is a more broadly applicable statement about bowel obstruction in general. The primary correct answer given is A.<br>
+            d. Presence of a rim of air under the LT hemi-diaphragm is the sign of bowel perforation: Incorrect. Free air under the diaphragm (pneumoperitoneum) is a sign of bowel perforation. It is more commonly seen under the right hemidiaphragm. This describes a complication, not a feature of obstruction itself.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q14">
+        <p class="question-text"><span class="question-number">14.</span> Regarding bowel obstruction, single correct statement is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Laboratory investigations are often specific.</li>
+            <li class="option" data-correct="true">B. An air-fluid level is an important sign of small bowel obstruction.</li>
+            <li class="option" data-correct="false">C. CT scan without contrast is the most specific imaging modality.</li>
+            <li class="option" data-correct="false">D. Ultrasound is the best imaging modality for pneumoperitoneum.</li>
+            <li class="option" data-correct="false">E. None of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Laboratory investigations are often specific: Incorrect. Laboratory findings in bowel obstruction are typically non-specific.<br>
+            b. An air-fluid level is an important sign of small bowel obstruction: Correct. Multiple air-fluid levels, especially seen on an erect abdominal X-ray, are a characteristic feature of small bowel obstruction.<br>
+            c. CT scan without contrast is the most specific imaging modality: Incorrect. While non-contrast CT can diagnose obstruction, CT with intravenous and often oral contrast is generally more specific for determining the cause, location, and potential complications like ischemia.<br>
+            d. Ultrasound is the best imaging modality for pneumoperitoneum: Incorrect. An erect chest X-ray or abdominal X-ray (erect or left lateral decubitus) is the standard initial modality for detecting pneumoperitoneum. CT is more sensitive than X-ray.<br>
+            e. None of the above: Incorrect as B is correct.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q15">
+        <p class="question-text"><span class="question-number">15.</span> Regarding bowel obstruction, single correct statement is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Bowel obstruction is the most common gastrointestinal (GIT) emergency.</li>
+            <li class="option" data-correct="true">B. Small bowel obstruction is more common than large bowel obstruction and has a higher rate of complications.</li>
+            <li class="option" data-correct="false">C. Large bowel obstruction is usually managed conservatively.</li>
+            <li class="option" data-correct="false">D. Adhesion is the most common cause of large bowel obstruction.</li>
+            <li class="option" data-correct="false">E. None of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Bowel obstruction is the most common gastrointestinal (GIT) emergency: Incorrect. While common, it is debatable if it's the single "most common" against others like acute appendicitis or cholecystitis.<br>
+            b. Small bowel obstruction is more common than large bowel obstruction and has a higher rate of complications: Correct. SBO accounts for the majority of mechanical bowel obstructions and carries risks of ischemia, perforation, and electrolyte imbalances.<br>
+            c. Large bowel obstruction is usually managed conservatively: Incorrect. Complete large bowel obstruction often requires surgical intervention to prevent complications like cecal perforation.<br>
+            d. Adhesion is the most common cause of large bowel obstruction: Incorrect. Adhesions are the most common cause of small bowel obstruction. Colorectal cancer is the most common cause of large bowel obstruction in adults.<br>
+            e. None of the above: Incorrect as B is correct.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q16">
+        <p class="question-text"><span class="question-number">16.</span> Regarding bowel obstruction, single correct statement is:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Bowel obstruction is life threatening condition.</li>
+            <li class="option" data-correct="false">B. Backwash ileitis is the late complication of small bowel obstruction.</li>
+            <li class="option" data-correct="false">C. Coffee-bean sign is usually seen in cecal volvulus.</li>
+            <li class="option" data-correct="false">D. Pneumoperitoneum is the most common complication of small bowel obstruction.</li>
+            <li class="option" data-correct="false">E. None of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Bowel obstruction is life threatening condition: Correct. If untreated, bowel obstruction can lead to bowel ischemia, necrosis, perforation, sepsis, and death.<br>
+            b. Backwash ileitis is the late complication of small bowel obstruction: Incorrect. Backwash ileitis refers to inflammation of the terminal ileum in the context of pancolitis, usually ulcerative colitis.<br>
+            c. Coffee-bean sign is usually seen in cecal volvulus: Incorrect. The coffee-bean sign is characteristic of sigmoid volvulus.<br>
+            d. Pneumoperitoneum is the most common complication of small bowel obstruction: Incorrect. While pneumoperitoneum (due to perforation) is a severe complication, dehydration and electrolyte abnormalities are more common. Bowel ischemia is also a significant concern.<br>
+            e. None of the above: Incorrect as A is correct.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q20">
+        <p class="question-text"><span class="question-number">20.</span> Regarding functional obstruction:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Usually occur in post-operative status.</li>
+            <li class="option" data-correct="false">B. All the GIT return to normal activity within first 24hours in post appendicectomy.</li>
+            <li class="option" data-correct="false">C. may be seen in cases of peritonitis, hypokalemia and hypothyroidism.</li>
+            <li class="option" data-correct="false">D. Imaging is mandatory after 48 hours.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Usually occur in post-operative status: Correct. Post-operative ileus is a common type of functional bowel obstruction.<br>
+            b. All the GIT return to normal activity within first 24hours in post appendicectomy: Incorrect. Return of bowel function varies: small intestine (0-24h), stomach (24-48h), and colon (48-72h).<br>
+            c. may be seen in cases of peritonitis, hypokalemia and hypothyroidism: Incorrect in the context of "single correct answer" if A is considered more directly related to "usually occur". While these are causes, post-operative status is a very common scenario for functional obstruction.<br>
+            d. Imaging is mandatory after 48 hours: Incorrect. Imaging is considered based on clinical judgment, not strictly mandatory after a fixed time.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q21">
+        <p class="question-text"><span class="question-number">21.</span> Regarding bowel obstruction:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Laboratory investigations are often non-specific.</li>
+            <li class="option" data-correct="false">B. MRI is the imaging modality of choice for diagnosis.</li>
+            <li class="option" data-correct="false">C. x-ray is the best imaging modality for localization of the level of obstruction.</li>
+            <li class="option" data-correct="false">D. Air bubble is usually seen under the RT hemi-diaphragm.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Laboratory investigations are often non-specific: Correct. Lab findings can support the clinical picture but are not specific to bowel obstruction.<br>
+            b. MRI is the imaging modality of choice for diagnosis: Incorrect. CT and plain X-rays are primary; MRI has specific, not general, roles.<br>
+            c. x-ray is the best imaging modality for localization of the level of obstruction: Incorrect. CT is far superior for localizing the level and identifying the cause.<br>
+            d. Air bubble is usually seen under the RT hemi-diaphragm: Incorrect. This describes free air (pneumoperitoneum), a sign of bowel perforation, not uncomplicated obstruction. "Air bubble" is imprecise.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q31">
+        <p class="question-text"><span class="question-number">31.</span> Regarding bowel obstruction, single correct answer:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. CT scan is the imaging modality of choice to determine the level and cause of obstruction</li>
+            <li class="option" data-correct="false">B. MRI is the imaging modality of choice for diagnosis.</li>
+            <li class="option" data-correct="false">C. Ultrasound is the best imaging modality for localization of the level of obstruction.</li>
+            <li class="option" data-correct="false">D. Air bubble is usually seen under the RT hemi-diaphragm.</li>
+            <li class="option" data-correct="false">E. supine x-ray showing multiple air fluid levels</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. CT scan is the imaging modality of choice to determine the level and cause of obstruction: Correct. CT is highly accurate for confirming obstruction, identifying the transition point, and often revealing the cause and complications.<br>
+            b. MRI is the imaging modality of choice for diagnosis: Incorrect. Not the primary choice for general bowel obstruction.<br>
+            c. Ultrasound is the best imaging modality for localization of the level of obstruction: Incorrect. CT is superior for comprehensive assessment.<br>
+            d. Air bubble is usually seen under the RT hemi-diaphragm: Incorrect. Refers to pneumoperitoneum (perforation sign).<br>
+            e. supine x-ray showing multiple air fluid levels: Incorrect. Air-fluid levels are best seen on erect or decubitus X-rays.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q37">
+        <p class="question-text"><span class="question-number">37.</span> Regarding the bowel obstruction, single incorrect answer:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. The stomach is the first part of the bowel recovered after surgery.</li>
+            <li class="option" data-correct="false">B. Localized ileus may resemble early mechanical small bowel obstruction.</li>
+            <li class="option" data-correct="false">C. Abdominal radiographs are only 50-60% sensitive for small bowel obstruction.</li>
+            <li class="option" data-correct="false">D. Peritonitis and hypokalemia may be causing functional bowel obstruction</li>
+            <li class="option" data-correct="false">E. Adhesive band is the most common cause of mechanical small bowel obstruction</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. The stomach is the first part of the bowel recovered after surgery: Correct (as in, this statement is the incorrect one among the options). Typically, the small intestine recovers first, then stomach, then colon.<br>
+            b. Localized ileus may resemble early mechanical small bowel obstruction: Incorrect (this statement is true, so not the answer to "single incorrect answer"). It can be challenging to differentiate.<br>
+            c. Abdominal radiographs are only 50-60% sensitive for small bowel obstruction: Incorrect (this statement is true). Plain X-rays have limitations.<br>
+            d. Peritonitis and hypokalemia may be causing functional bowel obstruction: Incorrect (this statement is true). Both are recognized causes.<br>
+            e. Adhesive band is the most common cause of mechanical small bowel obstruction: Incorrect (this statement is true). Post-surgical adhesions are the leading cause.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 9</div>
+</div>
+
+<div class="section" data-section-id="3">
+    <h2 class="section-title">Contrast Media</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q1">
+        <p class="question-text"><span class="question-number">3.</span> Regarding Barium studies, single incorrect answer:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Barium swallow is used to examine the esophagus.</li>
+            <li class="option" data-correct="true">B. Barium is a water-soluble material.</li>
+            <li class="option" data-correct="false">C. Barium studies are contraindicated in case of suspected bowel perforation.</li>
+            <li class="option" data-correct="false">D. Barium meal is used to examine stomach.</li>
+            <li class="option" data-correct="false">E. Barium follow through used to examine small bowels.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Correct. Barium swallow is for the esophagus.<br>
+            b. Incorrect. Barium sulfate is insoluble in water.<br>
+            c. Correct. Contraindicated in suspected perforation due to risk of peritonitis.<br>
+            d. Correct. Barium meal is for the stomach.<br>
+            e. Correct. Barium follow-through is for the small intestine.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q2">
+        <p class="question-text"><span class="question-number">12.</span> Gastrografin all wrong except</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Used in CT</li>
+            <!-- Assuming other options were unlisted and incorrect as per source -->
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct. Gastrografin is a water-soluble contrast used for GI opacification in CT, especially if perforation is suspected.<br>
+            (Explanation notes the question format implies A is the only correct option among others not provided).
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q3">
+        <p class="question-text"><span class="question-number">13.</span> Esophageal diverticulum all are false except:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Mid-esophageal diverticulum is true</li>
+            <!-- Assuming other options were unlisted and incorrect as per source -->
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct. Interpreted as: Mid-esophageal diverticula are typically true diverticula, involving all wall layers.<br>
+            (Explanation notes the question format implies A is the only correct option among others not provided).
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q4">
+        <p class="question-text"><span class="question-number">20.</span> Regarding Barium, the correct answer is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Water soluble.</li>
+            <li class="option" data-correct="false">B. Less dense than gastrografin.</li>
+            <li class="option" data-correct="true">C. Used in CT examination.</li>
+            <li class="option" data-correct="false">D. High osmolar comparing to gastrografin.</li>
+            <li class="option" data-correct="false">E. Non of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect. Barium sulfate is insoluble in water.<br>
+            b. Incorrect. Barium generally provides higher radiodensity.<br>
+            c. Correct. Barium suspensions are used as oral contrast in CT.<br>
+            d. Incorrect. Barium is non-osmolar; Gastrografin is hyperosmolar.<br>
+            e. Incorrect. C is correct.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">21.</span> Regarding Barium swallow, all true except :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. full esophagus to show filling defect.</li>
+            <li class="option" data-correct="false">B. empty esophagus for mucosal pattern</li>
+            <li class="option" data-correct="false">C. contraindicated in case of suspected esophageal perforation.</li>
+            <li class="option" data-correct="true">D. malignant esophageal stricture showing smooth tapering ends.</li>
+            <li class="option" data-correct="false">E. shouldering is an important radiological sign of malignancy.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect (this statement is true). Full esophagus shows filling defects.<br>
+            b. Incorrect (this statement is true). Empty/partially collapsed for mucosal pattern.<br>
+            c. Incorrect (this statement is true). Barium is contraindicated in suspected perforation.<br>
+            d. Correct (this statement is false). Malignant strictures are typically irregular, not smooth tapering.<br>
+            e. Incorrect (this statement is true). Shouldering is a sign of malignancy.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">27.</span> Regarding the esophageal diverticulum:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Zenker's diverticulum is a false diverticulum.</li>
+            <li class="option" data-correct="false">B. Zenker's diverticulum is a usually posterior and RT lateral to the cervical esophagus.</li>
+            <li class="option" data-correct="false">C. Mid-esophageal diverticulum is a true diverticulum.</li>
+            <li class="option" data-correct="false">D. Intramural pseudodiverticulosis is usually seen in diabetic young adult females.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct. Zenker's is a false diverticulum (mucosa and submucosa only).<br>
+            b. Incorrect. Zenker's arises in posterior midline, may deviate left.<br>
+            c. Incorrect. Mid-esophageal diverticula are true. (Note: Source mentions this is also correct, but A is chosen as more definitive).<br>
+            d. Incorrect. Intramural pseudodiverticulosis seen in older individuals, associated with other conditions.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">28.</span> Regarding the esophageal stricture:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Peptic stricture is the most common type and usually primary.</li>
+            <li class="option" data-correct="false">B. Corrosive stricture is an iatrogenic stricture.</li>
+            <li class="option" data-correct="true">C. Squamous cell carcinoma is the commonest cause of malignant esophageal stricture.</li>
+            <li class="option" data-correct="false">D. Malignant stricture is usually smooth, preceded by shouldering and proximal dilation.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect. Peptic strictures are common but secondary to GERD.<br>
+            b. Incorrect. Corrosive strictures are from caustic ingestion, not iatrogenic.<br>
+            c. Correct. SCC is the most common cause of malignant esophageal strictures globally.<br>
+            d. Incorrect. Malignant strictures are irregular; shouldering and proximal dilation are common, but not smooth.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q8">
+        <p class="question-text"><span class="question-number">33.</span> Regarding the esophageal pathologies, single incorrect answer:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Acquired web is less common than congenital web and usually seen in upper esophagus.</li>
+            <li class="option" data-correct="false">B. Epiphrenic diverticulum is a false diverticulum.</li>
+            <li class="option" data-correct="false">C. Plummer-Vinson syndrome is a pre-cancerous condition seen in middle age females suffering from iron deficiency anemia, web and dysphagia.</li>
+            <li class="option" data-correct="false">D. Schatzki's ring is a pathological B-ring.</li>
+            <li class="option" data-correct="false">E. Zenker diverticulum seen in upper third of the esophagus</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Incorrect. Acquired webs are more common than congenital webs.<br>
+            b. Correct. Epiphrenic diverticula are false diverticula.<br>
+            c. Correct. This describes Plummer-Vinson syndrome.<br>
+            d. Correct. Schatzki's ring is a pathological B-ring.<br>
+            e. Correct. Zenker's is in the upper esophagus/hypopharynx.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">34.</span> Regarding the esophageal stricture, single correct answer:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Peptic stricture is the most common type and usually secondary.</li>
+            <li class="option" data-correct="false">B. Corrosive stricture is an iatrogenic cause.</li>
+            <li class="option" data-correct="false">C. Squamous cell carcinoma is the commonest cause of malignant esophageal neoplasm.</li>
+            <li class="option" data-correct="false">D. Malignant stricture is usually smooth, preceded by shouldering and proximal dilation.</li>
+            <li class="option" data-correct="false">E. Malignant stricture had smooth tapering and regular out lines</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct. Peptic strictures (from GERD) are common and secondary.<br>
+            b. Incorrect. Corrosive strictures are from caustic ingestion.<br>
+            c. Correct statement about neoplasm, but A is more direct about stricture. SCC is commonest esophageal cancer.<br>
+            d. Incorrect. Malignant strictures are irregular.<br>
+            e. Incorrect. Malignant strictures have irregular outlines.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q10">
+        <p class="question-text"><span class="question-number">Unnumbered Q1.</span> Regarding barium examination all the following wrong except</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Barium meal for visualization of the esophagus</li>
+            <li class="option" data-correct="true">B. Barium enema is used for evaluating the colon diseases</li>
+            <li class="option" data-correct="false">C. Gastrografin can be used as substitution to barium if bowel perforation of obstruction</li>
+            <li class="option" data-correct="false">D. Achalasia had irregular narrowing or shouldering of the esophagus</li>
+            <li class="option" data-correct="false">E. Esophageal carcinoma had smooth narrowing of the esophagus.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect. Barium swallow for esophagus; meal for stomach/duodenum.<br>
+            b. Correct. Barium enema is for evaluating colon diseases.<br>
+            c. Incorrect. Wording is ambiguous; Gastrografin for suspected perforation.<br>
+            d. Incorrect. Achalasia shows smooth, tapering ("bird's beak") narrowing.<br>
+            e. Incorrect. Esophageal carcinoma causes irregular narrowing.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q11">
+        <p class="question-text"><span class="question-number">Unnumbered Q2.</span> Regarding fluoroscopic examination all the following true except</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Used for demonstrating GI moving function.</li>
+            <li class="option" data-correct="false">B. Used for HSG (Hysterosalpingography examination)</li>
+            <li class="option" data-correct="false">C. High radiation exposure is a disadvantage</li>
+            <li class="option" data-correct="true">D. Had no role in injections into a joint or spine.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect (this statement is true). Fluoroscopy shows GI motility.<br>
+            b. Incorrect (this statement is true). HSG uses fluoroscopy.<br>
+            c. Incorrect (this statement is true). Fluoroscopy can involve high radiation.<br>
+            d. Correct (this statement is false). Fluoroscopy is crucial for guiding joint and spine injections.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q12">
+        <p class="question-text"><span class="question-number">Unnumbered Q3.</span> Regarding esophagus, single correct statement is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Zenker's diverticulum is a true diverticulum.</li>
+            <li class="option" data-correct="false">B. Mid-esophageal diverticulum is a false diverticulum.</li>
+            <li class="option" data-correct="false">C. Intramural pseudo-diverticulosis is usually seen in young adult females.</li>
+            <li class="option" data-correct="true">D. None of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. Zenker's is a false diverticulum.<br>
+            b. Incorrect. Mid-esophageal diverticula are typically true.<br>
+            c. Incorrect. Intramural pseudodiverticulosis is more common in older individuals.<br>
+            d. Correct. A, B, and C are incorrect.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-3">Score: 0 / 12</div>
+</div>
+
+
+
+<div class="bottom-nav-container">
+    <a href="#" class="main-button" id="home-button">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <button id="reset-button" class="main-button">
+        <i class="fas fa-sync-alt"></i> Reset
+    </button>
+</div>
+
+<script>
+// ====== SUBJECT PAGE SHORTCUT LOGIC ======
+const PAGE_ID = window.SUBJECT_SETTINGS.PAGE_ID;
+const ANSWERS_KEY = `${PAGE_ID}_answers`;
+const SCORES_KEY = `${PAGE_ID}_scores`;
+
+// Set dynamic title and home button
+document.title = window.SUBJECT_SETTINGS.PAGE_TITLE;
+document.getElementById('dynamic-title')?.remove(); // Remove if exists
+const homeBtn = document.getElementById('home-button');
+if (homeBtn) homeBtn.href = window.SUBJECT_SETTINGS.HOME_LINK;
+
+// ...rest of your script (no changes needed below this line)...
+const sections = document.querySelectorAll('.section');
+let sectionScores = {};
+
+function saveState(sectionId, questionId, selectedOptionIndex, currentScore, totalQuestions) {
+    let answers = JSON.parse(localStorage.getItem(ANSWERS_KEY)) || {};
+    if (!answers[sectionId]) answers[sectionId] = {};
+    answers[sectionId][questionId] = {
+        selectedOptionIndex: selectedOptionIndex,
+        answered: true
+    };
+    localStorage.setItem(ANSWERS_KEY, JSON.stringify(answers));
+
+    let scores = JSON.parse(localStorage.getItem(SCORES_KEY)) || {};
+    scores[sectionId] = { score: currentScore, total: totalQuestions };
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+function applyOptionSelectionLogic(optionElement, questionContainer, isLoadTime = false) {
+    const explanation = questionContainer.querySelector('.explanation');
+    const allOptionsInQuestion = questionContainer.querySelectorAll('.option');
+    const section = questionContainer.closest('.section');
+    const sectionId = section.dataset.sectionId;
+    const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+    const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+
+    if (questionContainer.classList.contains('answered') && !isLoadTime) return;
+    questionContainer.classList.add('answered');
+
+    const isCorrect = optionElement.dataset.correct === 'true';
+
+    let feedbackSpan = optionElement.querySelector('.feedback');
+    if (!feedbackSpan) {
+        feedbackSpan = document.createElement('span');
+        feedbackSpan.className = 'feedback';
+        optionElement.appendChild(feedbackSpan);
+    }
+    feedbackSpan.style.display = 'inline';
+
+    if (isCorrect) {
+        optionElement.classList.add('correct');
+        feedbackSpan.textContent = ' ✓ Correct!';
+        if (!isLoadTime) sectionScores[sectionId]++;
+    } else {
+        optionElement.classList.add('incorrect');
+        feedbackSpan.textContent = ' ✗ Incorrect.';
+        allOptionsInQuestion.forEach(opt => {
+            if (opt.dataset.correct === 'true') {
+                opt.classList.add('reveal-correct');
+                let correctFeedback = opt.querySelector('.feedback');
+                if (!correctFeedback) {
+                    correctFeedback = document.createElement('span');
+                    correctFeedback.className = 'feedback';
+                    opt.appendChild(correctFeedback);
+                }
+                correctFeedback.textContent = ' ✓ Correct Answer';
+                correctFeedback.style.display = 'inline';
+            }
+        });
+    }
+
+    if (explanation) explanation.style.display = 'block';
+    allOptionsInQuestion.forEach(opt => { opt.style.cursor = 'default'; });
+
+    if (scoreDisplay) {
+        scoreDisplay.textContent = `Score: ${sectionScores[sectionId]} / ${totalQuestionsInSection}`;
+    }
+
+    if (!isLoadTime) {
+        const optionIndex = Array.from(allOptionsInQuestion).indexOf(optionElement);
+        saveState(sectionId, questionContainer.dataset.questionId, optionIndex, sectionScores[sectionId], totalQuestionsInSection);
+    }
+}
+
+function loadState() {
+    const savedAnswersData = JSON.parse(localStorage.getItem(ANSWERS_KEY));
+    const savedScoresData = JSON.parse(localStorage.getItem(SCORES_KEY));
+
+    sections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        sectionScores[sectionId] = (savedScoresData && savedScoresData[sectionId]) ? savedScoresData[sectionId].score : 0;
+
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: ${sectionScores[sectionId]} / ${totalQuestionsInSection}`;
+        }
+
+        if (savedAnswersData && savedAnswersData[sectionId]) {
+            const questionsInSection = section.querySelectorAll('.question-container');
+            questionsInSection.forEach(qc => {
+                const questionId = qc.dataset.questionId;
+                const qData = savedAnswersData[sectionId][questionId];
+                if (qData && qData.answered && typeof qData.selectedOptionIndex === 'number') {
+                    const optionsInQ = qc.querySelectorAll('.option');
+                    const selectedOptionEl = optionsInQ[qData.selectedOptionIndex];
+                    if (selectedOptionEl) {
+                        applyOptionSelectionLogic(selectedOptionEl, qc, true);
+                    }
+                }
+            });
+        }
+    });
+}
+
+function resetState() {
+    localStorage.removeItem(ANSWERS_KEY);
+    localStorage.removeItem(SCORES_KEY);
+
+    sections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0;
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+
+        section.querySelectorAll('.question-container').forEach(qc => {
+            qc.classList.remove('answered');
+            const explanation = qc.querySelector('.explanation');
+            if (explanation) explanation.style.display = 'none';
+
+            qc.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('correct', 'incorrect', 'reveal-correct');
+                opt.style.cursor = 'pointer';
+                const feedback = opt.querySelector('.feedback');
+                if (feedback) {
+                    feedback.textContent = '';
+                    feedback.style.display = 'none';
+                }
+            });
+        });
+
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: 0 / ${totalQuestionsInSection}`;
+        }
+    });
+}
+
+// Save total number of questions for summary use (main page)
+document.addEventListener('DOMContentLoaded', function() {
+    const totalQuestions = document.querySelectorAll('.question-container').length;
+    let scores = JSON.parse(localStorage.getItem(SCORES_KEY)) || {};
+    scores['all'] = scores['all'] || {};
+    scores['all'].total = totalQuestions;
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    sections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0;
+    });
+
+    loadState();
+
+    sections.forEach(section => {
+        const options = section.querySelectorAll('.option');
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                const questionContainer = this.closest('.question-container');
+                applyOptionSelectionLogic(this, questionContainer, false);
+            });
+        });
+    });
+
+    const resetButton = document.getElementById('reset-button');
+    if (resetButton) {
+        resetButton.addEventListener('click', resetState);
+    }
+});
+</script>
+
+</body>
+</html>

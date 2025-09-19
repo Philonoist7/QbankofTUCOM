@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ====== SUBJECT PAGE SETTINGS ====== -->
+
+<script>
+/*
+    ====== EDIT ONLY THIS BLOCK FOR NEW SUBJECTS ======
+    Change these variables for each new subject page.
+*/
+(function() {
+    // Get filename without extension for PAGE_ID
+    const path = window.location.pathname;
+    const file = path.substring(path.lastIndexOf('/') + 1) || path.substring(path.lastIndexOf('\\') + 1);
+    const pageIdAuto = file.replace(/\.[^/.]+$/, ""); // Remove extension
+
+    window.SUBJECT_SETTINGS = {
+        
+
+
+        PAGE_TITLE: 'QBank - 2020-2021 MCQs', // <--- EDIT THIS: Title for this subject page.
+        HOME_LINK: 'surgery_qbank.html',      // <--- EDIT THIS: Link back to the group page or main.html.
+
+
+        PAGE_ID: pageIdAuto,      // Automatically set from filename
+    
+    
+    
+    };
+})();
+</script>
+
+<title id="dynamic-title-subject">Subject QBank</title>
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- Google Fonts - Open Sans (example, or keep Montserrat) -->
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Amiri Font for Arabic Text -->
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+
+
+
+<style>
+/* Styles for the question page */
+body {
+    font-family: 'Open Sans', Arial, sans-serif; /* Example: Changed font */
+    line-height: 1.7; /* Increased line height for readability */
+    margin: 0;
+    padding: 20px;
+    background-color: #eef1f5; /* Lighter background */
+    padding-top: 80px; /* Space for fixed header */
+    padding-bottom: 100px; /* Space for bottom nav */
+}
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50; /* Darker header */
+    color: #ecf0f1;
+    padding: 6px 0;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16); /* Softer shadow */
+}
+.fixed-header .made-by-prefix { color: #bdc3c7; } /* Lighter prefix text */
+.fixed-header a { color: #3498db; text-decoration: none; font-weight: bold; }
+.fixed-header a:hover { text-decoration: underline; color: #5dade2; }
+.fixed-header .quran-verse {
+    display: inline-block;
+    font-family: 'Amiri', 'Scheherazade', serif;
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #ffae00;
+    letter-spacing: 0.5px;
+    padding: 0.2em 1em;
+    border-radius: 8px;
+    margin-left: 10px;
+    margin-right: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    direction: rtl;
+}
+@media (max-width: 600px) {
+    .fixed-header .quran-verse {
+        font-size: 1em;
+        padding: 0.2em 0.5em;
+    }
+}
+
+.page-main-title {
+    font-size: 2.2em;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.section {
+    margin-bottom: 35px; /* Increased space between sections */
+    background-color: #ffffff;
+    padding: 25px; /* Increased padding */
+    border-radius: 10px; /* More rounded corners */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Softer, larger shadow */
+    max-width: 800px; /* Max width for content readability */
+    margin-left: auto;
+    margin-right: auto;
+}
+.section-title {
+    font-size: 1.6em; /* Adjusted size */
+    color: #34495e; /* Dark blue-gray */
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eaecee; /* Lighter border */
+    padding-bottom: 12px;
+    font-weight: 600;
+}
+.question-container {
+    margin-bottom: 30px; /* More space between questions */
+    padding: 20px;
+    border: 1px solid #dce4ec; /* Lighter border */
+    border-radius: 8px;
+    background-color: #fdfdfd; /* Very light background for question */
+    transition: box-shadow 0.3s ease;
+}
+.question-container:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.question-container.answered { background-color: #f8f9fa; }
+.question-number {
+    font-weight: 700; /* Bolder question number */
+    color: #007bff; /* Primary color for question number */
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+.question-text {
+    font-size: 1.1em;
+    color: #343a40; /* Standard text color */
+    margin-bottom: 18px; /* More space below question text */
+    line-height: 1.6;
+}
+ul.options { list-style: none; padding: 0; margin: 0; }
+li.option {
+    background-color: #f1f5f9; /* Light gray-blue for options */
+    margin-bottom: 12px; /* More space between options */
+    padding: 12px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-left 0.2s ease;
+    border: 1px solid #d1d9e2;
+    border-left: 4px solid transparent; /* For hover/selection indication */
+    position: relative;
+    user-select: none; /* Prevent text selection on click */
+    font-size: 1em;
+    color: #333;
+}
+li.option:hover:not(.answered li.option) {
+    background-color: #e4e9f0;
+    border-left-color: #007bff; /* Blue accent on hover */
+}
+.question-container.answered li.option { cursor: default; } /* No hover effect after answered */
+.question-container.answered li.option:hover { background-color: #f1f5f9; border-left-color: transparent; } /* Reset hover for answered */
+
+li.option.correct:hover, li.option.reveal-correct:hover { background-color: #d4edda !important; border-left-color: #28a745 !important; }
+li.option.incorrect:hover { background-color: #f8d7da !important; border-left-color: #dc3545 !important; }
+
+li.option.correct {
+    background-color: #d4edda !important; /* Ensure override */
+    border-color: #c3e6cb !important;
+    border-left: 4px solid #28a745 !important; /* Green for correct */
+    color: #155724;
+    font-weight: 600;
+}
+li.option.incorrect {
+    background-color: #f8d7da !important;
+    border-color: #f5c6cb !important;
+    border-left: 4px solid #dc3545 !important; /* Red for incorrect */
+    color: #721c24;
+    font-weight: 600;
+}
+.feedback { display: none; font-weight: bold; margin-left: 10px; }
+li.option.correct .feedback, li.option.incorrect .feedback { display: inline; }
+.correct .feedback { color: #155724; }
+.incorrect .feedback { color: #721c24; }
+
+li.option.reveal-correct { /* Style for showing the correct answer when user was wrong */
+    background-color: #d1ecf1 !important; /* Light info blue */
+    border-color: #bee5eb !important;
+    border-left: 4px solid #17a2b8 !important; /* Info blue */
+    color: #0c5460 !important;
+    font-weight: 600 !important;
+}
+.explanation {
+    display: none;
+    margin-top: 20px; /* More space above explanation */
+    padding: 15px;
+    background-color: #e9ecef; /* Slightly darker explanation background */
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    color: #495057;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+.explanation strong { color: #333; } /* Make "Correct answer:" part darker */
+
+.section-score {
+    margin-top: 30px;
+    font-size: 1.25em; /* Larger score text */
+    font-weight: bold;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    padding: 12px;
+    background-color: #e2f0fb; /* Light blue score background */
+    border: 1px solid #a8cff3; /* Softer blue border */
+    border-radius: 8px;
+}
+.bottom-nav-container {
+    position: fixed;
+    bottom: 0; /* Flush to bottom */
+    left: 0;
+    width: 100%;
+    background-color: #ffffff; /* White background for nav */
+    padding: 8px 0; /* Padding top/bottom */
+    z-index: 1001;
+    display: flex;
+    justify-content: center; /* Center buttons */
+    gap: 20px; /* Increased gap */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* Shadow at the top */
+    border-top: 1px solid #e0e0e0;
+}
+.main-button {
+    background-color: #007bff; /* Primary blue */
+    color: #ffffff;
+    padding: 10px 16px; /* Adjusted padding */
+    font-size: 1em; /* Standard font size */
+    text-decoration: none;
+    font-weight: 600; /* Bolder text */
+    border-radius: 25px; /* Pill shape */
+    box-shadow: 0 3px 7px rgba(0,123,255,0.3); /* Softer shadow related to button color */
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-button i { margin-right: 10px; font-size: 1.1em; } /* Slightly larger icon */
+.main-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,123,255,0.4);
+}
+a.main-button:hover { background-color: #0069d9; } /* Darker blue on hover */
+#reset-button { background-color: #e74c3c; box-shadow: 0 3px 7px rgba(231,76,60,0.3); } /* Red reset button */
+#reset-button:hover { background-color: #c0392b; box-shadow: 0 5px 10px rgba(192,57,43,0.4); }
+
+@media (max-width: 768px) {
+    body { padding: 15px; padding-top: 70px; padding-bottom: 90px; }
+    .page-main-title { font-size: 1.8em; }
+    .section { padding: 20px; }
+    .section-title { font-size: 1.4em; }
+    .question-text { font-size: 1em; }
+    li.option { padding: 10px 15px; font-size: 0.95em;}
+    .section-score { font-size: 1.15em; }
+}
+@media (max-width: 480px) {
+    body { padding: 10px; padding-top: 60px; padding-bottom: 80px; }
+    .page-main-title { font-size: 1.6em; margin-bottom: 20px;}
+    .section { padding: 15px; }
+    .section-title { font-size: 1.3em; margin-bottom: 20px; }
+    .question-container { padding: 15px; }
+    .question-text { font-size: 0.95em; }
+    li.option { padding: 10px 12px; font-size: 0.9em;}
+    .explanation { font-size: 0.9em; padding: 10px;}
+    .section-score { font-size: 1.1em; padding: 10px;}
+    .bottom-nav-container { padding: 10px 0; gap: 15px;}
+    .main-button { padding: 8px 16px; font-size: 0.9em;}
+}
+
+</style>
+</head>
+<body>
+<div class="fixed-header">
+    <span class="quran-verse">وَقُل رَّبِّ زِدْنِي عِلْمًا</span>
+</div>
+
+
+
+<h1 class="page-main-title" id="subject-page-title-display">Subject Questions</h1>
+
+
+<!--
+    ====== ADD YOUR QUESTIONS CONTENT BELOW ======
+    - Each section needs a unique data-section-id (e.g., "s1", "s2").
+      This ID is used for the score display (e.g., score-section-s1).
+    - Each question-container needs a unique data-question-id within its section (e.g., "q1", "q2").
+    - Mark the correct option with data-correct="true".
+-->
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">General Surgery Questions</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q1">
+        <p class="question-text"><span class="question-number">1.</span> Which of the following statements is FALSE with regard to necrotizing fasciitis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. This is a surgical emergency.</li>
+            <li class="option" data-correct="true">B. It is a mono-microbial infection.</li>
+            <li class="option" data-correct="false">C. Must of the patients have a history of trauma or previous infection.</li>
+            <li class="option" data-correct="false">D. Wide debridement of the involved tissues is advised.</li>
+            <li class="option" data-correct="false">E. It can rapidly progress to septic shock.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: It is a life-threatening surgical emergency requiring immediate intervention.<br>
+            b. Correct: Necrotizing fasciitis is typically a polymicrobial infection (caused by multiple bacteria), not monomicrobial.<br>
+            c. Incorrect: Most cases start at a site of minor trauma or infection.<br>
+            d. Incorrect: Aggressive and wide surgical debridement is the cornerstone of treatment.<br>
+            e. Incorrect: The rapid release of toxins can quickly lead to septic shock.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q2">
+        <p class="question-text"><span class="question-number">2.</span> Regarding extracellular fluid (ECF) all are true, except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Total ECF volume represents 20 % of the body weight.</li>
+            <li class="option" data-correct="true">B. Potassium is the principal cation in the ECF compartment.</li>
+            <li class="option" data-correct="false">C. The plasma volume constitutes 5% of body weight.</li>
+            <li class="option" data-correct="false">D. The interstitial fluid equilibrates rapidly with the other body compartments.</li>
+            <li class="option" data-correct="false">E. Extracellular fluid differs from intracellular fluid in electrolytes composition.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: This is true; ECF makes up about 20% of total body weight.<br>
+            b. Correct: The principal cation in the ECF is Sodium (Na+). Potassium (K+) is the main intracellular cation.<br>
+            c. Incorrect: This is true; plasma accounts for about 5% of body weight.<br>
+            d. Incorrect: This is true; water and solutes move freely between plasma and interstitial fluid.<br>
+            e. Incorrect: This is true; ECF is high in Na+ and Cl-, while intracellular fluid is high in K+.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q3">
+        <p class="question-text"><span class="question-number">3.</span> A second-degree burn is characterized by which of the following?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Coagulative necrosis extending to subcutaneous fat</li>
+            <li class="option" data-correct="false">B. Pearly white appearance</li>
+            <li class="option" data-correct="false">C. Anaesthetic</li>
+            <li class="option" data-correct="true">D. Erythema and bullae formation</li>
+            <li class="option" data-correct="false">E. Requires immediate skin grafting</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: This describes a third-degree (full-thickness) burn.<br>
+            b. Incorrect: This appearance is characteristic of a third-degree burn.<br>
+            c. Incorrect: Anesthetic (no sensation) is a feature of third-degree burns; second-degree burns are very painful.<br>
+            d. Correct: Redness (erythema) and blisters (bullae) are the classic signs of a second-degree burn.<br>
+            e. Incorrect: Immediate skin grafting is typically required for third-degree burns.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q4">
+        <p class="question-text"><span class="question-number">4.</span> Which of the following statements regarding abscesses is false?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Staphylococcus aureus is one of the most common causative organisms.</li>
+            <li class="option" data-correct="false">B. The abscess wall is not lined by epithelium.</li>
+            <li class="option" data-correct="true">C. Most wound-site abscesses occur before the patient is discharged from the hospital.</li>
+            <li class="option" data-correct="false">D. Antibiotics are indicated if there is evidence of cellulitis.</li>
+            <li class="option" data-correct="false">E. Actinomyces can cause a chronic abscess.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Staphylococcus aureus is the most common cause of skin abscesses.<br>
+            b. Incorrect: An abscess is walled off by a pyogenic membrane, not a true epithelial lining.<br>
+            c. Correct: Surgical site abscesses often manifest 5-7 days post-operatively, by which time many patients have been discharged.<br>
+            d. Incorrect: Antibiotics are added to incision and drainage if significant cellulitis is present.<br>
+            e. Incorrect: Actinomyces is a known cause of chronic, suppurative abscesses.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">5.</span> Regarding radiation therapy for tumors, which of the following statements is false?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Currently, high-energy radiation is delivered to tumors primarily with linear accelerators.</li>
+            <li class="option" data-correct="false">B. X-rays traverse the tissue, depositing the maximum dose at the surface, and thus involve the skin.</li>
+            <li class="option" data-correct="false">C. Gamma rays typically are produced by radioactive sources used in brachytherapy.</li>
+            <li class="option" data-correct="false">D. The dose of radiation absorbed correlates with the energy of the beam.</li>
+            <li class="option" data-correct="true">E. Radiation therapy is a precisely targeted form of gene therapy for cancer.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect: Linear accelerators are the standard equipment for modern radiotherapy.<br>
+            b. Incorrect: Modern high-energy X-rays have a skin-sparing effect, depositing the maximum dose below the surface.<br>
+            c. Incorrect: Brachytherapy involves placing radioactive sources that emit gamma rays inside or near a tumor.<br>
+            d. Incorrect: The absorbed dose is directly related to the energy of the radiation beam.<br>
+            e. Correct: Radiation therapy works by causing physical damage to DNA, whereas gene therapy involves modifying a person's genes.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">6.</span> The distinct steps of T3 and T4 synthesis are the following EXCEPT:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Trapping of inorganic iodine from the blood.</li>
+            <li class="option" data-correct="false">B. Oxidation of iodide to iodine</li>
+            <li class="option" data-correct="false">C. Binding of iodine with tyrosine to form iodotyrosines.</li>
+            <li class="option" data-correct="false">D. Coupling of mono-iodotyrosines and di-iodotyrosines to form T3 and T4.</li>
+            <li class="option" data-correct="true">E. No hormone remain free in the serum.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect: Iodide trapping is the first step in thyroid hormone synthesis.<br>
+            b. Incorrect: Oxidation of iodide is a crucial step catalyzed by thyroid peroxidase.<br>
+            c. Incorrect: The binding of iodine to tyrosine (organification) is a key step.<br>
+            d. Incorrect: The coupling of iodotyrosines forms T3 and T4.<br>
+            e. Correct: While over 99% of thyroid hormone is bound to proteins, a small, biologically active fraction remains free in the serum.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">7.</span> An 18-year-old presents with a well-circumscribed 2-cm mass in her right breast. The mass is painless and has a rubbery consistency and discrete borders. It appears to move freely through the breast tissue. What is the likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Carcinoma</li>
+            <li class="option" data-correct="false">B. Cyst</li>
+            <li class="option" data-correct="true">C. Fibroadenoma</li>
+            <li class="option" data-correct="false">D. Cystosarcoma phyllodes</li>
+            <li class="option" data-correct="false">E. Intramammary lymph node</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Carcinoma is rare in this age group and is typically hard and fixed.<br>
+            b. Incorrect: A cyst is typically fluid-filled and tense, not rubbery.<br>
+            c. Correct: This is the classic description of a fibroadenoma, the most common benign breast tumor in young women.<br>
+            d. Incorrect: Phyllodes tumors are rare, tend to be larger, and occur in older women.<br>
+            e. Incorrect: An intramammary lymph node is typically smaller and firmer.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q8">
+        <p class="question-text"><span class="question-number">8.</span> What is TRUE of basal cell carcinoma?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. It may show a flat ulcer.</li>
+            <li class="option" data-correct="false">B. It may metastasize to lymph nodes.</li>
+            <li class="option" data-correct="false">C. It may metastasize to remote skin areas.</li>
+            <li class="option" data-correct="false">D. It is found exclusively in the head and neck.</li>
+            <li class="option" data-correct="false">E. It is best treated by topical 5-FU.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct: The ulcerative type of Basal Cell Carcinoma (BCC), known as a "rodent ulcer," is a common presentation.<br>
+            b. Incorrect: Metastasis from BCC is extremely rare.<br>
+            c. Incorrect: Remote metastasis from BCC is extremely rare.<br>
+            d. Incorrect: While most common on the head and neck, BCC can occur anywhere on the body.<br>
+            e. Incorrect: Surgical excision is the standard treatment; topical agents are reserved for superficial types.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">9.</span> Which of the following features of cancer of the lung indicates distant spread?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Hypercalcemia</li>
+            <li class="option" data-correct="false">B. Cushing-like syndrome</li>
+            <li class="option" data-correct="false">C. Gynecomastia</li>
+            <li class="option" data-correct="false">D. Syndrome of inappropriate antidiuretic hormone (SIADH)</li>
+            <li class="option" data-correct="false">E. Brachial plexus lesion (Pancoast's syndrome)</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct: Hypercalcemia is a paraneoplastic syndrome, a systemic effect indicating advanced disease, not local invasion.<br>
+            b. Incorrect: Cushing-like syndrome is also a paraneoplastic syndrome indicating systemic disease.<br>
+            c. Incorrect: Gynecomastia can also be a paraneoplastic syndrome indicating systemic disease.<br>
+            d. Incorrect: SIADH is also a paraneoplastic syndrome indicating systemic disease.<br>
+            e. Incorrect: Brachial plexus lesion (Pancoast's syndrome) is a sign of direct local invasion, not distant spread.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q10">
+        <p class="question-text"><span class="question-number">10.</span> Diagnosis of duodenal ulcer is best confirmed by which of the following?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Urea breath test</li>
+            <li class="option" data-correct="false">B. Serum gastrin levels</li>
+            <li class="option" data-correct="false">C. Barium meal examination</li>
+            <li class="option" data-correct="true">D. Upper endoscopy</li>
+            <li class="option" data-correct="false">E. Upper endoscopy and biopsy</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: A urea breath test confirms H. pylori infection, a common cause, but does not visualize the ulcer.<br>
+            b. Incorrect: This test is for Zollinger-Ellison syndrome, a rare cause of ulcers.<br>
+            c. Incorrect: A barium meal is an older, less accurate imaging technique.<br>
+            d. Correct: Upper endoscopy is the gold standard because it allows direct visualization of the ulcer.<br>
+            e. Incorrect: Biopsy is often performed to test for H. pylori, but the endoscopy itself diagnoses the ulcer.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q11">
+        <p class="question-text"><span class="question-number">11.</span> The most common identifiable source of a pyogenic liver abscess is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Seeding from the portal vein</li>
+            <li class="option" data-correct="true">B. The biliary tree</li>
+            <li class="option" data-correct="false">C. Hematogenous from endocarditis</li>
+            <li class="option" data-correct="false">D. Direct extension of a nearby focus</li>
+            <li class="option" data-correct="false">E. Inflammatory bowel disease</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Portal vein seeding is a less common cause in the modern era.<br>
+            b. Correct: Infection originating in the biliary tree (e.g., ascending cholangitis) is currently the most common cause.<br>
+            c. Incorrect: Seeding from the bloodstream via the hepatic artery is an uncommon cause.<br>
+            d. Incorrect: Direct extension from an adjacent infection is a possible but less common cause.<br>
+            e. Incorrect: Inflammatory bowel disease is a known but not the most common cause.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q12">
+        <p class="question-text"><span class="question-number">12.</span> Splenectomy patients should be immunized against all the following organisms, EXCEPT:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Haemophilus influenzae</li>
+            <li class="option" data-correct="false">B. Meningococcus B</li>
+            <li class="option" data-correct="false">C. Meningococcus C</li>
+            <li class="option" data-correct="false">D. Streptococcus pneumoniae</li>
+            <li class="option" data-correct="true">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect: Vaccination against Haemophilus influenzae is recommended.<br>
+            b. Incorrect: Vaccination against Meningococcus B is recommended.<br>
+            c. Incorrect: Vaccination against Meningococcus C (as part of the quadrivalent vaccine) is recommended.<br>
+            d. Incorrect: Vaccination against Streptococcus pneumoniae is critically important.<br>
+            e. Correct: Immunization is recommended for all the listed organisms, so there is no exception.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q13">
+        <p class="question-text"><span class="question-number">13.</span> Which of the following is true regarding bile and gallstones?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. The primary bile acids are deoxycholic and lithocholic acid.</li>
+            <li class="option" data-correct="true">B. The primary phospholipid in bile is lecithin.</li>
+            <li class="option" data-correct="false">C. Cholecystectomy decreases bile salt secretion.</li>
+            <li class="option" data-correct="false">D. Brown pigmented gallstones are more likely to be found in the gallbladder versus the CBD.</li>
+            <li class="option" data-correct="false">E. Bile consists of an equal part bile salts, phospholipids, and cholesterol.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: These are secondary bile acids; the primary ones are cholic acid and chenodeoxycholic acid.<br>
+            b. Correct: Lecithin is the main phospholipid in bile and helps keep cholesterol dissolved.<br>
+            c. Incorrect: Cholecystectomy removes the gallbladder (storage organ) but does not affect the liver's production of bile.<br>
+            d. Incorrect: Brown pigment stones are typically associated with infection and stasis in the bile ducts (CBD).<br>
+            e. Incorrect: Bile contains these components in an approximate 10:3:1 ratio (salts:phospholipids:cholesterol), not equal parts.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q14">
+        <p class="question-text"><span class="question-number">14.</span> Which of the following is not a parameter to assess the severity of acute pancreatitis in either Ranson or Glasgow score?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Lactate dehydrogenase (LDH) and aspartate transaminase (AST).</li>
+            <li class="option" data-correct="false">B. White cell count</li>
+            <li class="option" data-correct="true">C. Serum amylase</li>
+            <li class="option" data-correct="false">D. Serum calcium</li>
+            <li class="option" data-correct="false">E. Blood urea</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: LDH and AST are parameters in both scoring systems.<br>
+            b. Incorrect: White cell count is a parameter in both scoring systems.<br>
+            c. Correct: Serum amylase is used for diagnosis, but its level does not correlate with disease severity and is not part of these prognostic scores.<br>
+            d. Incorrect: Serum calcium is a parameter in both scoring systems.<br>
+            e. Incorrect: Blood urea is a parameter in both scoring systems.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q15">
+        <p class="question-text"><span class="question-number">15.</span> Which of the following is false with regard to an enterocutaneous fistula?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. The commonest cause is postoperative.</li>
+            <li class="option" data-correct="false">B. A high-output fistula is defined as one where there is > 1 L/day.</li>
+            <li class="option" data-correct="false">C. They should be thoroughly assessed with barium studies and CT scans.</li>
+            <li class="option" data-correct="true">D. They always need an operation to cure the problem.</li>
+            <li class="option" data-correct="false">E. Hypoproteinaemia and sepsis often accompany the condition.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: About 75-85% of these fistulas occur after surgery.<br>
+            b. Incorrect: A fistula with output >500 mL/day is considered high-output, so >1 L/day certainly qualifies.<br>
+            c. Incorrect: Imaging like CT and fistulograms are crucial to define the fistula's anatomy.<br>
+            d. Correct: A significant number of fistulas can close with conservative management (nutrition, sepsis control); they do not "always" require surgery.<br>
+            e. Incorrect: Large fluid and protein losses lead to malnutrition, and the breach of the gut barrier leads to sepsis.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q16">
+        <p class="question-text"><span class="question-number">16.</span> Which of the following findings is consistent with the diagnosis of ulcerative colitis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. The rectum is not involved.</li>
+            <li class="option" data-correct="true">B. The disease is confluent, there are no skip areas in the colon and the rectum is involved.</li>
+            <li class="option" data-correct="false">C. The full thickness of the bowel wall is involved.</li>
+            <li class="option" data-correct="false">D. Microscopic examination of the mucosa reveals normal cells without evidence of dysplasia.</li>
+            <li class="option" data-correct="false">E. The incidence of colorectal cancer is equal to that of the general population.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Ulcerative colitis (UC) almost always starts in the rectum.<br>
+            b. Correct: This is the classic description of UC: continuous inflammation with no "skip lesions," starting in the rectum.<br>
+            c. Incorrect: UC is limited to the mucosa and submucosa; full-thickness inflammation is characteristic of Crohn's disease.<br>
+            d. Incorrect: Microscopic examination would show inflammation and possibly dysplasia in long-standing cases.<br>
+            e. Incorrect: Patients with UC have a significantly increased risk of colorectal cancer.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q17">
+        <p class="question-text"><span class="question-number">17.</span> What is the most common cause small-bowel obstruction?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Adenocarcinoma</li>
+            <li class="option" data-correct="true">B. Adhesions</li>
+            <li class="option" data-correct="false">C. Crohn's disease</li>
+            <li class="option" data-correct="false">D. Ulcerative colitis</li>
+            <li class="option" data-correct="false">E. Gallstone ileus</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Primary small bowel cancer is a rare cause of obstruction.<br>
+            b. Correct: Adhesions from previous abdominal surgery are the most common cause of small bowel obstruction.<br>
+            c. Incorrect: Crohn's disease is a much less frequent cause than adhesions.<br>
+            d. Incorrect: Ulcerative colitis is a disease of the colon and does not cause small bowel obstruction.<br>
+            e. Incorrect: Gallstone ileus is a rare cause of obstruction.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q18">
+        <p class="question-text"><span class="question-number">18.</span> What is the most common complication of Meckel's diverticulum among adults?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Bleeding</li>
+            <li class="option" data-correct="false">B. Perforation</li>
+            <li class="option" data-correct="true">C. Intestinal obstruction</li>
+            <li class="option" data-correct="false">D. Ulceration</li>
+            <li class="option" data-correct="false">E. Carcinoma</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Bleeding is the most common complication in children.<br>
+            b. Incorrect: Perforation is a less common complication than obstruction.<br>
+            c. Correct: In adults, intestinal obstruction (due to volvulus or intussusception) is the most frequent complication.<br>
+            d. Incorrect: Ulceration is the pathology that causes bleeding, not the most common clinical complication itself in adults.<br>
+            e. Incorrect: Cancer within a Meckel's diverticulum is very rare.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q19">
+        <p class="question-text"><span class="question-number">19.</span> Why does acute appendicitis in elderly patients and in children have a worse prognosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. The appendix is retrocecal.</li>
+            <li class="option" data-correct="false">B. The appendix is in the preileal position.</li>
+            <li class="option" data-correct="false">C. The appendix is in the pelvic position.</li>
+            <li class="option" data-correct="true">D. The omentum and peritoneal cavity appear to be less efficient in localizing the disease in these age groups.</li>
+            <li class="option" data-correct="false">E. The appendix is longer in these age groups.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: Anatomical position can alter symptoms but is not the primary reason for worse outcomes at age extremes.<br>
+            b. Incorrect: Anatomical position is not the primary reason for worse outcomes.<br>
+            c. Incorrect: Anatomical position is not the primary reason for worse outcomes.<br>
+            d. Correct: In the very young, the omentum is underdeveloped, and in the elderly, it is less robust, leading to a failure to contain the infection and a higher rate of perforation.<br>
+            e. Incorrect: Appendix length is not associated with worse prognosis in these age groups.
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q20">
+        <p class="question-text"><span class="question-number">20.</span> Which of the following statements about haemorrhoids is true?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Most haemorrhoids are congenital.</li>
+            <li class="option" data-correct="false">B. Pain is usual in uncomplicated grade 1 haemorrhoids.</li>
+            <li class="option" data-correct="false">C. Piles which remain permanently prolapsed are called grade 3 haemorrhoids.</li>
+            <li class="option" data-correct="true">D. Portal pyaemia is a rare but known complication of haemorrhoids.</li>
+            <li class="option" data-correct="false">E. Profuse haemorrhage is never seen.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: Haemorrhoids are acquired, not congenital.<br>
+            b. Incorrect: Uncomplicated internal haemorrhoids are typically painless.<br>
+            c. Incorrect: Permanently prolapsed haemorrhoids that cannot be reduced are classified as Grade 4.<br>
+            d. Correct: Although extremely rare, septic thrombophlebitis of the portal vein (portal pyaemia) is a recognized complication of anorectal sepsis.<br>
+            e. Incorrect: While uncommon, haemorrhoids can cause profuse, life-threatening haemorrhage.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 20</div>
+</div>
+
+
+<!-- Add more sections here if needed, e.g. <div class="section" data-section-id="s2"> ... </div> -->
+
+
+
+
+
+
+
+
+
+<div class="bottom-nav-container">
+    <a href="#" class="main-button" id="home-button-subject">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <button id="reset-button" class="main-button">
+        <i class="fas fa-sync-alt"></i> Reset Progress
+    </button>
+</div>
+
+<script>
+// ====== SUBJECT PAGE LOGIC (DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING) ======
+const PAGE_ID = window.SUBJECT_SETTINGS.PAGE_ID;
+const ANSWERS_KEY = `${PAGE_ID}_answers`;
+const SCORES_KEY = `${PAGE_ID}_scores`;
+
+document.getElementById('dynamic-title-subject').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+document.getElementById('subject-page-title-display').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+const homeBtnSubject = document.getElementById('home-button-subject');
+if (homeBtnSubject) homeBtnSubject.href = window.SUBJECT_SETTINGS.HOME_LINK;
+
+const allSections = document.querySelectorAll('.section');
+let sectionScores = {};
+
+function saveState(sectionId, questionId, selectedOptionIndex, currentScore, totalQuestionsInSection) {
+    let answers = JSON.parse(localStorage.getItem(ANSWERS_KEY)) || {};
+    if (!answers[sectionId]) answers[sectionId] = {};
+    answers[sectionId][questionId] = {
+        selectedOptionIndex: selectedOptionIndex,
+        answered: true
+    };
+    localStorage.setItem(ANSWERS_KEY, JSON.stringify(answers));
+
+    let scores = JSON.parse(localStorage.getItem(SCORES_KEY)) || {};
+    if (!scores[sectionId]) scores[sectionId] = { score: 0, total: 0}; // Initialize if not exists
+    scores[sectionId] = { score: currentScore, total: totalQuestionsInSection };
+
+    // Update overall total for the page if not already set or if it changed
+    let overallTotal = 0;
+    allSections.forEach(sec => {
+        const secId = sec.dataset.sectionId;
+        const numQs = sec.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        // Ensure section total is also up-to-date in the scores object if initializing
+        if (!scores[secId] || scores[secId].total !== numQs) {
+             scores[secId] = scores[secId] || {score:0}; // preserve score if exists
+             scores[secId].total = numQs;
+        }
+    });
+    scores['all'] = scores['all'] || {};
+    scores['all'].total = overallTotal;
+
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+function applyOptionSelectionLogic(optionElement, questionContainer, isLoadTime = false) {
+    const explanation = questionContainer.querySelector('.explanation');
+    const allOptionsInQuestion = questionContainer.querySelectorAll('.option');
+    const section = questionContainer.closest('.section');
+    const sectionId = section.dataset.sectionId;
+    const scoreDisplay = section.querySelector(`#score-section-${sectionId}`); // Ensure ID matches
+    const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+
+    if (questionContainer.classList.contains('answered') && !isLoadTime) return; // Prevent re-answering
+
+    questionContainer.classList.add('answered');
+    const isCorrect = optionElement.dataset.correct === 'true';
+
+    let feedbackSpan = optionElement.querySelector('.feedback');
+    if (!feedbackSpan) {
+        feedbackSpan = document.createElement('span');
+        feedbackSpan.className = 'feedback';
+        optionElement.appendChild(feedbackSpan);
+    }
+    feedbackSpan.style.display = 'inline'; // Make sure it's visible
+
+    if (isCorrect) {
+        optionElement.classList.add('correct');
+        feedbackSpan.textContent = ' ✓ Correct!';
+        if (!isLoadTime) {
+            sectionScores[sectionId] = (sectionScores[sectionId] || 0) + 1;
+        }
+    } else {
+        optionElement.classList.add('incorrect');
+        feedbackSpan.textContent = ' ✗ Incorrect.';
+        allOptionsInQuestion.forEach(opt => {
+            if (opt.dataset.correct === 'true') {
+                opt.classList.add('reveal-correct'); // Use a distinct class for just revealing
+                let correctFeedback = opt.querySelector('.feedback');
+                if (!correctFeedback) {
+                    correctFeedback = document.createElement('span');
+                    correctFeedback.className = 'feedback';
+                    opt.appendChild(correctFeedback);
+                }
+                correctFeedback.textContent = ' (Correct Answer)'; // Simpler feedback
+                correctFeedback.style.display = 'inline';
+            }
+        });
+    }
+
+    if (explanation) explanation.style.display = 'block';
+    allOptionsInQuestion.forEach(opt => {
+        opt.style.cursor = 'default'; // Disable further clicks by changing cursor
+        // To truly disable, you might remove event listeners or set pointer-events: none
+    });
+
+    if (scoreDisplay) {
+        scoreDisplay.textContent = `Score: ${sectionScores[sectionId] || 0} / ${totalQuestionsInSection}`;
+    }
+
+    if (!isLoadTime) {
+        const optionIndex = Array.from(allOptionsInQuestion).indexOf(optionElement);
+        saveState(sectionId, questionContainer.dataset.questionId, optionIndex, sectionScores[sectionId] || 0, totalQuestionsInSection);
+    }
+}
+
+function loadState() {
+    const savedAnswersData = JSON.parse(localStorage.getItem(ANSWERS_KEY));
+    const savedScoresData = JSON.parse(localStorage.getItem(SCORES_KEY));
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        sectionScores[sectionId] = (savedScoresData && savedScoresData[sectionId]) ? savedScoresData[sectionId].score : 0;
+
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: ${sectionScores[sectionId]} / ${totalQuestionsInSection}`;
+        }
+
+        if (savedAnswersData && savedAnswersData[sectionId]) {
+            const questionsInSection = section.querySelectorAll('.question-container');
+            questionsInSection.forEach(qc => {
+                const questionId = qc.dataset.questionId;
+                const qData = savedAnswersData[sectionId][questionId];
+                if (qData && qData.answered && typeof qData.selectedOptionIndex === 'number') {
+                    const optionsInQ = qc.querySelectorAll('.option');
+                    if (qData.selectedOptionIndex >= 0 && qData.selectedOptionIndex < optionsInQ.length) {
+                        const selectedOptionEl = optionsInQ[qData.selectedOptionIndex];
+                        if (selectedOptionEl) {
+                           applyOptionSelectionLogic(selectedOptionEl, qc, true); // True for isLoadTime
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function resetState() {
+    localStorage.removeItem(ANSWERS_KEY);
+    localStorage.removeItem(SCORES_KEY); // Also remove scores to reset counts
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Reset internal score tracking
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+
+        section.querySelectorAll('.question-container').forEach(qc => {
+            qc.classList.remove('answered');
+            const explanation = qc.querySelector('.explanation');
+            if (explanation) explanation.style.display = 'none';
+
+            qc.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('correct', 'incorrect', 'reveal-correct');
+                opt.style.cursor = 'pointer'; // Re-enable cursor
+                const feedback = opt.querySelector('.feedback');
+                if (feedback) {
+                    feedback.textContent = '';
+                    feedback.style.display = 'none'; // Hide feedback
+                }
+            });
+        });
+
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: 0 / ${totalQuestionsInSection}`;
+        }
+    });
+    // After resetting, re-initialize the total questions for the page in localStorage
+    initializePageTotalQuestions();
+}
+
+function initializePageTotalQuestions() {
+    let overallTotal = 0;
+    const scores = {}; // Start with a fresh scores object for initialization
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const numQs = section.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        scores[sectionId] = { score: 0, total: numQs }; // Initialize section scores
+    });
+    scores['all'] = { total: overallTotal };
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize sectionScores for all sections on the page
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Initialize score to 0
+    });
+
+    // Attempt to load saved state
+    loadState();
+
+    // If no scores are loaded (e.g., first visit or after reset), initialize totals
+    if (!localStorage.getItem(SCORES_KEY)) {
+        initializePageTotalQuestions();
+    } else { // If scores exist, ensure 'all.total' is up-to-date
+        let existingScores = JSON.parse(localStorage.getItem(SCORES_KEY));
+        let currentOverallTotal = 0;
+        allSections.forEach(section => {
+            currentOverallTotal += section.querySelectorAll('.question-container').length;
+        });
+        if (!existingScores.all || existingScores.all.total !== currentOverallTotal) {
+            existingScores.all = existingScores.all || {};
+            existingScores.all.total = currentOverallTotal;
+            localStorage.setItem(SCORES_KEY, JSON.stringify(existingScores));
+        }
+    }
+
+
+    allSections.forEach(section => {
+        const options = section.querySelectorAll('.option');
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                const questionContainer = this.closest('.question-container');
+                if (!questionContainer.classList.contains('answered')) { // Only process if not answered
+                    applyOptionSelectionLogic(this, questionContainer, false); // False for isLoadTime
+                }
+            });
+        });
+    });
+
+    const resetButtonSubject = document.getElementById('reset-button');
+    if (resetButtonSubject) {
+        resetButtonSubject.addEventListener('click', resetState);
+    }
+});
+</script>
+<footer style="text-align: center; padding: 2em 1em 1em; font-size: 14px; color: #3a3a3a; width:100%; box-sizing:border-box;">
+    © <span id="currentYear"></span> Developed by
+    <a href="https://github.com/Philonoist7" target="_blank" class="footer-link">
+      <strong>Ali Hussein</strong>
+    </a>
+    <script>
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+    <style>
+      .footer-link {
+        color: #004992;
+        text-decoration: none;
+        transition: color 0.2s, border-bottom-color 0.2s;
+      }
+      .footer-link:hover {
+        color: #003366;
+        border-bottom: 1.5px solid #003366;
+      }
+    </style>
+    </footer>
+</body>
+</html>

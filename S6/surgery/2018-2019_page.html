@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ====== SUBJECT PAGE SETTINGS ====== -->
+
+<script>
+/*
+    ====== EDIT ONLY THIS BLOCK FOR NEW SUBJECTS ======
+    Change these variables for each new subject page.
+*/
+(function() {
+    // Get filename without extension for PAGE_ID
+    const path = window.location.pathname;
+    const file = path.substring(path.lastIndexOf('/') + 1) || path.substring(path.lastIndexOf('\\') + 1);
+    const pageIdAuto = file.replace(/\.[^/.]+$/, ""); // Remove extension
+
+    window.SUBJECT_SETTINGS = {
+        
+
+
+        PAGE_TITLE: 'QBank - 2018-2019 MCQs', // <--- EDIT THIS: Title for this subject page.
+        HOME_LINK: 'surgery_qbank.html',      // <--- EDIT THIS: Link back to the group page or main.html.
+       
+       
+       
+       
+        PAGE_ID: pageIdAuto,      // Automatically set from filename
+    
+    
+    
+    };
+})();
+</script>
+
+<title id="dynamic-title-subject">Subject QBank</title>
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- Google Fonts - Open Sans (example, or keep Montserrat) -->
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Amiri Font for Arabic Text -->
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+
+
+
+<style>
+/* Styles for the question page */
+body {
+    font-family: 'Open Sans', Arial, sans-serif; /* Example: Changed font */
+    line-height: 1.7; /* Increased line height for readability */
+    margin: 0;
+    padding: 20px;
+    background-color: #eef1f5; /* Lighter background */
+    padding-top: 80px; /* Space for fixed header */
+    padding-bottom: 100px; /* Space for bottom nav */
+}
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50; /* Darker header */
+    color: #ecf0f1;
+    padding: 6px 0;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16); /* Softer shadow */
+}
+.fixed-header .made-by-prefix { color: #bdc3c7; } /* Lighter prefix text */
+.fixed-header a { color: #3498db; text-decoration: none; font-weight: bold; }
+.fixed-header a:hover { text-decoration: underline; color: #5dade2; }
+.fixed-header .quran-verse {
+    display: inline-block;
+    font-family: 'Amiri', 'Scheherazade', serif;
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #ffae00;
+    letter-spacing: 0.5px;
+    padding: 0.2em 1em;
+    border-radius: 8px;
+    margin-left: 10px;
+    margin-right: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    direction: rtl;
+}
+@media (max-width: 600px) {
+    .fixed-header .quran-verse {
+        font-size: 1em;
+        padding: 0.2em 0.5em;
+    }
+}
+
+.page-main-title {
+    font-size: 2.2em;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.section {
+    margin-bottom: 35px; /* Increased space between sections */
+    background-color: #ffffff;
+    padding: 25px; /* Increased padding */
+    border-radius: 10px; /* More rounded corners */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Softer, larger shadow */
+    max-width: 800px; /* Max width for content readability */
+    margin-left: auto;
+    margin-right: auto;
+}
+.section-title {
+    font-size: 1.6em; /* Adjusted size */
+    color: #34495e; /* Dark blue-gray */
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eaecee; /* Lighter border */
+    padding-bottom: 12px;
+    font-weight: 600;
+}
+.question-container {
+    margin-bottom: 30px; /* More space between questions */
+    padding: 20px;
+    border: 1px solid #dce4ec; /* Lighter border */
+    border-radius: 8px;
+    background-color: #fdfdfd; /* Very light background for question */
+    transition: box-shadow 0.3s ease;
+}
+.question-container:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.question-container.answered { background-color: #f8f9fa; }
+.question-number {
+    font-weight: 700; /* Bolder question number */
+    color: #007bff; /* Primary color for question number */
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+.question-text {
+    font-size: 1.1em;
+    color: #343a40; /* Standard text color */
+    margin-bottom: 18px; /* More space below question text */
+    line-height: 1.6;
+}
+ul.options { list-style: none; padding: 0; margin: 0; }
+li.option {
+    background-color: #f1f5f9; /* Light gray-blue for options */
+    margin-bottom: 12px; /* More space between options */
+    padding: 12px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-left 0.2s ease;
+    border: 1px solid #d1d9e2;
+    border-left: 4px solid transparent; /* For hover/selection indication */
+    position: relative;
+    user-select: none; /* Prevent text selection on click */
+    font-size: 1em;
+    color: #333;
+}
+li.option:hover:not(.answered li.option) {
+    background-color: #e4e9f0;
+    border-left-color: #007bff; /* Blue accent on hover */
+}
+.question-container.answered li.option { cursor: default; } /* No hover effect after answered */
+.question-container.answered li.option:hover { background-color: #f1f5f9; border-left-color: transparent; } /* Reset hover for answered */
+
+li.option.correct:hover, li.option.reveal-correct:hover { background-color: #d4edda !important; border-left-color: #28a745 !important; }
+li.option.incorrect:hover { background-color: #f8d7da !important; border-left-color: #dc3545 !important; }
+
+li.option.correct {
+    background-color: #d4edda !important; /* Ensure override */
+    border-color: #c3e6cb !important;
+    border-left: 4px solid #28a745 !important; /* Green for correct */
+    color: #155724;
+    font-weight: 600;
+}
+li.option.incorrect {
+    background-color: #f8d7da !important;
+    border-color: #f5c6cb !important;
+    border-left: 4px solid #dc3545 !important; /* Red for incorrect */
+    color: #721c24;
+    font-weight: 600;
+}
+.feedback { display: none; font-weight: bold; margin-left: 10px; }
+li.option.correct .feedback, li.option.incorrect .feedback { display: inline; }
+.correct .feedback { color: #155724; }
+.incorrect .feedback { color: #721c24; }
+
+li.option.reveal-correct { /* Style for showing the correct answer when user was wrong */
+    background-color: #d1ecf1 !important; /* Light info blue */
+    border-color: #bee5eb !important;
+    border-left: 4px solid #17a2b8 !important; /* Info blue */
+    color: #0c5460 !important;
+    font-weight: 600 !important;
+}
+.explanation {
+    display: none;
+    margin-top: 20px; /* More space above explanation */
+    padding: 15px;
+    background-color: #e9ecef; /* Slightly darker explanation background */
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    color: #495057;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+.explanation strong { color: #333; } /* Make "Correct answer:" part darker */
+
+.section-score {
+    margin-top: 30px;
+    font-size: 1.25em; /* Larger score text */
+    font-weight: bold;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    padding: 12px;
+    background-color: #e2f0fb; /* Light blue score background */
+    border: 1px solid #a8cff3; /* Softer blue border */
+    border-radius: 8px;
+}
+.bottom-nav-container {
+    position: fixed;
+    bottom: 0; /* Flush to bottom */
+    left: 0;
+    width: 100%;
+    background-color: #ffffff; /* White background for nav */
+    padding: 8px 0; /* Padding top/bottom */
+    z-index: 1001;
+    display: flex;
+    justify-content: center; /* Center buttons */
+    gap: 20px; /* Increased gap */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* Shadow at the top */
+    border-top: 1px solid #e0e0e0;
+}
+.main-button {
+    background-color: #007bff; /* Primary blue */
+    color: #ffffff;
+    padding: 10px 16px; /* Adjusted padding */
+    font-size: 1em; /* Standard font size */
+    text-decoration: none;
+    font-weight: 600; /* Bolder text */
+    border-radius: 25px; /* Pill shape */
+    box-shadow: 0 3px 7px rgba(0,123,255,0.3); /* Softer shadow related to button color */
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-button i { margin-right: 10px; font-size: 1.1em; } /* Slightly larger icon */
+.main-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,123,255,0.4);
+}
+a.main-button:hover { background-color: #0069d9; } /* Darker blue on hover */
+#reset-button { background-color: #e74c3c; box-shadow: 0 3px 7px rgba(231,76,60,0.3); } /* Red reset button */
+#reset-button:hover { background-color: #c0392b; box-shadow: 0 5px 10px rgba(192,57,43,0.4); }
+
+@media (max-width: 768px) {
+    body { padding: 15px; padding-top: 70px; padding-bottom: 90px; }
+    .page-main-title { font-size: 1.8em; }
+    .section { padding: 20px; }
+    .section-title { font-size: 1.4em; }
+    .question-text { font-size: 1em; }
+    li.option { padding: 10px 15px; font-size: 0.95em;}
+    .section-score { font-size: 1.15em; }
+}
+@media (max-width: 480px) {
+    body { padding: 10px; padding-top: 60px; padding-bottom: 80px; }
+    .page-main-title { font-size: 1.6em; margin-bottom: 20px;}
+    .section { padding: 15px; }
+    .section-title { font-size: 1.3em; margin-bottom: 20px; }
+    .question-container { padding: 15px; }
+    .question-text { font-size: 0.95em; }
+    li.option { padding: 10px 12px; font-size: 0.9em;}
+    .explanation { font-size: 0.9em; padding: 10px;}
+    .section-score { font-size: 1.1em; padding: 10px;}
+    .bottom-nav-container { padding: 10px 0; gap: 15px;}
+    .main-button { padding: 8px 16px; font-size: 0.9em;}
+}
+
+</style>
+</head>
+<body>
+<div class="fixed-header">
+    <span class="quran-verse">وَقُل رَّبِّ زِدْنِي عِلْمًا</span>
+</div>
+
+
+
+<h1 class="page-main-title" id="subject-page-title-display">Subject Questions</h1>
+
+
+<!--
+    ====== ADD YOUR QUESTIONS CONTENT BELOW ======
+    - Each section needs a unique data-section-id (e.g., "s1", "s2").
+      This ID is used for the score display (e.g., score-section-s1).
+    - Each question-container needs a unique data-question-id within its section (e.g., "q1", "q2").
+    - Mark the correct option with data-correct="true".
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Medical MCQs</title>
+</head>
+<body>
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">Trauma and Emergency Surgery Questions</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q1">
+        <p class="question-text"><span class="question-number">1.</span> The most urgent measure in the management of severely injured patient in the emergency room is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Control of active bleeding.</li>
+            <li class="option" data-correct="false">B. Taking blood sample for grouping and cross matching.</li>
+            <li class="option" data-correct="false">C. Establishing on intravenous line.</li>
+            <li class="option" data-correct="true">D. Securing clear airway and adequate pulmonary ventilation.</li>
+            <li class="option" data-correct="false">E. Providing tetanus prophylaxis.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. Control of bleeding (Circulation) is critical but follows Airway and Breathing in the ATLS protocol.<br>
+            b. Incorrect. Taking blood samples is part of Circulation management, done after securing the airway.<br>
+            c. Incorrect. Establishing IV access is part of Circulation, secondary to Airway and Breathing.<br>
+            d. Correct. Following the ATLS 'ABCDE' protocol, Airway and Breathing are the first and most urgent priorities.<br>
+            e. Incorrect. Tetanus prophylaxis is part of later management, not the immediate life-saving intervention.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q2">
+        <p class="question-text"><span class="question-number">2.</span> The essential pathophysiological disorder in all types of shock is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Hypotension.</li>
+            <li class="option" data-correct="false">B. Tachycardia.</li>
+            <li class="option" data-correct="false">C. Visceral vasoconstriction.</li>
+            <li class="option" data-correct="true">D. Impaired tissue perfusion.</li>
+            <li class="option" data-correct="false">E. Reduced blood volume.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. Hypotension is a sign, but shock can exist with normal blood pressure (compensated shock).<br>
+            b. Incorrect. Tachycardia is a common response but can be absent in neurogenic shock.<br>
+            c. Incorrect. Vasoconstriction is a compensatory mechanism, not the core disorder.<br>
+            d. Correct. Shock is defined by circulatory failure leading to inadequate tissue perfusion, which is the final common pathway.<br>
+            e. Incorrect. Reduced blood volume is specific to hypovolemic shock, not all types.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q4">
+        <p class="question-text"><span class="question-number">4.</span> A comatose patient who has sustained multiple closed injuries is admitted with severe hypotension. The hypotension is most probably due to:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Intracranial hematoma.</li>
+            <li class="option" data-correct="false">B. Cerebral concussion.</li>
+            <li class="option" data-correct="true">C. Internal hemorrhage.</li>
+            <li class="option" data-correct="false">D. Neurogenic shock.</li>
+            <li class="option" data-correct="false">E. Cardiogenic shock.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect. Intracranial hematoma typically causes hypertension (Cushing's triad), not hypotension.<br>
+            b. Incorrect. Cerebral concussion does not cause hypotension.<br>
+            c. Correct. In multiple trauma, hypotension should be assumed to be from hemorrhagic shock until proven otherwise.<br>
+            d. Incorrect. Neurogenic shock is a diagnosis of exclusion and is less common than hemorrhage.<br>
+            e. Incorrect. Cardiogenic shock is less common than hemorrhagic shock in this context.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">5.</span> The most serious complication of blood transfusion is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Pyrogenic reactions.</li>
+            <li class="option" data-correct="false">B. Thrombophlebitis of recipient vein.</li>
+            <li class="option" data-correct="false">C. Circulatory overloading.</li>
+            <li class="option" data-correct="true">D. Incompatibility reactions.</li>
+            <li class="option" data-correct="false">E. Viral hepatitis.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. Pyrogenic reactions are common but rarely life-threatening.<br>
+            b. Incorrect. Thrombophlebitis is a minor, local complication.<br>
+            c. Incorrect. Circulatory overload can be serious but is typically manageable.<br>
+            d. Correct. Acute hemolytic transfusion reaction from ABO incompatibility is the most severe and life-threatening immediate complication.<br>
+            e. Incorrect. Viral transmission risk has been greatly reduced by screening; acute hemolytic reactions are a more immediate threat.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q10">
+        <p class="question-text"><span class="question-number">10.</span> Regarding the management of major trauma</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Deaths follow a bimodal distribution</li>
+            <li class="option" data-correct="false">B. X-rays after the primary survey should be of AP Cervical spine, chest and pelvis</li>
+            <li class="option" data-correct="false">C. Cardiac tamponade is characterized by raised BP, low JVP and muffled heart sounds</li>
+            <li class="option" data-correct="true">D. Assessment of uncomplicated limb fractures should occur during the secondary survey</li>
+            <li class="option" data-correct="false">E. Deterioration in the casualty should lead to the secondary survey</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. Trauma deaths follow a trimodal distribution (immediate, early, late).<br>
+            b. Incorrect. Standard trauma X-rays include a lateral C-spine view, not just AP.<br>
+            c. Incorrect. Beck's triad for cardiac tamponade includes low BP (hypotension) and high JVP.<br>
+            d. Correct. The primary survey handles life threats; detailed examination of non-life-threatening injuries occurs in the secondary survey.<br>
+            e. Incorrect. Patient deterioration requires an immediate return to the primary survey (ABCDEs), not the secondary survey.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q18">
+        <p class="question-text"><span class="question-number">18.</span> Which is false regarding burn infection?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Infection control requires attention to handwashing.</li>
+            <li class="option" data-correct="false">B. A rise or fall in white cell count and a decreasing clinical status are signs of infection.</li>
+            <li class="option" data-correct="true">C. Swabs taken from the burn and sputum are of no use in building a picture of the patient's flora.</li>
+            <li class="option" data-correct="false">D. Antibiotics given should be ideally based on cultures and on discussion with a microbiologist.</li>
+            <li class="option" data-correct="false">E. Catheters are a possible source of infection.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Correct. Hand hygiene is essential to prevent cross-contamination.<br>
+            b. Correct. Systemic signs of sepsis can include changes in white cell count and clinical deterioration.<br>
+            c. Incorrect. This statement is false. Surveillance swabs are useful for monitoring flora and guiding empiric antibiotic therapy.<br>
+            d. Correct. Antibiotic therapy should be targeted based on culture results to ensure efficacy and reduce resistance.<br>
+            e. Correct. Invasive devices like catheters are major portals of entry for infection.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 6</div>
+</div>
+
+
+<div class="section" data-section-id="2">
+    <h2 class="section-title">General Surgery Questions</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">6.</span> A 35-year-old multiparous female presented with a reducible right inguinal swelling which was diagnosed as a hernia. This hernia is most probably:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Femoral.</li>
+            <li class="option" data-correct="false">B. Direct inguinal.</li>
+            <li class="option" data-correct="true">C. Indirect inguinal.</li>
+            <li class="option" data-correct="false">D. Obturator.</li>
+            <li class="option" data-correct="false">E. Spigelian.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect. Femoral hernias are more common in women than men but are less common overall than indirect inguinal hernias.<br>
+            b. Incorrect. Direct inguinal hernias are rare in women and are typically found in older men.<br>
+            c. Correct. Indirect inguinal hernia is the most common type of groin hernia in both sexes and all age groups.<br>
+            d. Incorrect. Obturator hernias are very rare.<br>
+            e. Incorrect. Spigelian hernias are rare.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">7.</span> The commonest route of infection of breast abscess is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Along blood vessels</li>
+            <li class="option" data-correct="false">B. Retrograde infection along lymphatic vessels</li>
+            <li class="option" data-correct="false">C. Along natural passages (nipple)</li>
+            <li class="option" data-correct="true">D. Along artificial passages like fissures or cracks of nipple and areola</li>
+            <li class="option" data-correct="false">E. Local extension from infection of the chest wall muscles or ribs</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. Hematogenous spread is a very rare cause of breast abscess.<br>
+            b. Incorrect. Lymphatic spread is not the most common route.<br>
+            c. Incorrect. This is generally true, but option D is more specific and accurate for lactational abscesses.<br>
+            d. Correct. Bacteria typically enter through cracks or fissures in the nipple/areola during breastfeeding, which is the most common scenario.<br>
+            e. Incorrect. Extension from a chest wall infection is extremely rare.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q8">
+        <p class="question-text"><span class="question-number">8.</span> Risk factors of breast cancer include all the following except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Mutation in suppressor genes (BRCA I, II).</li>
+            <li class="option" data-correct="false">B. Early menarche.</li>
+            <li class="option" data-correct="false">C. Carcinoma in situ.</li>
+            <li class="option" data-correct="true">D. Prolonged lactation.</li>
+            <li class="option" data-correct="false">E. White races.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. BRCA1 and BRCA2 mutations are strong genetic risk factors.<br>
+            b. Incorrect. Early menarche increases lifetime estrogen exposure, a known risk factor.<br>
+            c. Incorrect. Carcinoma in situ is a non-invasive cancer and a major risk factor for subsequent invasive cancer.<br>
+            d. Correct. Prolonged lactation (breastfeeding) is a protective factor against breast cancer, not a risk factor.<br>
+            e. Incorrect. Women of Caucasian descent have a higher incidence of breast cancer.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">9.</span> Which of following statements about breast fibroadenosis is false</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. It manifests itself by pain or lumps.</li>
+            <li class="option" data-correct="false">B. Symptoms vary with the stages of the menstrual cycle.</li>
+            <li class="option" data-correct="false">C. Unopposed estrogen stimulation is a major etiologic factor.</li>
+            <li class="option" data-correct="false">D. Large lumps may contain fluid on aspiration.</li>
+            <li class="option" data-correct="true">E. It can usually be clinically differentiated from carcinoma.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Correct. Fibrocystic change is characterized by breast pain and lumpiness.<br>
+            b. Correct. Symptoms are hormonally sensitive and worsen premenstrually.<br>
+            c. Correct. It is thought to be an exaggerated response of breast tissue to hormones.<br>
+            d. Correct. The condition can involve cysts, which are fluid-filled and can be aspirated.<br>
+            e. Incorrect. This statement is false. It can be very difficult to clinically distinguish from cancer, requiring further investigation (triple assessment).<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q11">
+        <p class="question-text"><span class="question-number">11.</span> Regarding pyogenic liver abscesses, all true, except:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Right lobe is less common involved than left.</li>
+            <li class="option" data-correct="false">B. The etiology is unexplained in the majority.</li>
+            <li class="option" data-correct="false">C. Percutaneous catheter drainage under CT or US guidance is a good option for treatment.</li>
+            <li class="option" data-correct="false">D. The mortality is more than amebic abscesses.</li>
+            <li class="option" data-correct="false">E. Has increased incidence in diabetics.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Incorrect. This statement is false. The right lobe is involved in about 80% of cases due to its larger size and portal venous drainage pattern.<br>
+            b. Correct. While many sources are identified, a significant portion can be cryptogenic.<br>
+            c. Correct. Image-guided drainage with antibiotics is the standard of care.<br>
+            d. Correct. Pyogenic abscesses have a higher mortality rate than amebic abscesses.<br>
+            e. Correct. Diabetes is a significant risk factor.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q12">
+        <p class="question-text"><span class="question-number">12.</span> All associated with H. pylori infection, except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Adenocarcinoma of stomach</li>
+            <li class="option" data-correct="true">B. Squamous cell carcinoma of esophagus</li>
+            <li class="option" data-correct="false">C. Duodenal ulcer</li>
+            <li class="option" data-correct="false">D. Chronic active gastritis</li>
+            <li class="option" data-correct="false">E. Gastric lymphoma, MALT type</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect. H. pylori is a major cause of gastric adenocarcinoma.<br>
+            b. Correct. H. pylori has no association with squamous cell carcinoma of the esophagus.<br>
+            c. Incorrect. H. pylori is the cause of >90% of duodenal ulcers.<br>
+            d. Incorrect. Chronic active gastritis is the hallmark histological finding of H. pylori infection.<br>
+            e. Incorrect. H. pylori is the primary cause of gastric MALT lymphoma.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q13">
+        <p class="question-text"><span class="question-number">13.</span> Indications for elective splenectomy include all, except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Hypersplenism.</li>
+            <li class="option" data-correct="true">B. Staging of Hodgkin's disease.</li>
+            <li class="option" data-correct="false">C. Splenic cyst.</li>
+            <li class="option" data-correct="false">D. Splenic abscess.</li>
+            <li class="option" data-correct="false">E. Sickle cell anemia.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect. Splenectomy is a treatment for severe hypersplenism.<br>
+            b. Correct. Staging laparotomy with splenectomy is an obsolete practice, replaced by modern imaging (CT/PET).<br>
+            c. Incorrect. Large or symptomatic splenic cysts are an indication for splenectomy.<br>
+            d. Incorrect. A splenic abscess may require splenectomy if other measures fail.<br>
+            e. Incorrect. Splenectomy is indicated for specific complications of sickle cell disease.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q14">
+        <p class="question-text"><span class="question-number">14.</span> The most frequent manifestation of Meckel's diverticulum is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Diverticulitis</li>
+            <li class="option" data-correct="true">B. Bleeding</li>
+            <li class="option" data-correct="false">C. Diarrhea.</li>
+            <li class="option" data-correct="false">D. Intussusception</li>
+            <li class="option" data-correct="false">E. Intestinal obstruction</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect. Diverticulitis can occur but is less common than bleeding.<br>
+            b. Correct. Painless lower GI bleeding is the most common presentation, especially in children, due to ectopic gastric mucosa.<br>
+            c. Incorrect. Diarrhea is not a typical symptom.<br>
+            d. Incorrect. It can be a lead point for intussusception, but this is less common than bleeding.<br>
+            e. Incorrect. Obstruction is the most common presentation in adults but not overall.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q15">
+        <p class="question-text"><span class="question-number">15.</span> Patients with left-sided colon cancer are more likely to have the following, except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. obstructive signs</li>
+            <li class="option" data-correct="false">B. bright red blood in stools</li>
+            <li class="option" data-correct="true">C. presentation with anemia</li>
+            <li class="option" data-correct="false">D. constipation</li>
+            <li class="option" data-correct="false">E. lower abdominal pain</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect. Left-sided cancers tend to be constricting, causing obstructive symptoms.<br>
+            b. Incorrect. Proximity to the rectum often leads to bright red blood per rectum (hematochezia).<br>
+            c. Correct. Presentation with iron-deficiency anemia from occult bleeding is the classic hallmark of right-sided colon cancers.<br>
+            d. Incorrect. Change in bowel habit, such as constipation, is a common symptom of left-sided lesions.<br>
+            e. Incorrect. Lower abdominal pain, often colicky, can be a presenting symptom.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q17">
+        <p class="question-text"><span class="question-number">17.</span> The most common cause of acute pancreatitis:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Bile duct stone.</li>
+            <li class="option" data-correct="false">B. Alcoholism.</li>
+            <li class="option" data-correct="false">C. Diabetes Mellitus</li>
+            <li class="option" data-correct="false">D. Iatrogenic</li>
+            <li class="option" data-correct="false">E. Idiopathic</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct. Gallstones are the leading cause of acute pancreatitis worldwide.<br>
+            b. Incorrect. Alcohol abuse is the second most common cause.<br>
+            c. Incorrect. Diabetes is a consequence of chronic pancreatitis, not a common cause of acute pancreatitis.<br>
+            d. Incorrect. Iatrogenic causes (e.g., post-ERCP) are less common than gallstones or alcohol.<br>
+            e. Incorrect. Idiopathic is a diagnosis of exclusion after common causes are ruled out.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q20">
+        <p class="question-text"><span class="question-number">20.</span> The distinct steps of T3 and T4 synthesis are the following EXCEPT:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Trapping of inorganic iodine from the blood.</li>
+            <li class="option" data-correct="false">B. Oxidation of iodide to iodine</li>
+            <li class="option" data-correct="false">C. Binding of iodine with tyrosine to form iodotyrosines.</li>
+            <li class="option" data-correct="false">D. Coupling of mono-iodotyrosines and di-iodotyrosines to form T3 and T4.</li>
+            <li class="option" data-correct="true">E. No hormone remain free in the serum.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect. Iodide trapping is the first step.<br>
+            b. Incorrect. Oxidation of iodide is a necessary step.<br>
+            c. Incorrect. Organification (binding to tyrosine) is a key step.<br>
+            d. Incorrect. Coupling of iodotyrosines forms T3 and T4.<br>
+            e. Correct. This statement is false. A small but biologically active fraction of thyroid hormone circulates as free T3 and T4.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q21">
+        <p class="question-text"><span class="question-number">21.</span> Treatment of paralytic ileus include all of the following, except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Intravenous fluids.</li>
+            <li class="option" data-correct="false">B. Nasogastric suction</li>
+            <li class="option" data-correct="false">C. Correction of electrolytes imbalance.</li>
+            <li class="option" data-correct="true">D. Early operation.</li>
+            <li class="option" data-correct="false">E. Cessation of oral intake.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. IV fluids are essential for hydration.<br>
+            b. Incorrect. Nasogastric suction decompresses the stomach and prevents vomiting.<br>
+            c. Incorrect. Correcting electrolyte abnormalities (especially hypokalemia) is crucial.<br>
+            d. Correct. Paralytic ileus is a functional, not mechanical, issue. Surgery is not indicated and can worsen the condition.<br>
+            e. Incorrect. The bowel must be rested, so patients are kept NPO (nil per os).<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q22">
+        <p class="question-text"><span class="question-number">22.</span> Regarding anal fissures, all true, except:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. 90% occur in the anterior midline.</li>
+            <li class="option" data-correct="false">B. Multiple fissures suggest a diagnosis of Crohn's disease.</li>
+            <li class="option" data-correct="false">C. Anterior fissures are more common in postpartum women.</li>
+            <li class="option" data-correct="false">D. Sphincterotomy has a high success rate in healing of fissures</li>
+            <li class="option" data-correct="false">E. Minor fecal incontinence may occur after sphincterotomy.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Incorrect. This statement is false. Approximately 90% of anal fissures occur in the posterior midline.<br>
+            b. Correct. Multiple or off-midline fissures are atypical and suggest underlying systemic disease.<br>
+            c. Correct. Anterior fissures are more common in women, especially post-childbirth.<br>
+            d. Correct. Lateral internal sphincterotomy has a healing rate over 90% for chronic fissures.<br>
+            e. Correct. Minor incontinence is a recognized risk of sphincterotomy.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q23">
+        <p class="question-text"><span class="question-number">23.</span> With regard to colorectal polyps, which of the following is not considered precancerous?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Hyperplastic polyp</li>
+            <li class="option" data-correct="false">B. Tubular adenoma</li>
+            <li class="option" data-correct="false">C. Tubulovillous adenoma</li>
+            <li class="option" data-correct="false">D. Villous adenoma</li>
+            <li class="option" data-correct="false">E. Adenomatous polyp</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct. Small hyperplastic polyps are benign and have little to no malignant potential.<br>
+            b. Incorrect. Tubular adenomas are precancerous.<br>
+            c. Incorrect. Tubulovillous adenomas are precancerous.<br>
+            d. Incorrect. Villous adenomas have the highest malignant potential among adenomas.<br>
+            e. Incorrect. Adenomatous polyp is the general term for precancerous polyps.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q24">
+        <p class="question-text"><span class="question-number">24.</span> Acute perforation of duodenal ulcer may present by the following except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Severe generalized abdominal pain.</li>
+            <li class="option" data-correct="true">B. Colicky pain in lower abdomen.</li>
+            <li class="option" data-correct="false">C. Massive hematemesis if posterior ulcer eroding gastroduodenal artery.</li>
+            <li class="option" data-correct="false">D. X-ray films show gas under diaphragm.</li>
+            <li class="option" data-correct="false">E. Septic shock.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect. Sudden, severe, generalized abdominal pain is the classic presentation of perforation.<br>
+            b. Correct. The pain of peritonitis is constant and severe, not colicky (cramping).<br>
+            c. Incorrect. While hematemesis is from a bleeding ulcer, not perforation, colicky pain is a more fundamentally incorrect symptom description.<br>
+            d. Incorrect. Pneumoperitoneum (gas under the diaphragm) is a pathognomonic sign on X-ray.<br>
+            e. Incorrect. Delayed treatment leads to bacterial peritonitis and septic shock.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q25">
+        <p class="question-text"><span class="question-number">25.</span> True statement regarding the pathophysiology of acute appendicitis:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Fecaliths are responsible for approximately 30% of adult patients.</li>
+            <li class="option" data-correct="false">B. Lymphoid hyperplasia is a rare cause of appendicitis in young patients</li>
+            <li class="option" data-correct="false">C. Clostridium difficile is implicated as a pathogenic organism</li>
+            <li class="option" data-correct="false">D. Carcinoid tumors account for approximately 5% of all cases of acute appendicitis</li>
+            <li class="option" data-correct="false">E. Colonic cancer is a major cause.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct. Obstruction by a fecalith is a common cause of appendicitis in adults.<br>
+            b. Incorrect. Lymphoid hyperplasia is the most common cause in children and young adults.<br>
+            c. Incorrect. The infection is polymicrobial, caused by normal gut flora like E. coli, not C. difficile.<br>
+            d. Incorrect. Carcinoid tumors are a very rare cause of appendiceal obstruction.<br>
+            e. Incorrect. Cecal cancer can cause appendicitis in the elderly but is an uncommon cause overall.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q26">
+        <p class="question-text"><span class="question-number">26.</span> Regarding hepatic hemangioma:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. The most common symptom is jaundice</li>
+            <li class="option" data-correct="false">B. It is rare benign solid liver tumor</li>
+            <li class="option" data-correct="false">C. It carries a slight risk of malignant degeneration</li>
+            <li class="option" data-correct="true">D. Most patients are asymptomatic</li>
+            <li class="option" data-correct="false">E. Best diagnosed by biopsy and histologic evaluation</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. Jaundice is extremely rare; most hemangiomas are asymptomatic.<br>
+            b. Incorrect. It is the most common benign solid tumor of the liver.<br>
+            c. Incorrect. Hepatic hemangiomas have no malignant potential.<br>
+            d. Correct. The vast majority are discovered incidentally as they do not cause symptoms.<br>
+            e. Incorrect. Biopsy is contraindicated due to a high risk of hemorrhage; diagnosis is made by imaging.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-2">Score: 0 / 17</div>
+</div>
+
+<div class="section" data-section-id="3">
+    <h2 class="section-title">Vascular Surgery Questions</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q3">
+        <p class="question-text"><span class="question-number">3.</span> Regarding acute limb ischemia:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Arterial occlusion is worst in those with underling occlusive disease</li>
+            <li class="option" data-correct="false">B. Occurs more often in patients in sinus rhythm</li>
+            <li class="option" data-correct="false">C. Objective sensory require urgent treatment</li>
+            <li class="option" data-correct="false">D. Fixed skin staining is an early sign</li>
+            <li class="option" data-correct="false">E. Intra-arterial thrombolysis is invariably successful with no morbidity</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct. Patients with pre-existing peripheral arterial disease have poor collateral circulation, leading to more severe ischemia.<br>
+            b. Incorrect. It occurs more often in patients with atrial fibrillation, a common source of emboli.<br>
+            c. Incorrect. Sensory loss is an important sign, but motor loss is a more ominous sign of severe ischemia.<br>
+            d. Incorrect. Fixed skin staining (mottling) is a late sign of irreversible tissue damage.<br>
+            e. Incorrect. Thrombolysis is not always successful and carries significant risks like bleeding.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q19">
+        <p class="question-text"><span class="question-number">19.</span> Which of the following statements is correct regarding arterial injury?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. All arterial injuries are associated with absence of a palpable pulse.</li>
+            <li class="option" data-correct="false">B. Preoperative arteriography is required to diagnose an arterial injury.</li>
+            <li class="option" data-correct="false">C. The presence of Doppler signals indicates that an arterial injury has not occurred.</li>
+            <li class="option" data-correct="true">D. Patients with critical limb ischemia have paralysis and paresthesias.</li>
+            <li class="option" data-correct="false">E. In all patients with multiple trauma, arterial injuries should be repaired before other injuries are addressed.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. A pulse may still be present with a partial arterial injury or good collateral flow.<br>
+            b. Incorrect. Patients with "hard signs" of arterial injury should go directly to surgery without imaging delays.<br>
+            c. Incorrect. A Doppler signal confirms some flow but does not rule out a significant injury.<br>
+            d. Correct. Paralysis and paresthesias are key neurological signs of severe limb ischemia indicating nerve dysfunction.<br>
+            e. Incorrect. ATLS principles dictate "life over limb"; immediate life threats are addressed first.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-3">Score: 0 / 2</div>
+</div>
+
+<div class="section" data-section-id="4">
+    <h2 class="section-title">Plastic Surgery Questions</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q16">
+        <p class="question-text"><span class="question-number">16.</span> Regarding keloid scar:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. It is preventable</li>
+            <li class="option" data-correct="false">B. It is most common on lower extremities, lower back and abdomen</li>
+            <li class="option" data-correct="false">C. Histologically, keloid and hypertrophic scars are no different</li>
+            <li class="option" data-correct="true">D. Collagen type I is the predominant type found in keloid scar</li>
+            <li class="option" data-correct="false">E. It is limited to the area of wound healing</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. Keloids are very difficult to prevent in predisposed individuals.<br>
+            b. Incorrect. They are most common on the upper chest, shoulders, upper back, and earlobes.<br>
+            c. Incorrect. They are histologically different; keloids have thick, haphazard collagen bundles.<br>
+            d. Correct. Keloids have a significantly increased amount of collagen, with an increased ratio of type I to type III.<br>
+            e. Incorrect. This describes a hypertrophic scar; keloids, by definition, grow beyond the original wound boundaries.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-4">Score: 0 / 1</div>
+</div>
+
+<div class="section" data-section-id="5">
+    <h2 class="section-title">Neurosurgery Questions</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q27">
+        <p class="question-text"><span class="question-number">27.</span> The aim of surgery in treatment of depressed skull fractures is to:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. maintain mental status</li>
+            <li class="option" data-correct="false">B. ensure CSF circulation</li>
+            <li class="option" data-correct="false">C. prevent secondary epilepsy</li>
+            <li class="option" data-correct="true">D. alleviate pressure effect</li>
+            <li class="option" data-correct="false">E. repair bone defect</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. This is a general goal of head injury management, not the specific aim of the surgery.<br>
+            b. Incorrect. This is not the primary aim of fracture elevation.<br>
+            c. Incorrect. Preventing epilepsy is a secondary goal, not the primary indication.<br>
+            d. Correct. The main neurosurgical reason is to decompress the underlying brain and remove any associated hematoma causing a mass effect.<br>
+            e. Incorrect. Repairing the defect is also an objective, but relieving pressure on the brain is the critical neurological aim.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q28">
+        <p class="question-text"><span class="question-number">28.</span> Which of the following statements about astrocytomas is false?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. are gliomas.</li>
+            <li class="option" data-correct="false">B. can present with seizures.</li>
+            <li class="option" data-correct="false">C. The cell of origin is the astrocyte.</li>
+            <li class="option" data-correct="false">D. are radiosensitive tumours.</li>
+            <li class="option" data-correct="true">E. can usually be completely excised.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Correct. Astrocytomas are the most common type of glioma (tumors of glial cells).<br>
+            b. Correct. Seizures are a common presenting symptom of brain tumors.<br>
+            c. Correct. Astrocytomas arise from astrocytes by definition.<br>
+            d. Correct. Radiation therapy is a standard part of treatment for high-grade astrocytomas.<br>
+            e. Incorrect. This statement is false. Malignant astrocytomas are infiltrative, making complete surgical excision with clear margins nearly impossible.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q29">
+        <p class="question-text"><span class="question-number">29.</span> Raccon eye sign is a feature of</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. anterior fossa skull base fracture</li>
+            <li class="option" data-correct="false">B. middle fossa skull base fracture</li>
+            <li class="option" data-correct="false">C. posterior fossa skull base fracture</li>
+            <li class="option" data-correct="false">D. zygomatic bone fracture</li>
+            <li class="option" data-correct="false">E. Temporal bone fracture.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct. "Raccoon eyes" (bilateral periorbital ecchymosis) are a classic sign of a basilar skull fracture involving the anterior cranial fossa.<br>
+            b. Incorrect. Middle fossa fractures are associated with Battle's sign or CSF otorrhea.<br>
+            c. Incorrect. Posterior fossa fractures may cause Battle's sign.<br>
+            d. Incorrect. A zygomatic fracture causes localized bruising, not the bilateral pattern of raccoon eyes.<br>
+            e. Incorrect. A temporal bone fracture is part of the middle cranial fossa.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q30">
+        <p class="question-text"><span class="question-number">30.</span> A young age male with history of head assault presented in coma then regained consciousness then fall into deep coma. On examination he had dilated pupil ipsilateral to the trauma site. This scenario is suggestive of:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. brain contusion</li>
+            <li class="option" data-correct="true">B. extradural hematoma</li>
+            <li class="option" data-correct="false">C. subdural hematoma</li>
+            <li class="option" data-correct="false">D. brain concussion</li>
+            <li class="option" data-correct="false">E. diffuse axonal injury</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect. A brain contusion does not typically produce a lucid interval.<br>
+            b. Correct. This is the classic presentation of an extradural hematoma: initial loss of consciousness, a lucid interval, then rapid decline.<br>
+            c. Incorrect. Subdural hematomas usually have a slower, more gradual onset.<br>
+            d. Incorrect. Concussion is a transient disturbance that resolves, it does not cause progressive coma.<br>
+            e. Incorrect. Diffuse axonal injury causes immediate and prolonged unconsciousness with no lucid interval.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-5">Score: 0 / 4</div>
+</div>
+
+</body>
+</html>
+
+
+<!-- Add more sections here if needed, e.g. <div class="section" data-section-id="s2"> ... </div> -->
+
+
+
+
+
+
+
+
+
+<div class="bottom-nav-container">
+    <a href="#" class="main-button" id="home-button-subject">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <button id="reset-button" class="main-button">
+        <i class="fas fa-sync-alt"></i> Reset Progress
+    </button>
+</div>
+
+<script>
+// ====== SUBJECT PAGE LOGIC (DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING) ======
+const PAGE_ID = window.SUBJECT_SETTINGS.PAGE_ID;
+const ANSWERS_KEY = `${PAGE_ID}_answers`;
+const SCORES_KEY = `${PAGE_ID}_scores`;
+
+document.getElementById('dynamic-title-subject').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+document.getElementById('subject-page-title-display').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+const homeBtnSubject = document.getElementById('home-button-subject');
+if (homeBtnSubject) homeBtnSubject.href = window.SUBJECT_SETTINGS.HOME_LINK;
+
+const allSections = document.querySelectorAll('.section');
+let sectionScores = {};
+
+function saveState(sectionId, questionId, selectedOptionIndex, currentScore, totalQuestionsInSection) {
+    let answers = JSON.parse(localStorage.getItem(ANSWERS_KEY)) || {};
+    if (!answers[sectionId]) answers[sectionId] = {};
+    answers[sectionId][questionId] = {
+        selectedOptionIndex: selectedOptionIndex,
+        answered: true
+    };
+    localStorage.setItem(ANSWERS_KEY, JSON.stringify(answers));
+
+    let scores = JSON.parse(localStorage.getItem(SCORES_KEY)) || {};
+    if (!scores[sectionId]) scores[sectionId] = { score: 0, total: 0}; // Initialize if not exists
+    scores[sectionId] = { score: currentScore, total: totalQuestionsInSection };
+
+    // Update overall total for the page if not already set or if it changed
+    let overallTotal = 0;
+    allSections.forEach(sec => {
+        const secId = sec.dataset.sectionId;
+        const numQs = sec.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        // Ensure section total is also up-to-date in the scores object if initializing
+        if (!scores[secId] || scores[secId].total !== numQs) {
+             scores[secId] = scores[secId] || {score:0}; // preserve score if exists
+             scores[secId].total = numQs;
+        }
+    });
+    scores['all'] = scores['all'] || {};
+    scores['all'].total = overallTotal;
+
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+function applyOptionSelectionLogic(optionElement, questionContainer, isLoadTime = false) {
+    const explanation = questionContainer.querySelector('.explanation');
+    const allOptionsInQuestion = questionContainer.querySelectorAll('.option');
+    const section = questionContainer.closest('.section');
+    const sectionId = section.dataset.sectionId;
+    const scoreDisplay = section.querySelector(`#score-section-${sectionId}`); // Ensure ID matches
+    const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+
+    if (questionContainer.classList.contains('answered') && !isLoadTime) return; // Prevent re-answering
+
+    questionContainer.classList.add('answered');
+    const isCorrect = optionElement.dataset.correct === 'true';
+
+    let feedbackSpan = optionElement.querySelector('.feedback');
+    if (!feedbackSpan) {
+        feedbackSpan = document.createElement('span');
+        feedbackSpan.className = 'feedback';
+        optionElement.appendChild(feedbackSpan);
+    }
+    feedbackSpan.style.display = 'inline'; // Make sure it's visible
+
+    if (isCorrect) {
+        optionElement.classList.add('correct');
+        feedbackSpan.textContent = ' ✓ Correct!';
+        if (!isLoadTime) {
+            sectionScores[sectionId] = (sectionScores[sectionId] || 0) + 1;
+        }
+    } else {
+        optionElement.classList.add('incorrect');
+        feedbackSpan.textContent = ' ✗ Incorrect.';
+        allOptionsInQuestion.forEach(opt => {
+            if (opt.dataset.correct === 'true') {
+                opt.classList.add('reveal-correct'); // Use a distinct class for just revealing
+                let correctFeedback = opt.querySelector('.feedback');
+                if (!correctFeedback) {
+                    correctFeedback = document.createElement('span');
+                    correctFeedback.className = 'feedback';
+                    opt.appendChild(correctFeedback);
+                }
+                correctFeedback.textContent = ' (Correct Answer)'; // Simpler feedback
+                correctFeedback.style.display = 'inline';
+            }
+        });
+    }
+
+    if (explanation) explanation.style.display = 'block';
+    allOptionsInQuestion.forEach(opt => {
+        opt.style.cursor = 'default'; // Disable further clicks by changing cursor
+        // To truly disable, you might remove event listeners or set pointer-events: none
+    });
+
+    if (scoreDisplay) {
+        scoreDisplay.textContent = `Score: ${sectionScores[sectionId] || 0} / ${totalQuestionsInSection}`;
+    }
+
+    if (!isLoadTime) {
+        const optionIndex = Array.from(allOptionsInQuestion).indexOf(optionElement);
+        saveState(sectionId, questionContainer.dataset.questionId, optionIndex, sectionScores[sectionId] || 0, totalQuestionsInSection);
+    }
+}
+
+function loadState() {
+    const savedAnswersData = JSON.parse(localStorage.getItem(ANSWERS_KEY));
+    const savedScoresData = JSON.parse(localStorage.getItem(SCORES_KEY));
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        sectionScores[sectionId] = (savedScoresData && savedScoresData[sectionId]) ? savedScoresData[sectionId].score : 0;
+
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: ${sectionScores[sectionId]} / ${totalQuestionsInSection}`;
+        }
+
+        if (savedAnswersData && savedAnswersData[sectionId]) {
+            const questionsInSection = section.querySelectorAll('.question-container');
+            questionsInSection.forEach(qc => {
+                const questionId = qc.dataset.questionId;
+                const qData = savedAnswersData[sectionId][questionId];
+                if (qData && qData.answered && typeof qData.selectedOptionIndex === 'number') {
+                    const optionsInQ = qc.querySelectorAll('.option');
+                    if (qData.selectedOptionIndex >= 0 && qData.selectedOptionIndex < optionsInQ.length) {
+                        const selectedOptionEl = optionsInQ[qData.selectedOptionIndex];
+                        if (selectedOptionEl) {
+                           applyOptionSelectionLogic(selectedOptionEl, qc, true); // True for isLoadTime
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function resetState() {
+    localStorage.removeItem(ANSWERS_KEY);
+    localStorage.removeItem(SCORES_KEY); // Also remove scores to reset counts
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Reset internal score tracking
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+
+        section.querySelectorAll('.question-container').forEach(qc => {
+            qc.classList.remove('answered');
+            const explanation = qc.querySelector('.explanation');
+            if (explanation) explanation.style.display = 'none';
+
+            qc.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('correct', 'incorrect', 'reveal-correct');
+                opt.style.cursor = 'pointer'; // Re-enable cursor
+                const feedback = opt.querySelector('.feedback');
+                if (feedback) {
+                    feedback.textContent = '';
+                    feedback.style.display = 'none'; // Hide feedback
+                }
+            });
+        });
+
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: 0 / ${totalQuestionsInSection}`;
+        }
+    });
+    // After resetting, re-initialize the total questions for the page in localStorage
+    initializePageTotalQuestions();
+}
+
+function initializePageTotalQuestions() {
+    let overallTotal = 0;
+    const scores = {}; // Start with a fresh scores object for initialization
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const numQs = section.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        scores[sectionId] = { score: 0, total: numQs }; // Initialize section scores
+    });
+    scores['all'] = { total: overallTotal };
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize sectionScores for all sections on the page
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Initialize score to 0
+    });
+
+    // Attempt to load saved state
+    loadState();
+
+    // If no scores are loaded (e.g., first visit or after reset), initialize totals
+    if (!localStorage.getItem(SCORES_KEY)) {
+        initializePageTotalQuestions();
+    } else { // If scores exist, ensure 'all.total' is up-to-date
+        let existingScores = JSON.parse(localStorage.getItem(SCORES_KEY));
+        let currentOverallTotal = 0;
+        allSections.forEach(section => {
+            currentOverallTotal += section.querySelectorAll('.question-container').length;
+        });
+        if (!existingScores.all || existingScores.all.total !== currentOverallTotal) {
+            existingScores.all = existingScores.all || {};
+            existingScores.all.total = currentOverallTotal;
+            localStorage.setItem(SCORES_KEY, JSON.stringify(existingScores));
+        }
+    }
+
+
+    allSections.forEach(section => {
+        const options = section.querySelectorAll('.option');
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                const questionContainer = this.closest('.question-container');
+                if (!questionContainer.classList.contains('answered')) { // Only process if not answered
+                    applyOptionSelectionLogic(this, questionContainer, false); // False for isLoadTime
+                }
+            });
+        });
+    });
+
+    const resetButtonSubject = document.getElementById('reset-button');
+    if (resetButtonSubject) {
+        resetButtonSubject.addEventListener('click', resetState);
+    }
+});
+</script>
+<footer style="text-align: center; padding: 2em 1em 1em; font-size: 14px; color: #3a3a3a; width:100%; box-sizing:border-box;">
+    © <span id="currentYear"></span> Developed by
+    <a href="https://github.com/Philonoist7" target="_blank" class="footer-link">
+      <strong>Ali Hussein</strong>
+    </a>
+    <script>
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+    <style>
+      .footer-link {
+        color: #004992;
+        text-decoration: none;
+        transition: color 0.2s, border-bottom-color 0.2s;
+      }
+      .footer-link:hover {
+        color: #003366;
+        border-bottom: 1.5px solid #003366;
+      }
+    </style>
+    </footer>
+</body>
+</html>

@@ -37,12 +37,19 @@
             padding-top: 80px; /* Space for fixed header */
             color: var(--text-color);
         }
+        .title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
         .page-title {
             font-size: 2.5em;
             font-weight: 700;
             color: var(--text-color);
-            margin-bottom: 40px;
             text-align: center;
+            margin: 0;
         }
         .container {
             display: flex;
@@ -285,7 +292,7 @@
             height: 44px;
             background: var(--primary-color, #007bff);
             color: #fff;
-            border-radius: 0;
+            border-radius: var(--border-radius);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -316,69 +323,20 @@
         Change these variables for each new main page or to quickly update subjects.
     */
     window.MAIN_PAGE_SETTINGS = {
-        TITLE: 'QBank of TUCOM',
+        TITLE: 'QBank of TUCOM - S2',
         SUBJECTS: [
-            {
-                name: 'Stage One',
-                link: 'S1/S1.html',
-                colorClass: 'stage-one',
-                iconClass: 'fas fa-1',
-                pageId: 'stage_one'
-            },
-            {
-                name: 'Stage Two',
-                link: 'S2/S2.html',
-                colorClass: 'stage-two',
-                iconClass: 'fas fa-2',
-                pageId: 'stage_two'
-            },
-            {
-                name: 'Stage Three',
-                link: 'S3/S3.html',
-                colorClass: 'stage-three',
-                iconClass: 'fas fa-3',
-                pageId: 'stage_three'
-            },
-            {
-                name: 'Stage Four',
-                link: 'S4/S4.html',
-                colorClass: 'stage-four',
-                iconClass: 'fas fa-4',
-                pageId: 'stage_four'
-            },
-            {
-                name: 'Stage Five',
-                link: 'S5/S5.html',
-                colorClass: 'stage-five',
-                iconClass: 'fas fa-5',
-                pageId: 'stage_five'
-            },
-            {
-                name: 'Stage Six',
-                link: 'S6/S6.html',
-                colorClass: 'stage-six',
-                iconClass: 'fas fa-6',
-                pageId: 'stage_six'
-            }
+            // No subjects yet
         ]
     };
-    /* ====== END MAIN_PAGE_SETTINGS ====== */
-
     /*
-        ====== PROGRESS HANDLING FOR MAIN PAGE ======
-        - `SUMMARY_SUBJECTS`: List pageIds that represent aggregated summaries
-          (typically GROUP_KEYs from group_qbank.html pages).
-        - For these, progress is read from localStorage keys like `${pageId}_summary_scores`.
-        hi
-        - For other pageIds, progress is calculated from `${pageId}_answers` and `${pageId}_scores`.
+        ====== SHORTCUT: HOW TO HANDLE PROGRESS FOR EACH SUBJECT ======
+        - To use a summary from a group page (like ENT or Ophthalmology), add its pageId to SUMMARY_SUBJECTS.
+        - The summary must be saved in localStorage as `${pageId}_summary_scores` and `${pageId}_summary_answers`.
+        - For normal subjects, progress is calculated from their own localStorage keys.
     */
     window.MAIN_PROGRESS_SHORTCUT = {
-        SUMMARY_SUBJECTS: [
-            'stage_one', 'stage_two', 'stage_three', 'stage_four', 'stage_five', 'stage_six'
-        ]
-
+        SUMMARY_SUBJECTS: []
     };
-    /* ====== END PROGRESS HANDLING SETTINGS ====== */
     </script>
 </head>
 
@@ -388,12 +346,8 @@
         /* Add your custom subject color classes here if needed */
         /* Example: .subject-box.subject i { color: #yourcolor; } */
 
-        .subject-box.stage-one i { color: #000000; }    /* Black for Stage One */
-        .subject-box.stage-two i { color: #000000; }    /* Black for Stage Two */
-        .subject-box.stage-three i { color: #000000; }  /* Black for Stage Three */
-        .subject-box.stage-four i { color: #000000; }   /* Black for Stage Four */
-        .subject-box.stage-five i { color: #000000; }   /* Black for Stage Five */
-        .subject-box.stage-six i { color: #000000; }    /* Black for Stage Six */
+        .subject-box.editme i { color: #e7a33c; } /* Example: Red for  */
+        
 
 </style>
       
@@ -405,14 +359,20 @@
         <span class="quran-verse">وَقُل رَّبِّ زِدْنِي عِلْمًا</span>
     </div>
 
-    <h1 class="page-title" id="main-page-title-display"></h1>
+    <div class="title-container">
+        <a href="../index.html" class="back-main-btn" title="Back to Main Page">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="page-title" id="main-page-title-display"></h1>
+    </div>
+
 
     <!-- ====== PIN BOARD CONTENT ====== -->
     <div id="pin-board"> <!-- Remove dir="rtl" and text-align:right if not using Arabic -->
         <h2>📌 Pin Board</h2> <!-- <--- EDIT THIS: Pin board title -->
         <ul>
             <li>Good Luck :)</li> <!-- <--- EDIT THIS: Pin board item 1 -->
-            <!-- <--- EDIT THIS: Pin board item 2 -->
+                <!-- <--- EDIT THIS: Pin board item 2 -->
             <!-- Add more <li> items as needed -->
         </ul>
     </div>

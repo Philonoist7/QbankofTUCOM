@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ====== SUBJECT PAGE SETTINGS ====== -->
+
+<script>
+/*
+    ====== EDIT ONLY THIS BLOCK FOR NEW SUBJECTS ======
+    Change these variables for each new subject page.
+*/
+(function() {
+    // Get filename without extension for PAGE_ID
+    const path = window.location.pathname;
+    const file = path.substring(path.lastIndexOf('/') + 1) || path.substring(path.lastIndexOf('\\') + 1);
+    const pageIdAuto = file.replace(/\.[^/.]+$/, ""); // Remove extension
+
+    window.SUBJECT_SETTINGS = {
+        
+
+
+        PAGE_TITLE: 'QBank - 2023-2024 MCQs', // <--- EDIT THIS: Title for this subject page.
+        HOME_LINK: 'surgery_qbank.html',      // <--- EDIT THIS: Link back to the group page or main.html.
+
+
+        PAGE_ID: pageIdAuto,      // Automatically set from filename
+    
+    
+    
+    };
+})();
+</script>
+
+<title id="dynamic-title-subject">Subject QBank</title>
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- Google Fonts - Open Sans (example, or keep Montserrat) -->
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Amiri Font for Arabic Text -->
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+
+
+
+<style>
+/* Styles for the question page */
+body {
+    font-family: 'Open Sans', Arial, sans-serif; /* Example: Changed font */
+    line-height: 1.7; /* Increased line height for readability */
+    margin: 0;
+    padding: 20px;
+    background-color: #eef1f5; /* Lighter background */
+    padding-top: 80px; /* Space for fixed header */
+    padding-bottom: 100px; /* Space for bottom nav */
+}
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50; /* Darker header */
+    color: #ecf0f1;
+    padding: 6px 0;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16); /* Softer shadow */
+}
+.fixed-header .made-by-prefix { color: #bdc3c7; } /* Lighter prefix text */
+.fixed-header a { color: #3498db; text-decoration: none; font-weight: bold; }
+.fixed-header a:hover { text-decoration: underline; color: #5dade2; }
+.fixed-header .quran-verse {
+    display: inline-block;
+    font-family: 'Amiri', 'Scheherazade', serif;
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #ffae00;
+    letter-spacing: 0.5px;
+    padding: 0.2em 1em;
+    border-radius: 8px;
+    margin-left: 10px;
+    margin-right: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    direction: rtl;
+}
+@media (max-width: 600px) {
+    .fixed-header .quran-verse {
+        font-size: 1em;
+        padding: 0.2em 0.5em;
+    }
+}
+
+.page-main-title {
+    font-size: 2.2em;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.section {
+    margin-bottom: 35px; /* Increased space between sections */
+    background-color: #ffffff;
+    padding: 25px; /* Increased padding */
+    border-radius: 10px; /* More rounded corners */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Softer, larger shadow */
+    max-width: 800px; /* Max width for content readability */
+    margin-left: auto;
+    margin-right: auto;
+}
+.section-title {
+    font-size: 1.6em; /* Adjusted size */
+    color: #34495e; /* Dark blue-gray */
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eaecee; /* Lighter border */
+    padding-bottom: 12px;
+    font-weight: 600;
+}
+.question-container {
+    margin-bottom: 30px; /* More space between questions */
+    padding: 20px;
+    border: 1px solid #dce4ec; /* Lighter border */
+    border-radius: 8px;
+    background-color: #fdfdfd; /* Very light background for question */
+    transition: box-shadow 0.3s ease;
+}
+.question-container:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.question-container.answered { background-color: #f8f9fa; }
+.question-number {
+    font-weight: 700; /* Bolder question number */
+    color: #007bff; /* Primary color for question number */
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+.question-text {
+    font-size: 1.1em;
+    color: #343a40; /* Standard text color */
+    margin-bottom: 18px; /* More space below question text */
+    line-height: 1.6;
+}
+ul.options { list-style: none; padding: 0; margin: 0; }
+li.option {
+    background-color: #f1f5f9; /* Light gray-blue for options */
+    margin-bottom: 12px; /* More space between options */
+    padding: 12px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-left 0.2s ease;
+    border: 1px solid #d1d9e2;
+    border-left: 4px solid transparent; /* For hover/selection indication */
+    position: relative;
+    user-select: none; /* Prevent text selection on click */
+    font-size: 1em;
+    color: #333;
+}
+li.option:hover:not(.answered li.option) {
+    background-color: #e4e9f0;
+    border-left-color: #007bff; /* Blue accent on hover */
+}
+.question-container.answered li.option { cursor: default; } /* No hover effect after answered */
+.question-container.answered li.option:hover { background-color: #f1f5f9; border-left-color: transparent; } /* Reset hover for answered */
+
+li.option.correct:hover, li.option.reveal-correct:hover { background-color: #d4edda !important; border-left-color: #28a745 !important; }
+li.option.incorrect:hover { background-color: #f8d7da !important; border-left-color: #dc3545 !important; }
+
+li.option.correct {
+    background-color: #d4edda !important; /* Ensure override */
+    border-color: #c3e6cb !important;
+    border-left: 4px solid #28a745 !important; /* Green for correct */
+    color: #155724;
+    font-weight: 600;
+}
+li.option.incorrect {
+    background-color: #f8d7da !important;
+    border-color: #f5c6cb !important;
+    border-left: 4px solid #dc3545 !important; /* Red for incorrect */
+    color: #721c24;
+    font-weight: 600;
+}
+.feedback { display: none; font-weight: bold; margin-left: 10px; }
+li.option.correct .feedback, li.option.incorrect .feedback { display: inline; }
+.correct .feedback { color: #155724; }
+.incorrect .feedback { color: #721c24; }
+
+li.option.reveal-correct { /* Style for showing the correct answer when user was wrong */
+    background-color: #d1ecf1 !important; /* Light info blue */
+    border-color: #bee5eb !important;
+    border-left: 4px solid #17a2b8 !important; /* Info blue */
+    color: #0c5460 !important;
+    font-weight: 600 !important;
+}
+.explanation {
+    display: none;
+    margin-top: 20px; /* More space above explanation */
+    padding: 15px;
+    background-color: #e9ecef; /* Slightly darker explanation background */
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    color: #495057;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+.explanation strong { color: #333; } /* Make "Correct answer:" part darker */
+
+.section-score {
+    margin-top: 30px;
+    font-size: 1.25em; /* Larger score text */
+    font-weight: bold;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    padding: 12px;
+    background-color: #e2f0fb; /* Light blue score background */
+    border: 1px solid #a8cff3; /* Softer blue border */
+    border-radius: 8px;
+}
+.bottom-nav-container {
+    position: fixed;
+    bottom: 0; /* Flush to bottom */
+    left: 0;
+    width: 100%;
+    background-color: #ffffff; /* White background for nav */
+    padding: 8px 0; /* Padding top/bottom */
+    z-index: 1001;
+    display: flex;
+    justify-content: center; /* Center buttons */
+    gap: 20px; /* Increased gap */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* Shadow at the top */
+    border-top: 1px solid #e0e0e0;
+}
+.main-button {
+    background-color: #007bff; /* Primary blue */
+    color: #ffffff;
+    padding: 10px 16px; /* Adjusted padding */
+    font-size: 1em; /* Standard font size */
+    text-decoration: none;
+    font-weight: 600; /* Bolder text */
+    border-radius: 25px; /* Pill shape */
+    box-shadow: 0 3px 7px rgba(0,123,255,0.3); /* Softer shadow related to button color */
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-button i { margin-right: 10px; font-size: 1.1em; } /* Slightly larger icon */
+.main-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,123,255,0.4);
+}
+a.main-button:hover { background-color: #0069d9; } /* Darker blue on hover */
+#reset-button { background-color: #e74c3c; box-shadow: 0 3px 7px rgba(231,76,60,0.3); } /* Red reset button */
+#reset-button:hover { background-color: #c0392b; box-shadow: 0 5px 10px rgba(192,57,43,0.4); }
+
+@media (max-width: 768px) {
+    body { padding: 15px; padding-top: 70px; padding-bottom: 90px; }
+    .page-main-title { font-size: 1.8em; }
+    .section { padding: 20px; }
+    .section-title { font-size: 1.4em; }
+    .question-text { font-size: 1em; }
+    li.option { padding: 10px 15px; font-size: 0.95em;}
+    .section-score { font-size: 1.15em; }
+}
+@media (max-width: 480px) {
+    body { padding: 10px; padding-top: 60px; padding-bottom: 80px; }
+    .page-main-title { font-size: 1.6em; margin-bottom: 20px;}
+    .section { padding: 15px; }
+    .section-title { font-size: 1.3em; margin-bottom: 20px; }
+    .question-container { padding: 15px; }
+    .question-text { font-size: 0.95em; }
+    li.option { padding: 10px 12px; font-size: 0.9em;}
+    .explanation { font-size: 0.9em; padding: 10px;}
+    .section-score { font-size: 1.1em; padding: 10px;}
+    .bottom-nav-container { padding: 10px 0; gap: 15px;}
+    .main-button { padding: 8px 16px; font-size: 0.9em;}
+}
+
+</style>
+</head>
+<body>
+<div class="fixed-header">
+    <span class="quran-verse">وَقُل رَّبِّ زِدْنِي عِلْمًا</span>
+</div>
+
+
+
+<h1 class="page-main-title" id="subject-page-title-display">Subject Questions</h1>
+
+
+<!--
+    ====== ADD YOUR QUESTIONS CONTENT BELOW ======
+    - Each section needs a unique data-section-id (e.g., "s1", "s2").
+      This ID is used for the score display (e.g., score-section-s1).
+    - Each question-container needs a unique data-question-id within its section (e.g., "q1", "q2").
+    - Mark the correct option with data-correct="true".
+-->
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">General Surgery, Trauma & Anesthesia Questions</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q1">
+        <p class="question-text"><span class="question-number">1.</span> A 25-year-old woman, weighing 65 Kg, is having a sebaceous cyst excised from her mid back. You are asked to infiltrate local anesthetic around the area before the sebaceous cyst can be removed. Which of the following is the maximum safe dose of lidocaine that can be used before it reaches toxic levels?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. 250 mg</li>
+            <li class="option" data-correct="false">B. 200 mg</li>
+            <li class="option" data-correct="true">C. 195 mg</li>
+            <li class="option" data-correct="false">D. 160 mg</li>
+            <li class="option" data-correct="false">E. 120 mg</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: 250 mg exceeds the lower limit of the safe range for plain lidocaine.<br>
+            b. Incorrect: 200 mg is slightly above the most conservative calculation for the maximum safe dose.<br>
+            c. Correct: The maximum safe dose of plain lidocaine is 3 mg/kg. For a 65 kg patient, this is 65 * 3 = 195 mg.<br>
+            d. Incorrect: This is well below the calculated maximum safe dose.<br>
+            e. Incorrect: This is well below the calculated maximum safe dose.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q2">
+        <p class="question-text"><span class="question-number">2.</span> A 72-year-old woman is about to undergo an elective total hip replacement for osteoarthritis. She has a history of hypertension and type 2 diabetes mellitus but no ischemic heart disease or peripheral vascular disease. Which of the following is the most appropriate thromboembolic prophylaxis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Intermittent pneumatic calf compression</li>
+            <li class="option" data-correct="false">B. Calf-length thromboembolic deterrent elastic stockings and early ambulation</li>
+            <li class="option" data-correct="false">C. Full-dose unfractionated heparin to increase the activated partial thromboplastin time to two time control</li>
+            <li class="option" data-correct="false">D. Insertion of an inferior vena cava filter</li>
+            <li class="option" data-correct="true">E. Subcutaneous low-molecular-weight heparin</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect: Intermittent pneumatic compression is useful, but chemical prophylaxis is superior for this high-risk surgery.<br>
+            b. Incorrect: Elastic stockings and ambulation are insufficient as sole prophylaxis for a total hip replacement.<br>
+            c. Incorrect: Full-dose heparin is for treatment of a DVT/PE, not prophylaxis, due to high bleeding risk.<br>
+            d. Incorrect: An IVC filter is used for patients with proven DVT/PE who cannot be anticoagulated.<br>
+            e. Correct: Low-molecular-weight heparin is the standard of care for VTE prophylaxis in major orthopedic surgery.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q3">
+        <p class="question-text"><span class="question-number">3.</span> A 22-year-old man (O blood group) sustained a splenic injury in a road traffic accident. He is undergoing a transfusion of 4 units prior to surgery. You are asked to review the patient 10 minutes into the transfusion as he has become unwell and agitated. He has pyrexia (39.5°C) with associated tachycardia (120 beats/min) and hypotension (80/50 mmHg). Which of the following is the most likely cause?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Non-hemolytic febrile transfusion reaction</li>
+            <li class="option" data-correct="false">B. Transfusion-related acute lung injury</li>
+            <li class="option" data-correct="false">C. Bacterial contamination</li>
+            <li class="option" data-correct="false">D. Air embolus</li>
+            <li class="option" data-correct="true">E. Hemolytic transfusion reaction (ABO incompatibility)</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect: A non-hemolytic febrile reaction does not cause severe hypotension and agitation.<br>
+            b. Incorrect: TRALI presents primarily with acute respiratory distress.<br>
+            c. Incorrect: Bacterial contamination can cause shock, but the onset is rarely this rapid (10 minutes).<br>
+            d. Incorrect: Air embolism presents with sudden cardiovascular collapse, not typically with high fever.<br>
+            e. Correct: The rapid onset of fever, hypotension, tachycardia, and agitation is classic for an acute hemolytic transfusion reaction.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q4">
+        <p class="question-text"><span class="question-number">4.</span> A 35-year-old man is admitted after severing his arm on industrial machinery. His airway is patent and there is no identifiable hindrance to breathing. His pulse is 110 beats/min, blood pressure is 130/105 mmHg, and respiratory rate is 25 breaths/min. Which stage of shock is this patient in?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Class I</li>
+            <li class="option" data-correct="true">B. Class II</li>
+            <li class="option" data-correct="false">C. Class III</li>
+            <li class="option" data-correct="false">D. Class IV</li>
+            <li class="option" data-correct="false">E. Impossible to say from given information</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Class I shock has minimal changes to vital signs.<br>
+            b. Correct: The vital signs (HR 100-120, RR 20-30, normal BP with narrowed pulse pressure) fit Class II shock (15-30% blood loss).<br>
+            c. Incorrect: Class III shock involves a drop in blood pressure and more severe tachycardia/tachypnea.<br>
+            d. Incorrect: Class IV shock involves profound hypotension and is immediately life-threatening.<br>
+            e. Incorrect: The information provided is sufficient for classification.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q20">
+        <p class="question-text"><span class="question-number">20.</span> Forty five years old fairy female presented with sever right abdominal pain and vomitting. The expected ultrasound findings, All true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. increased wall thickness of gall bladder</li>
+            <li class="option" data-correct="false">B. gall bladder stone</li>
+            <li class="option" data-correct="true">C. the patient should not be fasting</li>
+            <li class="option" data-correct="false">D. MRCP done to exclude CBD stones</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Increased wall thickness is a true sign of cholecystitis.<br>
+            b. Incorrect: Gallstones are a common finding and cause of cholecystitis.<br>
+            c. Correct: This is false. Patients must be fasting for a gallbladder ultrasound to ensure the gallbladder is distended.<br>
+            d. Incorrect: MRCP is a true and appropriate next step if CBD stones are suspected.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q22">
+        <p class="question-text"><span class="question-number">22.</span> [chose one most appropriate answer regarding the causes of difficult endotracheal intubation]</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. short thick neck.</li>
+            <li class="option" data-correct="false">B. limited mouth opening.</li>
+            <li class="option" data-correct="false">C. prominent front incisors.</li>
+            <li class="option" data-correct="false">D. limited neck movement.</li>
+            <li class="option" data-correct="true">E. all the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect: A short, thick neck is a predictor, but not the only one listed.<br>
+            b. Incorrect: Limited mouth opening is a predictor, but not the only one listed.<br>
+            c. Incorrect: Prominent incisors are a predictor, but not the only one listed.<br>
+            d. Incorrect: Limited neck movement is a predictor, but not the only one listed.<br>
+            e. Correct: All listed factors are well-known predictors of a difficult intubation.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q23">
+        <p class="question-text"><span class="question-number">23.</span> A 30 years man admitted to the emergency department after Road traffic accident, chest x.ray show abdominal viscera in the left hemithorax, which is the most likely diagnoses?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Sliding esophageal hernia.</li>
+            <li class="option" data-correct="false">B. Repture of esophagus.</li>
+            <li class="option" data-correct="true">C. Repture of diaphragm.</li>
+            <li class="option" data-correct="false">D. Bochdalek hernia.</li>
+            <li class="option" data-correct="false">E. Dextrocardia.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: A sliding hiatal hernia is a chronic, non-traumatic condition.<br>
+            b. Incorrect: Esophageal rupture presents with pneumomediastinum, not herniated viscera.<br>
+            c. Correct: Abdominal organs in the chest after trauma is the classic sign of a traumatic diaphragmatic rupture.<br>
+            d. Incorrect: A Bochdalek hernia is a congenital defect, not traumatic.<br>
+            e. Incorrect: Dextrocardia is a congenital condition where the heart is on the right side.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q24">
+        <p class="question-text"><span class="question-number">24.</span> A 50 years old man presented with pallor and dyspenia on exertion, he has no abdominal pain, he has microcytic hypochromic anemia, the most likely diagnoses is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Diverticulosis of colon.</li>
+            <li class="option" data-correct="false">B. Peptic ulcer diseases.</li>
+            <li class="option" data-correct="false">C. Crohn's diseases.</li>
+            <li class="option" data-correct="true">D. Carcinoma of right colon.</li>
+            <li class="option" data-correct="false">E. All of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: Diverticular bleeding is typically acute and massive, not chronic and occult.<br>
+            b. Incorrect: While possible, malignancy is the most likely cause to rule out in this demographic.<br>
+            c. Incorrect: Crohn's disease usually presents with significant abdominal symptoms.<br>
+            d. Correct: Unexplained iron deficiency anemia in a man over 50 is considered to be from a right-sided colon cancer until proven otherwise.<br>
+            e. Incorrect: Carcinoma of the right colon is the most probable diagnosis.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q25">
+        <p class="question-text"><span class="question-number">25.</span> A 20 years female admitted for elective splenectomy, mostly she has:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Hereditary neurofibromatosis</li>
+            <li class="option" data-correct="false">B. Aplasic anemia.</li>
+            <li class="option" data-correct="true">C. Hereditary spherocytosis.</li>
+            <li class="option" data-correct="false">D. Pheochromocytoma.</li>
+            <li class="option" data-correct="false">E. Hashimoto's disease.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Splenectomy is not a treatment for neurofibromatosis.<br>
+            b. Incorrect: Splenectomy is not a treatment for aplastic anemia.<br>
+            c. Correct: Hereditary spherocytosis is a classic indication for splenectomy to stop the destruction of fragile red blood cells.<br>
+            d. Incorrect: Pheochromocytoma is a tumor of the adrenal gland.<br>
+            e. Incorrect: Hashimoto's is an autoimmune disease of the thyroid gland.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q26">
+        <p class="question-text"><span class="question-number">26.</span> A 45 years female presented with repeated vomiting due to gastric outlet obstruction, the metabolic changes that may have:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Hypokalemic hypernatremic metabolic alkalosis.</li>
+            <li class="option" data-correct="false">B. Hypochloremic hyponatremic metabolic acidosis.</li>
+            <li class="option" data-correct="true">C. Hypchloremic hypokalemic metabolic alkakosis.</li>
+            <li class="option" data-correct="false">D. All of the above.</li>
+            <li class="option" data-correct="false">E. Non of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Hypernatremia is not the characteristic finding.<br>
+            b. Incorrect: Vomiting causes a loss of acid, leading to alkalosis, not acidosis.<br>
+            c. Correct: Loss of hydrochloric acid (HCl) and potassium (K+) from vomiting leads to hypochloremic, hypokalemic metabolic alkalosis.<br>
+            d. Incorrect: Not all options are correct.<br>
+            e. Incorrect: A characteristic metabolic derangement occurs.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q28">
+        <p class="question-text"><span class="question-number">28.</span> [All of the following are manifestations of tracheobronchial injury except]</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Pneumothoracic</li>
+            <li class="option" data-correct="false">B. Mediastinal emphysema</li>
+            <li class="option" data-correct="true">C. Fibrothoracic</li>
+            <li class="option" data-correct="false">D. Surgical emphysema</li>
+            <li class="option" data-correct="false">E. Hemoptysis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Pneumothorax is a common acute manifestation due to air leak.<br>
+            b. Incorrect: Mediastinal emphysema is common from air tracking into the mediastinum.<br>
+            c. Correct: Fibrothorax is a late complication of conditions like hemothorax or empyema, not an acute sign of airway injury.<br>
+            d. Incorrect: Surgical (subcutaneous) emphysema is common as air tracks into soft tissues.<br>
+            e. Incorrect: Hemoptysis is a common sign due to bleeding from the injury site.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 11</div>
+</div>
+
+<div class="section" data-section-id="2">
+    <h2 class="section-title">Orthopedics Questions</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">5.</span> 30 yrs. old male sustained RTA with multiple injuries. X-ray shows fracture of mid shaft left tibia with 12 cm wound. Vital signs was BP 90/40 PULS with inability to move his lower limb. Neurological examination would include:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Anterior longitudinal column, which is best examined by pain and temperature.</li>
+            <li class="option" data-correct="false">B. Posterior longitudinal column, which is best examined by reflexes and vibration.</li>
+            <li class="option" data-correct="false">C. Lateral longitudinal column which is best examined by motor function.</li>
+            <li class="option" data-correct="false">D. Great toe flexion can be prognostic indicator.</li>
+            <li class="option" data-correct="true">E. Neurological examination must be done prior to patient resuscitation.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect: The phrasing is anatomically incorrect and this is not the priority.<br>
+            b. Incorrect: The phrasing is anatomically incorrect and this is not the priority.<br>
+            c. Incorrect: The phrasing is anatomically incorrect and this is not the priority.<br>
+            d. Incorrect: While motor function is an important indicator, it should not be assessed before resuscitation.<br>
+            e. Correct: The patient is in shock (hypotensive) and unstable. According to ATLS principles, resuscitation (Airway, Breathing, Circulation) is the absolute priority before a detailed secondary survey, which includes a full neurological exam.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">6.</span> A 7 years old boy fall on his outstretched hand and presented to emergency room complaining from sever elbow pain, limited elbow movements and swelling, lateral view x ray of injured elbow shows anterior humeral line pass anterior to capitellum. The most common nerve injury in this fracture is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Radial nerve</li>
+            <li class="option" data-correct="false">B. Musculocutaneous nerve</li>
+            <li class="option" data-correct="true">C. Median nerve</li>
+            <li class="option" data-correct="false">D. Ulnar nerve</li>
+            <li class="option" data-correct="false">E. Posterior interosseous nerve</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Radial nerve injury is less common than median nerve injury in this fracture type.<br>
+            b. Incorrect: Musculocutaneous nerve injury is very rare in supracondylar fractures.<br>
+            c. Correct: The x-ray describes a supracondylar humerus fracture. The median nerve (specifically the anterior interosseous branch) is the most commonly injured nerve in this fracture pattern.<br>
+            d. Incorrect: Ulnar nerve injury is more common in flexion-type fractures.<br>
+            e. Incorrect: The posterior interosseous nerve is a branch of the radial nerve, more commonly injured in forearm fractures.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">7.</span> A 24-year-old man sustains a twisting injury to his knee, with his body turning outwards (the tibia rotates inwards) as he falls while climbing a mountain. His binding fails to release and he feels a crack in his knee. Nothing seems to be out of place, but it swells immediately and he has to be brought down off the mountain on a stretcher. He has a positive Lachman's test. The most likely diagnosis:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Lateral collateral ligament injury</li>
+            <li class="option" data-correct="false">B. Medial collateral ligament injury</li>
+            <li class="option" data-correct="false">C. Meniscal injury</li>
+            <li class="option" data-correct="true">D. Anterior cruciate ligament injury</li>
+            <li class="option" data-correct="false">E. Posterior cruciate ligament injury</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: LCL injury does not typically cause a large, rapid hemarthrosis.<br>
+            b. Incorrect: MCL injury is not associated with a positive Lachman's test.<br>
+            c. Incorrect: Meniscal tears cause a delayed effusion, not immediate swelling.<br>
+            d. Correct: The mechanism (twisting), "crack," immediate swelling (hemarthrosis), and positive Lachman's test are all classic for an ACL tear.<br>
+            e. Incorrect: PCL injuries result from a different mechanism and are diagnosed with a posterior drawer test.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q13">
+        <p class="question-text"><span class="question-number">13.</span> 8 years male complaining of pain and limitation of the movement the knee joint. He is also experiencing fever....and history of fall on ground before 3 days ago, the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. chronic osteomyelitis</li>
+            <li class="option" data-correct="false">B. acute osteomyelitis</li>
+            <li class="option" data-correct="false">C. TB. Arthritis</li>
+            <li class="option" data-correct="true">D. septic arthritis</li>
+            <li class="option" data-correct="false">E. Gout</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: Chronic osteomyelitis has an indolent course, not an acute presentation.<br>
+            b. Incorrect: While possible, severe limitation of joint movement points to an intra-articular process.<br>
+            c. Incorrect: Tuberculous arthritis is a chronic, not acute, infection.<br>
+            d. Correct: The acute onset of fever, severe joint pain, and marked limitation of movement in a child is classic for septic arthritis.<br>
+            e. Incorrect: Gout is extremely rare in children.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q14">
+        <p class="question-text"><span class="question-number">14.</span> A 75-year-old female presented to the outpatient department with severe pain in her right hip. We obtained a history of breast cancer that was treated with a mastectomy and chemotherapy five years ago. X-rays revealed lytic Lesion involving the femoral head and neck. Provision diagnosis is</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. osteosarcoma</li>
+            <li class="option" data-correct="false">B. ewing sarcoma</li>
+            <li class="option" data-correct="true">C. secondary tumor</li>
+            <li class="option" data-correct="false">D. giant cell tumor</li>
+            <li class="option" data-correct="false">E. osteochondroma</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Osteosarcoma is a primary bone cancer of young adults.<br>
+            b. Incorrect: Ewing sarcoma is a primary bone cancer of children and young adults.<br>
+            c. Correct: In an elderly patient with a history of primary cancer (like breast), a new lytic bone lesion is most likely a metastasis (secondary tumor).<br>
+            d. Incorrect: Giant cell tumor typically occurs in younger adults (20-40 years).<br>
+            e. Incorrect: Osteochondroma is a benign tumor most common in adolescence.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q16">
+        <p class="question-text"><span class="question-number">16.</span> 27 years old football player with history of fall on his outstretched hand complaining of wrist pain, on examination he has limited wrist movement, tenderness and fullness of snuffbox and pain on axial compression and ulnar distraction of the wrist, the most likely diagnosis is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. distal ulna fracture.</li>
+            <li class="option" data-correct="false">B. lunate dislocation</li>
+            <li class="option" data-correct="true">C. scaphoid fracture.</li>
+            <li class="option" data-correct="false">D. 5th metacarpal neck facture.</li>
+            <li class="option" data-correct="false">E. distal radioulnar joint injury.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: A distal ulna fracture causes pain on the ulnar side of the wrist.<br>
+            b. Incorrect: Lunate dislocation presents with different clinical signs.<br>
+            c. Correct: Fall on an outstretched hand followed by tenderness in the anatomical snuffbox is the classic presentation for a scaphoid fracture.<br>
+            d. Incorrect: A 5th metacarpal fracture results from punching an object.<br>
+            e. Incorrect: DRUJ injury causes pain with forearm rotation.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q17">
+        <p class="question-text"><span class="question-number">17.</span> A 70 years old lady presented to the emergency room with pain in the hip region and inability to stand after fall on her leg, she was stable, x ray was taken and reveal intertrochantric fracture femur, risk factors for this fracture include all of the below except</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. age</li>
+            <li class="option" data-correct="false">B. sex</li>
+            <li class="option" data-correct="false">C. being white</li>
+            <li class="option" data-correct="false">D. osteoporosis</li>
+            <li class="option" data-correct="true">E. being black one</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect: Advanced age is a major risk factor.<br>
+            b. Incorrect: Female sex is a major risk factor.<br>
+            c. Incorrect: Caucasian ethnicity is a risk factor.<br>
+            d. Incorrect: Osteoporosis is the underlying cause.<br>
+            e. Correct: Individuals of African descent have higher bone density and a lower risk, making this a protective factor, not a risk factor.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q18">
+        <p class="question-text"><span class="question-number">18.</span> 23yrs old male sustained a fall from height. examination shows loss of anal tone with saddle paresthesia. Neurological examination would include:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. anterior longitudinal column which is best examined by pain and temperature.</li>
+            <li class="option" data-correct="false">B. posterior longitudinal column which is best examined by reflexes and vibration.</li>
+            <li class="option" data-correct="false">C. lateral longitudinal column which is best examined by motor function.</li>
+            <li class="option" data-correct="true">D. great toe flexion can be prognostic indicator.</li>
+            <li class="option" data-correct="false">E. neurological examination must be done prior to patient resuscitation.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: This is part of the exam, but not the best answer regarding prognosis in this context.<br>
+            b. Incorrect: This is part of the exam, but not the best answer regarding prognosis.<br>
+            c. Incorrect: This is a broad statement and part of the exam.<br>
+            d. Correct: In Cauda Equina Syndrome (suggested by the signs), the presence or absence of motor function, like great toe flexion (L5/S1), is a critical part of the assessment and a key prognostic indicator for recovery.<br>
+            e. Incorrect: Resuscitation (ABCs) always precedes a detailed neurological examination.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-2">Score: 0 / 8</div>
+</div>
+
+<div class="section" data-section-id="3">
+    <h2 class="section-title">Urology Questions</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q8">
+        <p class="question-text"><span class="question-number">8.</span> A 56 year old man is involved in a road traffic accident. He is found to have a pelvic fracture. He reports that he has some lower abdominal pain. He has peritonism in the lower abdomen. The nursing staff report that he has not passed any urine. A CT scan shows evidence of free fluid. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Membranous urethral injury</li>
+            <li class="option" data-correct="true">B. Bladder rupture</li>
+            <li class="option" data-correct="false">C. Bladder contusion</li>
+            <li class="option" data-correct="false">D. Bulbar urethral injury</li>
+            <li class="option" data-correct="false">E. Urinary tract infection</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Urethral injuries cause extraperitoneal urine leakage, not peritonism.<br>
+            b. Correct: The combination of pelvic fracture, anuria, peritonism, and free intraperitoneal fluid is classic for an intraperitoneal bladder rupture.<br>
+            c. Incorrect: A bladder contusion would not cause free intraperitoneal fluid or significant peritonism.<br>
+            d. Incorrect: Bulbar urethral injuries are not typically associated with pelvic fractures.<br>
+            e. Incorrect: A UTI does not fit the acute traumatic presentation.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">9.</span> A 67 year old man presents with recurrent episodes of haematuria, typically at the end of the urinary stream, he has been suffering from occasional fevers and has noticed pus on the urethral meatus on occasion. On examination the prostate has no discernible masses but is tender. What is the most likely cause?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Prostatitis</li>
+            <li class="option" data-correct="false">B. Cystitis</li>
+            <li class="option" data-correct="false">C. BPH</li>
+            <li class="option" data-correct="false">D. Prostate cancer</li>
+            <li class="option" data-correct="false">E. Nephritis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct: The triad of terminal hematuria, fevers, purulent discharge, and a tender prostate is characteristic of prostatitis.<br>
+            b. Incorrect: Cystitis does not cause a tender prostate.<br>
+            c. Incorrect: BPH does not cause fever, pus, or a tender prostate.<br>
+            d. Incorrect: Prostate cancer typically presents with a hard, non-tender nodule.<br>
+            e. Incorrect: Nephritis presents with flank pain and systemic symptoms.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q10">
+        <p class="question-text"><span class="question-number">10.</span> A 56 year old man presents with lethargy, haematuria and haemoptysis. On examination he is hypertensive and has a right loin mass. A CT scan shows a lesion affecting the upper pole of the right kidney, it has a small cystic centre. Which of the options below is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Squamous cell carcinoma of the kidney</li>
+            <li class="option" data-correct="false">B. Nephroblastoma</li>
+            <li class="option" data-correct="true">C. Renal adenocarcinoma</li>
+            <li class="option" data-correct="false">D. Transitional cell carcinoma of the kidney</li>
+            <li class="option" data-correct="false">E. Polycystic kidney disease</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Squamous cell carcinoma of the kidney is very rare.<br>
+            b. Incorrect: Nephroblastoma (Wilms' tumor) is a cancer of young children.<br>
+            c. Correct: The presentation of hematuria, flank mass, and systemic symptoms (hypertension, hemoptysis suggesting metastasis) is classic for Renal Cell Carcinoma (Renal adenocarcinoma).<br>
+            d. Incorrect: TCC of the renal pelvis is less likely to present with a large mass or hemoptysis.<br>
+            e. Incorrect: Polycystic kidney disease presents with multiple bilateral cysts, not a single mass.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q21">
+        <p class="question-text"><span class="question-number">21.</span> Young aged male presented with sever loin pain and vomiting, clinically suspected to beureteric stone, regarding the radiological evaluation all true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. CT scan native is the imaging modality of choice for uretetic stone</li>
+            <li class="option" data-correct="false">B. ultrasound examination can be the initial examination to evaluate hydronephrosis and renal stones</li>
+            <li class="option" data-correct="true">C. MRI better than CT scan to evaluate ureteric stone</li>
+            <li class="option" data-correct="false">D. some of the ureteric stones canot be seen by KUB</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: This is true. Non-contrast CT is the gold standard.<br>
+            b. Incorrect: This is true. Ultrasound is an excellent initial, non-radiation imaging test.<br>
+            c. Correct: This is false. CT is far superior to MRI for detecting calcified stones.<br>
+            d. Incorrect: This is true. Radiolucent stones (like uric acid) are not visible on a plain KUB x-ray.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-3">Score: 0 / 4</div>
+</div>
+
+<div class="section" data-section-id="4">
+    <h2 class="section-title">Pediatrics, Plastic Surgery & ENT Questions</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q11">
+        <p class="question-text"><span class="question-number">11.</span> 2.9 months baby presented with history of accidental exposure of his right hand to very hot soup, followed by sever pain. On examination there was burn wound on dorsum of right hand. The wound was wet, pink with some small blisters. The degree of burn wound is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Full thickness burn</li>
+            <li class="option" data-correct="false">B. First degree</li>
+            <li class="option" data-correct="true">C. Second degree</li>
+            <li class="option" data-correct="false">D. Third degree</li>
+            <li class="option" data-correct="false">E. Fourth degree</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Full thickness burns are typically white, leathery, and painless.<br>
+            b. Incorrect: First-degree burns are red and painful but do not have blisters.<br>
+            c. Correct: A wet, pink, painful wound with blisters is the classic appearance of a second-degree (partial-thickness) burn.<br>
+            d. Incorrect: Third degree is another term for full-thickness burn.<br>
+            e. Incorrect: Fourth-degree burns extend into deeper tissues like muscle or bone.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q12">
+        <p class="question-text"><span class="question-number">12.</span> A 16-year-old boy presents with left-sided nasal obstruction and recurrent sided epistaxis. A CT scan reveals a mass causing anterior bowing of the posterior maxillary wall. The most likely diagnosis is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Adenocarcinoma ethmoid sinus</li>
+            <li class="option" data-correct="false">B. Inflammatory nasal polyps</li>
+            <li class="option" data-correct="true">C. Juvenile angiofibroma</li>
+            <li class="option" data-correct="false">D. Maxillary sinusitis</li>
+            <li class="option" data-correct="false">E. Periorbital cellulitis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Adenocarcinoma is a malignancy of older adults.<br>
+            b. Incorrect: Nasal polyps are typically bilateral and do not cause bony erosion.<br>
+            c. Correct: This is the classic presentation of a Juvenile Nasopharyngeal Angiofibroma (JNA): an adolescent male with unilateral nasal obstruction and epistaxis, with characteristic bony bowing on CT.<br>
+            d. Incorrect: Sinusitis is an infection, not a discrete mass causing bony changes.<br>
+            e. Incorrect: Periorbital cellulitis is an infection of the soft tissues around the eye.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q15">
+        <p class="question-text"><span class="question-number">15.</span> The mother bring her neonate to emergency with chocking and cyanosis when she feed him for first time with frothy secresion. The diagnosis best done by:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. CT scan</li>
+            <li class="option" data-correct="false">B. erect abdominal x_ray</li>
+            <li class="option" data-correct="false">C. chest x_ray.</li>
+            <li class="option" data-correct="true">D. xray with nasogastric tube</li>
+            <li class="option" data-correct="false">E. Ultrasound</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: CT is not the primary diagnostic tool and involves unnecessary radiation.<br>
+            b. Incorrect: An abdominal x-ray is helpful but not the primary diagnostic test.<br>
+            c. Incorrect: A plain chest x-ray alone is not sufficient for diagnosis.<br>
+            d. Correct: The presentation is classic for esophageal atresia. The inability to pass an NG tube into the stomach, with the tube seen coiled in the upper esophagus on x-ray, is diagnostic.<br>
+            e. Incorrect: Ultrasound is not the primary modality for diagnosing esophageal atresia.<br>
+        </p>
+    </div>
+
+    <div class="question-container" data-question-id="q19">
+        <p class="question-text"><span class="question-number">19.</span> When the mother bring her 9 month male to emergency and told the doctor her baby irritable crying with bloody diarrhea pulling his hair with cramping pain, diagnosis will depend on:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. general stool examination</li>
+            <li class="option" data-correct="true">B. ultra sound</li>
+            <li class="option" data-correct="false">C. CT scan</li>
+            <li class="option" data-correct="false">D. barium swallow</li>
+            <li class="option" data-correct="false">E. laproscopy</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Stool examination is not the primary diagnostic modality.<br>
+            b. Correct: The clinical picture is classic for intussusception. Abdominal ultrasound is the non-invasive diagnostic imaging of choice, often showing a "target sign."<br>
+            c. Incorrect: CT is not first-line due to radiation exposure.<br>
+            d. Incorrect: Barium swallow evaluates the upper GI tract. An enema may be used for treatment after diagnosis.<br>
+            e. Incorrect: Laparoscopy is a surgical treatment, not an initial diagnostic tool.<br>
+        </p>
+    </div>
+    
+    <div class="section-score" id="score-section-4">Score: 0 / 4</div>
+</div>
+
+<div class="section" data-section-id="5">
+    <h2 class="section-title">Ophthalmology & Vascular Surgery Questions</h2>
+
+    <!-- Questions -->
+    <div class="question-container" data-question-id="q27">
+        <p class="question-text"><span class="question-number">27.</span> 24 years old female complain from color changes of her fingers of both hands specially when She exposed to cold weather her physician told her that She has Raynaud phenomenon .The pattern that represent the typical sequential triphasic color change seen in Raynauds phenomenon is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. cynosis (blue)- ischemia (white)- reperfusion (red).</li>
+            <li class="option" data-correct="false">B. ischemia (white)- reperfusion (red) - cynosis (blue).</li>
+            <li class="option" data-correct="false">C. cynosis (blue) - reperfusion (red) -ischemia (white).</li>
+            <li class="option" data-correct="true">D. ischemia (white)- cynosis (blue)- reperfusion (red).</li>
+            <li class="option" data-correct="false">E. reperfusion (red)- ischemia (white)- cynosis (blue).</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: The sequence is wrong.<br>
+            b. Incorrect: The sequence is wrong.<br>
+            c. Incorrect: The sequence is wrong.<br>
+            d. Correct: The classic triphasic change is Pallor (white) from vasospasm, followed by Cyanosis (blue) from deoxygenation, and finally Rubor (red) from reperfusion.<br>
+            e. Incorrect: The sequence is wrong.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q29">
+        <p class="question-text"><span class="question-number">29.</span> A young age female with history of long term contraceptives use presented with severe headache & vomiting mainly at early morning time. Examination reveals bilateral papilledema. Radiological assessment reveals nothing significant. Oxygen therapy might be recommended under the following restrictions EXCEPT:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. 20% concentration</li>
+            <li class="option" data-correct="false">B. Intermittent doses</li>
+            <li class="option" data-correct="false">C. Non humidified O2</li>
+            <li class="option" data-correct="true">D. Water assisted O2 ventilation</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: Administering 20% oxygen (below room air) is not therapeutic and could be considered a restriction.<br>
+            b. Incorrect: Intermittent dosing is a valid mode of delivery.<br>
+            c. Incorrect: Non-humidified O2 is a valid delivery method, often restricted to short-term use.<br>
+            d. Correct: "Water assisted O2 ventilation" is not a recognized medical term or therapy, making it the exception in this poorly worded question.<br>
+        </p>
+    </div>
+    
+    <div class="question-container" data-question-id="q30">
+        <p class="question-text"><span class="question-number">30.</span> A 35-year-old female presented to the emergency room complaining of severe pain in her left eye after a few drops of bleach were splashed onto her face while cleaning the bathtub one hour ago. What is the first step that you should do?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. give her topical analgesia.</li>
+            <li class="option" data-correct="false">B. refer her to tertiary center.</li>
+            <li class="option" data-correct="false">C. topical antibiotics.</li>
+            <li class="option" data-correct="true">D. wash with normal saline.</li>
+            <li class="option" data-correct="false">E. close the eye with bandage.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: Pain control is secondary to removing the chemical agent.<br>
+            b. Incorrect: Referral is necessary, but only after immediate irrigation.<br>
+            c. Incorrect: Antibiotics are not the first priority.<br>
+            d. Correct: The immediate and most critical action for a chemical eye burn is copious and prolonged irrigation with normal saline to wash away the chemical.<br>
+            e. Incorrect: Closing the eye would trap the chemical and worsen the injury.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-5">Score: 0 / 3</div>
+</div>
+
+
+<!-- Add more sections here if needed, e.g. <div class="section" data-section-id="s2"> ... </div> -->
+
+
+
+
+
+
+
+
+
+<div class="bottom-nav-container">
+    <a href="#" class="main-button" id="home-button-subject">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <button id="reset-button" class="main-button">
+        <i class="fas fa-sync-alt"></i> Reset Progress
+    </button>
+</div>
+
+<script>
+// ====== SUBJECT PAGE LOGIC (DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING) ======
+const PAGE_ID = window.SUBJECT_SETTINGS.PAGE_ID;
+const ANSWERS_KEY = `${PAGE_ID}_answers`;
+const SCORES_KEY = `${PAGE_ID}_scores`;
+
+document.getElementById('dynamic-title-subject').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+document.getElementById('subject-page-title-display').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+const homeBtnSubject = document.getElementById('home-button-subject');
+if (homeBtnSubject) homeBtnSubject.href = window.SUBJECT_SETTINGS.HOME_LINK;
+
+const allSections = document.querySelectorAll('.section');
+let sectionScores = {};
+
+function saveState(sectionId, questionId, selectedOptionIndex, currentScore, totalQuestionsInSection) {
+    let answers = JSON.parse(localStorage.getItem(ANSWERS_KEY)) || {};
+    if (!answers[sectionId]) answers[sectionId] = {};
+    answers[sectionId][questionId] = {
+        selectedOptionIndex: selectedOptionIndex,
+        answered: true
+    };
+    localStorage.setItem(ANSWERS_KEY, JSON.stringify(answers));
+
+    let scores = JSON.parse(localStorage.getItem(SCORES_KEY)) || {};
+    if (!scores[sectionId]) scores[sectionId] = { score: 0, total: 0}; // Initialize if not exists
+    scores[sectionId] = { score: currentScore, total: totalQuestionsInSection };
+
+    // Update overall total for the page if not already set or if it changed
+    let overallTotal = 0;
+    allSections.forEach(sec => {
+        const secId = sec.dataset.sectionId;
+        const numQs = sec.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        // Ensure section total is also up-to-date in the scores object if initializing
+        if (!scores[secId] || scores[secId].total !== numQs) {
+             scores[secId] = scores[secId] || {score:0}; // preserve score if exists
+             scores[secId].total = numQs;
+        }
+    });
+    scores['all'] = scores['all'] || {};
+    scores['all'].total = overallTotal;
+
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+function applyOptionSelectionLogic(optionElement, questionContainer, isLoadTime = false) {
+    const explanation = questionContainer.querySelector('.explanation');
+    const allOptionsInQuestion = questionContainer.querySelectorAll('.option');
+    const section = questionContainer.closest('.section');
+    const sectionId = section.dataset.sectionId;
+    const scoreDisplay = section.querySelector(`#score-section-${sectionId}`); // Ensure ID matches
+    const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+
+    if (questionContainer.classList.contains('answered') && !isLoadTime) return; // Prevent re-answering
+
+    questionContainer.classList.add('answered');
+    const isCorrect = optionElement.dataset.correct === 'true';
+
+    let feedbackSpan = optionElement.querySelector('.feedback');
+    if (!feedbackSpan) {
+        feedbackSpan = document.createElement('span');
+        feedbackSpan.className = 'feedback';
+        optionElement.appendChild(feedbackSpan);
+    }
+    feedbackSpan.style.display = 'inline'; // Make sure it's visible
+
+    if (isCorrect) {
+        optionElement.classList.add('correct');
+        feedbackSpan.textContent = ' ✓ Correct!';
+        if (!isLoadTime) {
+            sectionScores[sectionId] = (sectionScores[sectionId] || 0) + 1;
+        }
+    } else {
+        optionElement.classList.add('incorrect');
+        feedbackSpan.textContent = ' ✗ Incorrect.';
+        allOptionsInQuestion.forEach(opt => {
+            if (opt.dataset.correct === 'true') {
+                opt.classList.add('reveal-correct'); // Use a distinct class for just revealing
+                let correctFeedback = opt.querySelector('.feedback');
+                if (!correctFeedback) {
+                    correctFeedback = document.createElement('span');
+                    correctFeedback.className = 'feedback';
+                    opt.appendChild(correctFeedback);
+                }
+                correctFeedback.textContent = ' (Correct Answer)'; // Simpler feedback
+                correctFeedback.style.display = 'inline';
+            }
+        });
+    }
+
+    if (explanation) explanation.style.display = 'block';
+    allOptionsInQuestion.forEach(opt => {
+        opt.style.cursor = 'default'; // Disable further clicks by changing cursor
+        // To truly disable, you might remove event listeners or set pointer-events: none
+    });
+
+    if (scoreDisplay) {
+        scoreDisplay.textContent = `Score: ${sectionScores[sectionId] || 0} / ${totalQuestionsInSection}`;
+    }
+
+    if (!isLoadTime) {
+        const optionIndex = Array.from(allOptionsInQuestion).indexOf(optionElement);
+        saveState(sectionId, questionContainer.dataset.questionId, optionIndex, sectionScores[sectionId] || 0, totalQuestionsInSection);
+    }
+}
+
+function loadState() {
+    const savedAnswersData = JSON.parse(localStorage.getItem(ANSWERS_KEY));
+    const savedScoresData = JSON.parse(localStorage.getItem(SCORES_KEY));
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        sectionScores[sectionId] = (savedScoresData && savedScoresData[sectionId]) ? savedScoresData[sectionId].score : 0;
+
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: ${sectionScores[sectionId]} / ${totalQuestionsInSection}`;
+        }
+
+        if (savedAnswersData && savedAnswersData[sectionId]) {
+            const questionsInSection = section.querySelectorAll('.question-container');
+            questionsInSection.forEach(qc => {
+                const questionId = qc.dataset.questionId;
+                const qData = savedAnswersData[sectionId][questionId];
+                if (qData && qData.answered && typeof qData.selectedOptionIndex === 'number') {
+                    const optionsInQ = qc.querySelectorAll('.option');
+                    if (qData.selectedOptionIndex >= 0 && qData.selectedOptionIndex < optionsInQ.length) {
+                        const selectedOptionEl = optionsInQ[qData.selectedOptionIndex];
+                        if (selectedOptionEl) {
+                           applyOptionSelectionLogic(selectedOptionEl, qc, true); // True for isLoadTime
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function resetState() {
+    localStorage.removeItem(ANSWERS_KEY);
+    localStorage.removeItem(SCORES_KEY); // Also remove scores to reset counts
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Reset internal score tracking
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+
+        section.querySelectorAll('.question-container').forEach(qc => {
+            qc.classList.remove('answered');
+            const explanation = qc.querySelector('.explanation');
+            if (explanation) explanation.style.display = 'none';
+
+            qc.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('correct', 'incorrect', 'reveal-correct');
+                opt.style.cursor = 'pointer'; // Re-enable cursor
+                const feedback = opt.querySelector('.feedback');
+                if (feedback) {
+                    feedback.textContent = '';
+                    feedback.style.display = 'none'; // Hide feedback
+                }
+            });
+        });
+
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: 0 / ${totalQuestionsInSection}`;
+        }
+    });
+    // After resetting, re-initialize the total questions for the page in localStorage
+    initializePageTotalQuestions();
+}
+
+function initializePageTotalQuestions() {
+    let overallTotal = 0;
+    const scores = {}; // Start with a fresh scores object for initialization
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const numQs = section.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        scores[sectionId] = { score: 0, total: numQs }; // Initialize section scores
+    });
+    scores['all'] = { total: overallTotal };
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize sectionScores for all sections on the page
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Initialize score to 0
+    });
+
+    // Attempt to load saved state
+    loadState();
+
+    // If no scores are loaded (e.g., first visit or after reset), initialize totals
+    if (!localStorage.getItem(SCORES_KEY)) {
+        initializePageTotalQuestions();
+    } else { // If scores exist, ensure 'all.total' is up-to-date
+        let existingScores = JSON.parse(localStorage.getItem(SCORES_KEY));
+        let currentOverallTotal = 0;
+        allSections.forEach(section => {
+            currentOverallTotal += section.querySelectorAll('.question-container').length;
+        });
+        if (!existingScores.all || existingScores.all.total !== currentOverallTotal) {
+            existingScores.all = existingScores.all || {};
+            existingScores.all.total = currentOverallTotal;
+            localStorage.setItem(SCORES_KEY, JSON.stringify(existingScores));
+        }
+    }
+
+
+    allSections.forEach(section => {
+        const options = section.querySelectorAll('.option');
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                const questionContainer = this.closest('.question-container');
+                if (!questionContainer.classList.contains('answered')) { // Only process if not answered
+                    applyOptionSelectionLogic(this, questionContainer, false); // False for isLoadTime
+                }
+            });
+        });
+    });
+
+    const resetButtonSubject = document.getElementById('reset-button');
+    if (resetButtonSubject) {
+        resetButtonSubject.addEventListener('click', resetState);
+    }
+});
+</script>
+<footer style="text-align: center; padding: 2em 1em 1em; font-size: 14px; color: #3a3a3a; width:100%; box-sizing:border-box;">
+    © <span id="currentYear"></span> Developed by
+    <a href="https://github.com/Philonoist7" target="_blank" class="footer-link">
+      <strong>Ali Hussein</strong>
+    </a>
+    <script>
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+    <style>
+      .footer-link {
+        color: #004992;
+        text-decoration: none;
+        transition: color 0.2s, border-bottom-color 0.2s;
+      }
+      .footer-link:hover {
+        color: #003366;
+        border-bottom: 1.5px solid #003366;
+      }
+    </style>
+    </footer>
+</body>
+</html>
