@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ====== SUBJECT PAGE SETTINGS ====== -->
+
+<script>
+/*
+    ====== EDIT ONLY THIS BLOCK FOR NEW SUBJECTS ======
+    Change these variables for each new subject page.
+*/
+(function() {
+    // Get filename without extension for PAGE_ID
+    const path = window.location.pathname;
+    const file = path.substring(path.lastIndexOf('/') + 1) || path.substring(path.lastIndexOf('\\') + 1);
+    const pageIdAuto = file.replace(/\.[^/.]+$/, ""); // Remove extension
+
+    window.SUBJECT_SETTINGS = {
+        
+
+
+        PAGE_TITLE: 'Gynecology MCQs - Stage 5 Final', // <--- EDIT THIS: Title for this subject page.
+        HOME_LINK: 'gynob_qbank.html',      // <--- EDIT THIS: Link back to the group page or main.html.
+
+
+        PAGE_ID: pageIdAuto,      // Automatically set from filename
+    
+    
+    
+    };
+})();
+</script>
+
+<title id="dynamic-title-subject">Subject QBank</title>
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- Google Fonts - Open Sans (example, or keep Montserrat) -->
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Amiri Font for Arabic Text -->
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+
+
+
+<style>
+/* Styles for the question page */
+body {
+    font-family: 'Open Sans', Arial, sans-serif; /* Example: Changed font */
+    line-height: 1.7; /* Increased line height for readability */
+    margin: 0;
+    padding: 20px;
+    background-color: #eef1f5; /* Lighter background */
+    padding-top: 80px; /* Space for fixed header */
+    padding-bottom: 100px; /* Space for bottom nav */
+}
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50; /* Darker header */
+    color: #ecf0f1;
+    padding: 6px 0;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16); /* Softer shadow */
+}
+.fixed-header .made-by-prefix { color: #bdc3c7; } /* Lighter prefix text */
+.fixed-header a { color: #3498db; text-decoration: none; font-weight: bold; }
+.fixed-header a:hover { text-decoration: underline; color: #5dade2; }
+.fixed-header .quran-verse {
+    display: inline-block;
+    font-family: 'Amiri', 'Scheherazade', serif;
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #ffae00;
+    letter-spacing: 0.5px;
+    padding: 0.2em 1em;
+    border-radius: 8px;
+    margin-left: 10px;
+    margin-right: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    direction: rtl;
+}
+@media (max-width: 600px) {
+    .fixed-header .quran-verse {
+        font-size: 1em;
+        padding: 0.2em 0.5em;
+    }
+}
+
+.page-main-title {
+    font-size: 2.2em;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.section {
+    margin-bottom: 35px; /* Increased space between sections */
+    background-color: #ffffff;
+    padding: 25px; /* Increased padding */
+    border-radius: 10px; /* More rounded corners */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Softer, larger shadow */
+    max-width: 800px; /* Max width for content readability */
+    margin-left: auto;
+    margin-right: auto;
+}
+.section-title {
+    font-size: 1.6em; /* Adjusted size */
+    color: #34495e; /* Dark blue-gray */
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eaecee; /* Lighter border */
+    padding-bottom: 12px;
+    font-weight: 600;
+}
+.question-container {
+    margin-bottom: 30px; /* More space between questions */
+    padding: 20px;
+    border: 1px solid #dce4ec; /* Lighter border */
+    border-radius: 8px;
+    background-color: #fdfdfd; /* Very light background for question */
+    transition: box-shadow 0.3s ease;
+}
+.question-container:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.question-container.answered { background-color: #f8f9fa; }
+.question-number {
+    font-weight: 700; /* Bolder question number */
+    color: #007bff; /* Primary color for question number */
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+.question-text {
+    font-size: 1.1em;
+    color: #343a40; /* Standard text color */
+    margin-bottom: 18px; /* More space below question text */
+    line-height: 1.6;
+}
+ul.options { list-style: none; padding: 0; margin: 0; }
+li.option {
+    background-color: #f1f5f9; /* Light gray-blue for options */
+    margin-bottom: 12px; /* More space between options */
+    padding: 12px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-left 0.2s ease;
+    border: 1px solid #d1d9e2;
+    border-left: 4px solid transparent; /* For hover/selection indication */
+    position: relative;
+    user-select: none; /* Prevent text selection on click */
+    font-size: 1em;
+    color: #333;
+}
+li.option:hover:not(.answered li.option) {
+    background-color: #e4e9f0;
+    border-left-color: #007bff; /* Blue accent on hover */
+}
+.question-container.answered li.option { cursor: default; } /* No hover effect after answered */
+.question-container.answered li.option:hover { background-color: #f1f5f9; border-left-color: transparent; } /* Reset hover for answered */
+
+li.option.correct:hover, li.option.reveal-correct:hover { background-color: #d4edda !important; border-left-color: #28a745 !important; }
+li.option.incorrect:hover { background-color: #f8d7da !important; border-left-color: #dc3545 !important; }
+
+li.option.correct {
+    background-color: #d4edda !important; /* Ensure override */
+    border-color: #c3e6cb !important;
+    border-left: 4px solid #28a745 !important; /* Green for correct */
+    color: #155724;
+    font-weight: 600;
+}
+li.option.incorrect {
+    background-color: #f8d7da !important;
+    border-color: #f5c6cb !important;
+    border-left: 4px solid #dc3545 !important; /* Red for incorrect */
+    color: #721c24;
+    font-weight: 600;
+}
+.feedback { display: none; font-weight: bold; margin-left: 10px; }
+li.option.correct .feedback, li.option.incorrect .feedback { display: inline; }
+.correct .feedback { color: #155724; }
+.incorrect .feedback { color: #721c24; }
+
+li.option.reveal-correct { /* Style for showing the correct answer when user was wrong */
+    background-color: #d1ecf1 !important; /* Light info blue */
+    border-color: #bee5eb !important;
+    border-left: 4px solid #17a2b8 !important; /* Info blue */
+    color: #0c5460 !important;
+    font-weight: 600 !important;
+}
+.explanation {
+    display: none;
+    margin-top: 20px; /* More space above explanation */
+    padding: 15px;
+    background-color: #e9ecef; /* Slightly darker explanation background */
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    color: #495057;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+.explanation strong { color: #333; } /* Make "Correct answer:" part darker */
+
+.section-score {
+    margin-top: 30px;
+    font-size: 1.25em; /* Larger score text */
+    font-weight: bold;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    padding: 12px;
+    background-color: #e2f0fb; /* Light blue score background */
+    border: 1px solid #a8cff3; /* Softer blue border */
+    border-radius: 8px;
+}
+.bottom-nav-container {
+    position: fixed;
+    bottom: 0; /* Flush to bottom */
+    left: 0;
+    width: 100%;
+    background-color: #ffffff; /* White background for nav */
+    padding: 8px 0; /* Padding top/bottom */
+    z-index: 1001;
+    display: flex;
+    justify-content: center; /* Center buttons */
+    gap: 20px; /* Increased gap */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* Shadow at the top */
+    border-top: 1px solid #e0e0e0;
+}
+.main-button {
+    background-color: #007bff; /* Primary blue */
+    color: #ffffff;
+    padding: 10px 16px; /* Adjusted padding */
+    font-size: 1em; /* Standard font size */
+    text-decoration: none;
+    font-weight: 600; /* Bolder text */
+    border-radius: 25px; /* Pill shape */
+    box-shadow: 0 3px 7px rgba(0,123,255,0.3); /* Softer shadow related to button color */
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-button i { margin-right: 10px; font-size: 1.1em; } /* Slightly larger icon */
+.main-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,123,255,0.4);
+}
+a.main-button:hover { background-color: #0069d9; } /* Darker blue on hover */
+#reset-button { background-color: #e74c3c; box-shadow: 0 3px 7px rgba(231,76,60,0.3); } /* Red reset button */
+#reset-button:hover { background-color: #c0392b; box-shadow: 0 5px 10px rgba(192,57,43,0.4); }
+
+@media (max-width: 768px) {
+    body { padding: 15px; padding-top: 70px; padding-bottom: 90px; }
+    .page-main-title { font-size: 1.8em; }
+    .section { padding: 20px; }
+    .section-title { font-size: 1.4em; }
+    .question-text { font-size: 1em; }
+    li.option { padding: 10px 15px; font-size: 0.95em;}
+    .section-score { font-size: 1.15em; }
+}
+@media (max-width: 480px) {
+    body { padding: 10px; padding-top: 60px; padding-bottom: 80px; }
+    .page-main-title { font-size: 1.6em; margin-bottom: 20px;}
+    .section { padding: 15px; }
+    .section-title { font-size: 1.3em; margin-bottom: 20px; }
+    .question-container { padding: 15px; }
+    .question-text { font-size: 0.95em; }
+    li.option { padding: 10px 12px; font-size: 0.9em;}
+    .explanation { font-size: 0.9em; padding: 10px;}
+    .section-score { font-size: 1.1em; padding: 10px;}
+    .bottom-nav-container { padding: 10px 0; gap: 15px;}
+    .main-button { padding: 8px 16px; font-size: 0.9em;}
+}
+
+</style>
+</head>
+<body>
+<div class="fixed-header">
+    <span class="quran-verse">وَقُل رَّبِّ زِدْنِي عِلْمًا</span>
+</div>
+
+
+
+<h1 class="page-main-title" id="subject-page-title-display">Subject Questions</h1>
+
+
+<!--
+    ====== ADD YOUR QUESTIONS CONTENT BELOW ======
+    - Each section needs a unique data-section-id (e.g., "s1", "s2").
+      This ID is used for the score display (e.g., score-section-s1).
+    - Each question-container needs a unique data-question-id within its section (e.g., "q1", "q2").
+    - Mark the correct option with data-correct="true".
+-->
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">Gynecology & Obstetrics Questions</h2>
+
+    <!-- Question 1 -->
+    <div class="question-container" data-question-id="q1">
+        <p class="question-text"><span class="question-number">1.</span> Physiology of the menstrual cycle. Identify which of the following statements is incorrect?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Ovulation follows 36 hours after the LH surge.</li>
+            <li class="option" data-correct="true">B. Ovulation is as a result of 'negative feedback' effect on the hypothalamus and pituitary of oestrogen at its maximum.</li>
+            <li class="option" data-correct="false">C. The corpus luteum produces progesterone.</li>
+            <li class="option" data-correct="false">D. Withdrawal of endogenous progesterone results in endometrial breakdown and menstruation.</li>
+            <li class="option" data-correct="false">E. Average cycle length is 27-35 days.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. True. Ovulation typically occurs 34–36 hours after the onset of the LH surge.<br>
+            b. False. The LH surge is caused by a positive feedback mechanism of high estrogen, not negative feedback.<br>
+            c. True. The corpus luteum produces progesterone to support the endometrium.<br>
+            d. True. Progesterone withdrawal triggers menstruation.<br>
+            e. True. A normal cycle range is typically defined as 21–35 days.
+        </p>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="question-container" data-question-id="q2">
+        <p class="question-text"><span class="question-number">2.</span> The following statements refer to heavy menstrual bleeding (menorrhagia). Which is true?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Clinically, can be defined as excessive menstrual blood loss that interferes with a woman's physical, emotional, social or material quality of life.</li>
+            <li class="option" data-correct="false">B. It is >80 mL/menstrual cycle loss.</li>
+            <li class="option" data-correct="false">C. Endometrial and cervical malignancy may be the causes of it.</li>
+            <li class="option" data-correct="false">D. Thyroid disease, hemostatic disorders and use of anticoagulant medication should be considered.</li>
+            <li class="option" data-correct="true">E. All of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. This is the modern clinical definition (NICE guidelines).<br>
+            b. This is the objective research definition (>80 mL).<br>
+            c. Malignancy is a pathological cause.<br>
+            d. Systemic causes (coagulopathies, hypothyroidism) are recognized etiologies.<br>
+            e. All statements are factually correct.
+        </p>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="question-container" data-question-id="q3">
+        <p class="question-text"><span class="question-number">3.</span> Uterine fibroid is:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Benign tumours of the myometrium present in 40% of women.</li>
+            <li class="option" data-correct="false">B. Uterine fibroids are more common in Caucasian women,</li>
+            <li class="option" data-correct="false">C. Around 10% of fibroids are leiomyosarcomata.</li>
+            <li class="option" data-correct="false">D. Family history is present in some cases</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. True. Uterine fibroids are the most common benign solid tumors in women.<br>
+            b. False. They are significantly more common in women of African descent.<br>
+            c. False. Malignant transformation is rare (less than 1%).<br>
+            d. True, but A is the best definition/prevalence statistic.<br>
+        </p>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="question-container" data-question-id="q4">
+        <p class="question-text"><span class="question-number">4.</span> Endometrial carcinoma ,all true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Stage 1 disease is confined to the uterus and includes the cervix, lymph nodes but not the vagina.</li>
+            <li class="option" data-correct="false">B. Adenocarcinoma of the columnar endometrial gland cells accounts for >90%.</li>
+            <li class="option" data-correct="false">C. Risk factors include PCOS, nulliparity, late menopause, tamoxifen use.</li>
+            <li class="option" data-correct="false">D. Postmenopausal bleeding is the most common presentation.</li>
+            <li class="option" data-correct="false">E. Hysterectomy is involved in the management.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. False. Stage I is confined to the corpus uteri. Involvement of the cervix classifies it as Stage II.<br>
+            b. True. Endometrioid adenocarcinoma is the most common histology.<br>
+            c. True. These increase exposure to unopposed estrogen.<br>
+            d. True. PMB is the hallmark symptom.<br>
+            e. True. Hysterectomy is the standard surgical management.
+        </p>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">5.</span> Regarding the anatomy and function of the cervix:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. The uterosacral ligaments attach the cervix laterally to the pelvic side walls.</li>
+            <li class="option" data-correct="false">B. The cardinal ligaments attach the cervix to the posterior pelvic walls.</li>
+            <li class="option" data-correct="true">C. The columnar epithelium undergoes metaplasia in some cases.</li>
+            <li class="option" data-correct="false">D. The ectocervix is continuous with the vagina and is covered in columnar (glandular) epithelium.</li>
+            <li class="option" data-correct="false">E. The endocervix is lined by squamous epithelium.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. False. Uterosacral ligaments attach posteriorly to the sacrum.<br>
+            b. False. Cardinal ligaments attach laterally to the pelvic side walls.<br>
+            c. True. Squamous metaplasia occurs at the transformation zone.<br>
+            d. False. The ectocervix is covered by squamous epithelium.<br>
+            e. False. The endocervix is lined by columnar epithelium.
+        </p>
+    </div>
+
+    <!-- Question 6 -->
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">6.</span> Meigs' syndrome is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Fibromas can cause it.</li>
+            <li class="option" data-correct="false">B. Thecoma can cause it.</li>
+            <li class="option" data-correct="false">C. Ascites and a right pleural effusion are found in conjunction with the small ovarian mass.</li>
+            <li class="option" data-correct="false">D. Removal of the tumor cure the condition.</li>
+            <li class="option" data-correct="true">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. True. Ovarian fibroma is the classic cause.<br>
+            b. True. Other benign solid tumors can cause it.<br>
+            c. True. The classic triad includes ascites and pleural effusion.<br>
+            d. True. Resolution of fluid follows tumor removal.<br>
+        </p>
+    </div>
+
+    <!-- Question 7 -->
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">7.</span> Ovarian malignancy:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Symptoms are usually initially absent and 90% of patients present with stage 3–4 disease.</li>
+            <li class="option" data-correct="false">B. The ovary is a common site of metastatic spread, particularly from the breast and GI tract.</li>
+            <li class="option" data-correct="false">C. Up to 10% of malignant ovarian masses are secondary tumors.</li>
+            <li class="option" data-correct="false">D. The primary malignancy may be difficult to detect and the prognosis is very poor.</li>
+            <li class="option" data-correct="true">E. All of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. True. It is often diagnosed late.<br>
+            b. True. Krukenberg tumors and breast mets are common.<br>
+            c. True. Metastatic tumors are significant.<br>
+            d. True. Prognosis is often poor due to late stage.
+        </p>
+    </div>
+
+    <!-- Question 8 -->
+    <div class="question-container" data-question-id="q8">
+        <p class="question-text"><span class="question-number">8.</span> Ovarian tumor markers are all true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. CA 125</li>
+            <li class="option" data-correct="true">B. Testosterone</li>
+            <li class="option" data-correct="false">C. Carcinoembryonic antigen CEA</li>
+            <li class="option" data-correct="false">D. Alpha-fetoprotein AFP</li>
+            <li class="option" data-correct="false">E. HCG</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a, c, d, e. These are classic tumor markers for Epithelial, Mucinous/GI, and Germ Cell tumors.<br>
+            b. Testosterone is a hormone, although it can be elevated in rare Sertoli-Leydig tumors, it is generally not classified with standard oncofetal tumor markers like the others.
+        </p>
+    </div>
+
+    <!-- Question 9 -->
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">9.</span> Procedures used to treat infertility are:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. ICSI</li>
+            <li class="option" data-correct="false">B. IUI</li>
+            <li class="option" data-correct="false">C. IVF</li>
+            <li class="option" data-correct="true">D. All of the above</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. ICSI (Intracytoplasmic Sperm Injection) is used for male factor infertility.<br>
+            b. IUI (Intrauterine Insemination) is a common first-line procedure.<br>
+            c. IVF (In Vitro Fertilization) is a standard ART procedure.<br>
+            d. All listed are valid treatments.
+        </p>
+    </div>
+
+    <!-- Question 10 -->
+    <div class="question-container" data-question-id="q10">
+        <p class="question-text"><span class="question-number">10.</span> Semen contains:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Sucrose, calcium and certain enzyme</li>
+            <li class="option" data-correct="false">B. Glucose. Calcium and certain enzyme</li>
+            <li class="option" data-correct="true">C. Fructose, calcium and certain enzyme</li>
+            <li class="option" data-correct="false">D. Fructose, sodium and certain enzyme</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. The seminal vesicles secrete fructose as the primary energy source for sperm, along with enzymes and ions like calcium.
+        </p>
+    </div>
+
+    <!-- Question 11 -->
+    <div class="question-container" data-question-id="q11">
+        <p class="question-text"><span class="question-number">11.</span> A Caucasian 24 years old presented as a male infertility with history of respiratory infection, the likely diagnosis is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. A Kallmann syndrome</li>
+            <li class="option" data-correct="false">B. Varicocele</li>
+            <li class="option" data-correct="true">C. Congenital absences of vas deference</li>
+            <li class="option" data-correct="false">D. Antisperm antibody</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. CBAVD is strongly associated with Cystic Fibrosis mutations, which present with respiratory infections and infertility.<br>
+            a. Kallmann syndrome presents with anosmia (lack of smell), not respiratory infections.
+        </p>
+    </div>
+
+    <!-- Question 12 -->
+    <div class="question-container" data-question-id="q12">
+        <p class="question-text"><span class="question-number">12.</span> A 30 years old female with primary infertility for 1 year The initial investigation for her is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Assessment of ovulation</li>
+            <li class="option" data-correct="false">B. Laparoscopy</li>
+            <li class="option" data-correct="false">C. AMH, FSH and LH</li>
+            <li class="option" data-correct="false">D. HSG</li>
+            <li class="option" data-correct="true">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. A standard initial workup includes assessing ovulation, tubal patency (HSG), and ovarian reserve (FSH/LH/AMH). While laparoscopy is often secondary, 'All of the above' covers the essential panel.
+        </p>
+    </div>
+
+    <!-- Question 13 -->
+    <div class="question-container" data-question-id="q13">
+        <p class="question-text"><span class="question-number">13.</span> Physical component of semen analysis is determined by:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Sperm count</li>
+            <li class="option" data-correct="false">B. Sperm motility</li>
+            <li class="option" data-correct="false">C. Sperm morphology</li>
+            <li class="option" data-correct="true">D. All of the above</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. A standard semen analysis evaluates Count, Motility, and Morphology.
+        </p>
+    </div>
+
+    <!-- Question 14 -->
+    <div class="question-container" data-question-id="q14">
+        <p class="question-text"><span class="question-number">14.</span> In PCOS, the typical ultrasound finding is:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. String of pearls appearance</li>
+            <li class="option" data-correct="false">B. Snowstorm appearance</li>
+            <li class="option" data-correct="false">C. Target sign</li>
+            <li class="option" data-correct="false">D. Ring of fire</li>
+            <li class="option" data-correct="false">E. None of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Multiple small peripheral follicles give the "String of Pearls" appearance.<br>
+            b. Snowstorm suggests Molar pregnancy.<br>
+            d. Ring of fire suggests Ectopic pregnancy.
+        </p>
+    </div>
+
+    <!-- Question 15 -->
+    <div class="question-container" data-question-id="q15">
+        <p class="question-text"><span class="question-number">15.</span> The most effective method of permanent contraception in females is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. IUD</li>
+            <li class="option" data-correct="false">B. Depoprovera</li>
+            <li class="option" data-correct="false">C. OCP</li>
+            <li class="option" data-correct="false">D. Barrier methods</li>
+            <li class="option" data-correct="true">E. Tubal ligation</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Tubal ligation is a permanent sterilization method. The others are reversible.
+        </p>
+    </div>
+
+    <!-- Question 16 -->
+    <div class="question-container" data-question-id="q16">
+        <p class="question-text"><span class="question-number">16.</span> Endometrial biopsy is indicated in postmenopausal bleeding when endometrial thickness is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. >10 mm</li>
+            <li class="option" data-correct="false">B. >4 mm</li>
+            <li class="option" data-correct="false">C. <3 mm</li>
+            <li class="option" data-correct="false">D. <1 mm</li>
+            <li class="option" data-correct="false">E. >12 mm</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. The standard cutoff is 4 mm. Anything thicker than 4mm warrants a biopsy to rule out malignancy.
+        </p>
+    </div>
+
+    <!-- Question 17 -->
+    <div class="question-container" data-question-id="q17">
+        <p class="question-text"><span class="question-number">17.</span> The commonest cause of PID is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Trichomonas vaginalis</li>
+            <li class="option" data-correct="false">B. Candida albicans</li>
+            <li class="option" data-correct="true">C. Chlamydia trachomatis</li>
+            <li class="option" data-correct="false">D. HPV</li>
+            <li class="option" data-correct="false">E. Candidiasis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Chlamydia trachomatis and Neisseria gonorrhoeae are the primary ascending infections causing PID.
+        </p>
+    </div>
+
+    <!-- Question 18 -->
+    <div class="question-container" data-question-id="q18">
+        <p class="question-text"><span class="question-number">18.</span> What is the most common cause of female infertility?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Tubal factor</li>
+            <li class="option" data-correct="true">B. Ovarian causes</li>
+            <li class="option" data-correct="false">C. Male factor</li>
+            <li class="option" data-correct="false">D. Uterine anomalies</li>
+            <li class="option" data-correct="false">E. Unexplained infertility</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Ovulatory dysfunction (e.g., PCOS) is frequently cited as the most common cause of female infertility.
+        </p>
+    </div>
+
+    <!-- Question 19 -->
+    <div class="question-container" data-question-id="q19">
+        <p class="question-text"><span class="question-number">19.</span> Vulvar cancer is most commonly associated with:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Candida</li>
+            <li class="option" data-correct="false">B. Chlamydia</li>
+            <li class="option" data-correct="false">C. Herpes simplex</li>
+            <li class="option" data-correct="true">D. HPV infection</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. High-risk HPV is a major risk factor for VIN and invasive vulvar cancer.
+        </p>
+    </div>
+
+    <!-- Question 20 -->
+    <div class="question-container" data-question-id="q20">
+        <p class="question-text"><span class="question-number">20.</span> Which type of incontinence is caused by increased intra-abdominal pressure?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Urge incontinence</li>
+            <li class="option" data-correct="false">B. Overflow incontinence</li>
+            <li class="option" data-correct="true">C. Stress incontinence</li>
+            <li class="option" data-correct="false">D. Functional incontinence</li>
+            <li class="option" data-correct="false">E. Urinary fistula</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Stress urinary incontinence is defined as leakage coincident with increased intra-abdominal pressure (e.g., coughing).
+        </p>
+    </div>
+
+    <!-- Question 21 -->
+    <div class="question-container" data-question-id="q21">
+        <p class="question-text"><span class="question-number">21.</span> The typical discharge in bacterial vaginosis is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Thick, white, cottage cheese</li>
+            <li class="option" data-correct="false">B. Frothy, greenish-yellow</li>
+            <li class="option" data-correct="false">C. Bloody</li>
+            <li class="option" data-correct="true">D. Thin, grey, fishy odor</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Classic BV discharge is thin, grey/white with a fishy odor.<br>
+            a. Indicates Candida.<br>
+            b. Indicates Trichomonas.
+        </p>
+    </div>
+
+    <!-- Question 22 -->
+    <div class="question-container" data-question-id="q22">
+        <p class="question-text"><span class="question-number">22.</span> In evaluating ovulatory function, the most accurate test is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Basal body temperature</li>
+            <li class="option" data-correct="true">B. Serum progesterone</li>
+            <li class="option" data-correct="false">C. Pelvic ultrasound</li>
+            <li class="option" data-correct="false">D. Endometrial biopsy</li>
+            <li class="option" data-correct="false">E. Cervical mucus test</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Mid-luteal Serum Progesterone is the standard clinical test to confirm ovulation.
+        </p>
+    </div>
+
+    <!-- Question 23 -->
+    <div class="question-container" data-question-id="q23">
+        <p class="question-text"><span class="question-number">23.</span> The most common ovarian tumor in children and adolescence is:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Dermoid cyst</li>
+            <li class="option" data-correct="false">B. Serous cystadenoma</li>
+            <li class="option" data-correct="false">C. Mucinous cystadenoma</li>
+            <li class="option" data-correct="false">D. Endometrioma</li>
+            <li class="option" data-correct="false">E. Thecoma</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Germ cell tumors are the most common in this age group, with Mature Cystic Teratoma (Dermoid) being the most common benign type.
+        </p>
+    </div>
+
+    <!-- Question 24 -->
+    <div class="question-container" data-question-id="q24">
+        <p class="question-text"><span class="question-number">24.</span> The HPV types most associated with cervical cancer are:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. 31 and 33</li>
+            <li class="option" data-correct="false">B. 6 and 11</li>
+            <li class="option" data-correct="false">C. 42 and 44</li>
+            <li class="option" data-correct="false">D. 24 and 26</li>
+            <li class="option" data-correct="true">E. 16 and 18</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. HPV 16 and 18 are high-risk types responsible for approximately 70% of cervical cancers.
+        </p>
+    </div>
+
+    <!-- Question 25 -->
+    <div class="question-container" data-question-id="q25">
+        <p class="question-text"><span class="question-number">25.</span> HRT is contraindicated in:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Vaginal dryness</li>
+            <li class="option" data-correct="false">B. Hot flashes</li>
+            <li class="option" data-correct="true">C. Breast cancer survivors</li>
+            <li class="option" data-correct="false">D. Osteoporosis patient</li>
+            <li class="option" data-correct="false">E. Atrophic vaginitis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Estrogen-dependent tumors like breast cancer are a major contraindication. A, B, D, and E are indications.
+        </p>
+    </div>
+
+    <!-- Question 26 -->
+    <div class="question-container" data-question-id="q26">
+        <p class="question-text"><span class="question-number">26.</span> Most effective emergency contraception is:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Copper IUD</li>
+            <li class="option" data-correct="false">B. Levonorgestrel pills</li>
+            <li class="option" data-correct="false">C. Ulipristal acetate</li>
+            <li class="option" data-correct="false">D. Mifepristone</li>
+            <li class="option" data-correct="false">E. Tubal ligation</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. The Copper IUD is the most effective method (>99%) if inserted within 5 days.
+        </p>
+    </div>
+
+    <!-- Question 27 -->
+    <div class="question-container" data-question-id="q27">
+        <p class="question-text"><span class="question-number">27.</span> The most appropriate imaging for evaluating tubal patency is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. MRI pelvis</li>
+            <li class="option" data-correct="true">B. Hysterosalpingography</li>
+            <li class="option" data-correct="false">C. CT scan</li>
+            <li class="option" data-correct="false">D. Abdominal ultrasound</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. HSG is the standard first-line imaging to assess tubal patency and uterine cavity shape.
+        </p>
+    </div>
+
+    <!-- Question 28 -->
+    <div class="question-container" data-question-id="q28">
+        <p class="question-text"><span class="question-number">28.</span> A woman with hyperprolactinemia is likely to experience:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Amenorrhea</li>
+            <li class="option" data-correct="false">B. Polymenorrhea</li>
+            <li class="option" data-correct="false">C. Menorrhagia</li>
+            <li class="option" data-correct="false">D. Dysmenorrhea</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. High prolactin inhibits GnRH, leading to amenorrhea or oligomenorrhea.
+        </p>
+    </div>
+
+    <!-- Question 29 -->
+    <div class="question-container" data-question-id="q29">
+        <p class="question-text"><span class="question-number">29.</span> In PCOS, LH/FSH ratio is typically:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Undetectable</li>
+            <li class="option" data-correct="false">B. Decreased</li>
+            <li class="option" data-correct="false">C. Normal</li>
+            <li class="option" data-correct="true">D. Increased</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. PCOS is often characterized by elevated LH levels, leading to an increased LH:FSH ratio.
+        </p>
+    </div>
+
+    <!-- Question 30 -->
+    <div class="question-container" data-question-id="q30">
+        <p class="question-text"><span class="question-number">30.</span> The most common site of cervical cancer metastasis is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Liver</li>
+            <li class="option" data-correct="true">B. Lymph nodes</li>
+            <li class="option" data-correct="false">C. Brain</li>
+            <li class="option" data-correct="false">D. Bones</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Cervical cancer spreads primarily by direct extension and via lymphatics to pelvic lymph nodes.
+        </p>
+    </div>
+
+    <!-- Question 31 -->
+    <div class="question-container" data-question-id="q31">
+        <p class="question-text"><span class="question-number">31.</span> Vaginal pH in bacterial vaginosis is:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. >4.5</li>
+            <li class="option" data-correct="false">B. <4.0</li>
+            <li class="option" data-correct="false">C. Neutral</li>
+            <li class="option" data-correct="false">D. Exactly 7.0</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. The pH in BV is elevated (>4.5) due to the reduction of lactobacilli.
+        </p>
+    </div>
+
+    <!-- Question 32 -->
+    <div class="question-container" data-question-id="q32">
+        <p class="question-text"><span class="question-number">32.</span> The gold standard for cervical cancer prevention is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Radiation</li>
+            <li class="option" data-correct="false">B. Hysterectomy</li>
+            <li class="option" data-correct="false">C. HPV vaccination</li>
+            <li class="option" data-correct="true">D. Pap smear alone</li>
+            <li class="option" data-correct="false">E. Oral Contraceptive pills</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Historically, the Pap smear screening program is often cited in exams as the gold standard for reducing incidence (secondary prevention).
+        </p>
+    </div>
+
+    <!-- Question 33 -->
+    <div class="question-container" data-question-id="q33">
+        <p class="question-text"><span class="question-number">33.</span> Which is a risk factor for endometrial cancer?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Late menarche</li>
+            <li class="option" data-correct="false">B. Early menopause</li>
+            <li class="option" data-correct="false">C. Multiparity</li>
+            <li class="option" data-correct="false">D. Hypoestrogen state</li>
+            <li class="option" data-correct="true">E. Obesity</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Obesity leads to increased peripheral conversion of androgens to estrogen, creating an unopposed estrogen state.
+        </p>
+    </div>
+
+    <!-- Question 34 -->
+    <div class="question-container" data-question-id="q34">
+        <p class="question-text"><span class="question-number">34.</span> Postmenopausal bleeding should be investigated at first by:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Endometrial biopsy</li>
+            <li class="option" data-correct="false">B. Laparoscopy</li>
+            <li class="option" data-correct="false">C. Pap smear</li>
+            <li class="option" data-correct="true">D. Transvaginal ultrasound</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Transvaginal ultrasound is the first-line non-invasive investigation to measure endometrial thickness.
+        </p>
+    </div>
+
+    <!-- Question 35 -->
+    <div class="question-container" data-question-id="q35">
+        <p class="question-text"><span class="question-number">35.</span> The preferred treatment for stress urinary incontinence in old age is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Anticholinergics drugs for stress urinary incontinence</li>
+            <li class="option" data-correct="true">B. Pelvic floor exercises and life style changes for stress urinary incontinence</li>
+            <li class="option" data-correct="false">C. Antibiotics</li>
+            <li class="option" data-correct="false">D. Sling operation in urge incontinence</li>
+            <li class="option" data-correct="false">E. Abdominal hysterectomy</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Conservative management (Pelvic floor muscle training) is the first-line preferred treatment.
+        </p>
+    </div>
+
+    <!-- Question 36 -->
+    <div class="question-container" data-question-id="q36">
+        <p class="question-text"><span class="question-number">36.</span> The most common presenting symptom of cervical cancer is:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Postcoital bleeding</li>
+            <li class="option" data-correct="false">B. Pelvic pain</li>
+            <li class="option" data-correct="false">C. Amenorrhea</li>
+            <li class="option" data-correct="false">D. Vaginal dryness</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Postcoital bleeding (contact bleeding) is the classic early symptom.
+        </p>
+    </div>
+
+    <!-- Question 37 -->
+    <div class="question-container" data-question-id="q37">
+        <p class="question-text"><span class="question-number">37.</span> In male infertility, the first step in evaluation is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Testicular biopsy</li>
+            <li class="option" data-correct="false">B. Hormonal profile</li>
+            <li class="option" data-correct="false">C. DNA fragmentation test</li>
+            <li class="option" data-correct="false">D. Scrotal ultrasound</li>
+            <li class="option" data-correct="true">E. Semen analysis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Semen analysis is the fundamental, non-invasive initial test.
+        </p>
+    </div>
+
+    <!-- Question 38 -->
+    <div class="question-container" data-question-id="q38">
+        <p class="question-text"><span class="question-number">38.</span> Which is a protective factor against ovarian cancer?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. High-fat diet</li>
+            <li class="option" data-correct="false">B. Early menarche</li>
+            <li class="option" data-correct="false">C. Nulliparity</li>
+            <li class="option" data-correct="true">D. Oral Contraceptive use</li>
+            <li class="option" data-correct="false">E. High estrogen level</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Methods that suppress ovulation (OCPs, pregnancy) reduce the risk.
+        </p>
+    </div>
+
+    <!-- Question 39 -->
+    <div class="question-container" data-question-id="q39">
+        <p class="question-text"><span class="question-number">39.</span> Estrogen therapy in menopause can be benefit for:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Hot flashes</li>
+            <li class="option" data-correct="false">B. Vaginal dryness</li>
+            <li class="option" data-correct="false">C. Bone pain</li>
+            <li class="option" data-correct="false">D. Osteoporosis</li>
+            <li class="option" data-correct="true">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Estrogen treats vasomotor symptoms, atrophy, and prevents/treats osteoporosis.
+        </p>
+    </div>
+
+    <!-- Question 40 -->
+    <div class="question-container" data-question-id="q40">
+        <p class="question-text"><span class="question-number">40.</span> Risk factor for pelvic organ prolapse includes:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Nulliparity</li>
+            <li class="option" data-correct="true">B. Multiparity</li>
+            <li class="option" data-correct="false">C. Malnutrition</li>
+            <li class="option" data-correct="false">D. HPV infection</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Vaginal childbirth (Multiparity) is a significant risk factor for pelvic floor damage.
+        </p>
+    </div>
+
+    <!-- Question 41 -->
+    <div class="question-container" data-question-id="q41">
+        <p class="question-text"><span class="question-number">41.</span> Treatment for CIN 2/3 includes:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. LEEP and LLETZ procedure</li>
+            <li class="option" data-correct="false">B. Hysterectomy</li>
+            <li class="option" data-correct="false">C. Cone biopsy then radiation</li>
+            <li class="option" data-correct="false">D. Hormonal therapy</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. LEEP/LLETZ is the standard treatment for high-grade CIN.
+        </p>
+    </div>
+
+    <!-- Question 42 -->
+    <div class="question-container" data-question-id="q42">
+        <p class="question-text"><span class="question-number">42.</span> Kallmann syndrome is characterized by:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Early menarche</li>
+            <li class="option" data-correct="false">B. Hirsutism and obesity</li>
+            <li class="option" data-correct="false">C. Galactorrhea and amenorrhea</li>
+            <li class="option" data-correct="true">D. Anosmia and hypogonadism</li>
+            <li class="option" data-correct="false">E. Fertile person</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. It is characterized by hypogonadotropic hypogonadism and anosmia (lack of smell).
+        </p>
+    </div>
+
+    <!-- Question 43 -->
+    <div class="question-container" data-question-id="q43">
+        <p class="question-text"><span class="question-number">43.</span> Which of the following is a recognized risk factor for tubal infertility?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Endometriosis</li>
+            <li class="option" data-correct="false">B. Fibroids</li>
+            <li class="option" data-correct="false">C. Hypothyroidism</li>
+            <li class="option" data-correct="false">D. PCOS</li>
+            <li class="option" data-correct="false">E. Functional ovarian cyst</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Endometriosis causes adhesions that can distort or obstruct the fallopian tubes.
+        </p>
+    </div>
+
+    <!-- Question 44 -->
+    <div class="question-container" data-question-id="q44">
+        <p class="question-text"><span class="question-number">44.</span> Which condition presents with frothy, green vaginal discharge?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Bacterial vaginosis</li>
+            <li class="option" data-correct="false">B. Candidiasis</li>
+            <li class="option" data-correct="true">C. Trichomoniasis</li>
+            <li class="option" data-correct="false">D. PID</li>
+            <li class="option" data-correct="false">E. Candidiasis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Frothy, yellow-green discharge is pathognomonic for Trichomonas vaginalis.
+        </p>
+    </div>
+
+    <!-- Question 45 -->
+    <div class="question-container" data-question-id="q45">
+        <p class="question-text"><span class="question-number">45.</span> Diagnostic Laparoscopy is used in:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Tubal patency</li>
+            <li class="option" data-correct="false">B. Ovarian cystectomy</li>
+            <li class="option" data-correct="false">C. PCOS</li>
+            <li class="option" data-correct="false">D. Chocolate cyst</li>
+            <li class="option" data-correct="true">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Laparoscopy is used for diagnosis/treatment in all these conditions (chromopertubation, cystectomy, drilling, endometrioma).
+        </p>
+    </div>
+
+    <!-- Question 46 -->
+    <div class="question-container" data-question-id="q46">
+        <p class="question-text"><span class="question-number">46.</span> Which medication is used for menorrhagia?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Estrogen</li>
+            <li class="option" data-correct="true">B. Progesterone</li>
+            <li class="option" data-correct="false">C. Tamoxifen</li>
+            <li class="option" data-correct="false">D. Gonadotropins</li>
+            <li class="option" data-correct="false">E. Clomiphene citrate</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Progestogens are standard treatments to stabilize the endometrium and reduce heavy bleeding.
+        </p>
+    </div>
+
+    <!-- Question 47 -->
+    <div class="question-container" data-question-id="q47">
+        <p class="question-text"><span class="question-number">47.</span> Secondary amenorrhea investigations include:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Prolactin levels</li>
+            <li class="option" data-correct="false">B. Thyroid hormones</li>
+            <li class="option" data-correct="false">C. Pregnancy test</li>
+            <li class="option" data-correct="false">D. Pelvic ultrasound</li>
+            <li class="option" data-correct="true">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Workup includes ruling out pregnancy, endocrine causes, and anatomical causes.
+        </p>
+    </div>
+
+    <!-- Question 48 -->
+    <div class="question-container" data-question-id="q48">
+        <p class="question-text"><span class="question-number">48.</span> Common symptom of ovarian torsion is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Vaginal discharge</li>
+            <li class="option" data-correct="false">B. Intestinal obstruction</li>
+            <li class="option" data-correct="false">C. Sudden vaginal bleeding</li>
+            <li class="option" data-correct="false">D. No symptoms</li>
+            <li class="option" data-correct="true">E. Sudden severe pelvic pain</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Hallmark presentation is acute onset of severe unilateral pelvic pain.
+        </p>
+    </div>
+
+    <!-- Question 49 -->
+    <div class="question-container" data-question-id="q49">
+        <p class="question-text"><span class="question-number">49.</span> Risk factor for endometrial hyperplasia:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Unopposed estrogen therapy</li>
+            <li class="option" data-correct="false">B. Combined OCP use</li>
+            <li class="option" data-correct="false">C. Multiparity</li>
+            <li class="option" data-correct="false">D. Smoking</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Estrogen without progesterone stimulates endometrial proliferation, leading to hyperplasia.
+        </p>
+    </div>
+
+    <!-- Question 50 -->
+    <div class="question-container" data-question-id="q50">
+        <p class="question-text"><span class="question-number">50.</span> Which hormone is primarily responsible for follicular development?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Estrogen</li>
+            <li class="option" data-correct="false">B. LH</li>
+            <li class="option" data-correct="false">C. Testosterone</li>
+            <li class="option" data-correct="true">D. FSH</li>
+            <li class="option" data-correct="false">E. Progesterone</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. FSH recruits and stimulates the growth of ovarian follicles.
+        </p>
+    </div>
+
+    <!-- Question 51 -->
+    <div class="question-container" data-question-id="q51">
+        <p class="question-text"><span class="question-number">51.</span> Which of the following associations is incorrect?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Turner syndrome – 46, XO</li>
+            <li class="option" data-correct="false">B. True gonadal dysgenesis – 46, XY</li>
+            <li class="option" data-correct="false">C. Female adrenogenital syndrome – 46, XX</li>
+            <li class="option" data-correct="true">D. Klinefelter syndrome – normal testosterone levels</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Klinefelter syndrome is characterized by primary testicular failure, resulting in low testosterone.
+        </p>
+    </div>
+
+    <!-- Question 52 -->
+    <div class="question-container" data-question-id="q52">
+        <p class="question-text"><span class="question-number">52.</span> Regarding primary amenorrhea, all are true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Lack of breast development by age 11 requires investigation</li>
+            <li class="option" data-correct="false">B. It may be caused by systemic diseases</li>
+            <li class="option" data-correct="false">C. Turner syndrome is a known cause</li>
+            <li class="option" data-correct="false">D. Most cases are constitutional</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Investigation is typically initiated if there are no secondary sexual characteristics by age 13, not 11.
+        </p>
+    </div>
+
+    <!-- Question 53 -->
+    <div class="question-container" data-question-id="q53">
+        <p class="question-text"><span class="question-number">53.</span> Regarding molar pregnancy:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Partial moles are more common than complete moles</li>
+            <li class="option" data-correct="true">B. Complete mole is diploid origin</li>
+            <li class="option" data-correct="false">C. Partial mole is triploid with two maternal and one paternal set</li>
+            <li class="option" data-correct="false">D. Risk decreases significantly after age 50</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. True. Complete moles are usually diploid (46,XX) and androgenetic (paternal origin).<br>
+            c. False. Partial moles are triploid with two paternal and one maternal set.
+        </p>
+    </div>
+
+    <!-- Question 54 -->
+    <div class="question-container" data-question-id="q54">
+        <p class="question-text"><span class="question-number">54.</span> Regarding ovarian tumors, all are true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Strong genetic link</li>
+            <li class="option" data-correct="false">B. May present with thyrotoxicosis</li>
+            <li class="option" data-correct="false">C. Small family size is a risk factor</li>
+            <li class="option" data-correct="true">D. Germ cell tumors are common in older age</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Germ cell tumors are the most common ovarian neoplasms in children and young women, not older age.
+        </p>
+    </div>
+
+    <!-- Question 55 -->
+    <div class="question-container" data-question-id="q55">
+        <p class="question-text"><span class="question-number">55.</span> A 29-year-old woman with PCOS seeks contraception. What is the best option?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. IUCD</li>
+            <li class="option" data-correct="false">B. Progesterone-only pills</li>
+            <li class="option" data-correct="true">C. Combined oral contraceptives</li>
+            <li class="option" data-correct="false">D. None of the above</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. COCPs are first-line as they provide contraception, regulate the cycle, and treat androgenic symptoms.
+        </p>
+    </div>
+
+    <!-- Question 56 -->
+    <div class="question-container" data-question-id="q56">
+        <p class="question-text"><span class="question-number">56.</span> Which of the following is the most common cause of primary amenorrhea in females?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Polycystic ovarian syndrome (PCOS)</li>
+            <li class="option" data-correct="true">B. Turner syndrome</li>
+            <li class="option" data-correct="false">C. Hypothalamic dysfunction</li>
+            <li class="option" data-correct="false">D. Müllerian agenesis</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Gonadal dysgenesis (Turner Syndrome) is the most common cause of primary amenorrhea.
+        </p>
+    </div>
+
+    <!-- Question 57 -->
+    <div class="question-container" data-question-id="q57">
+        <p class="question-text"><span class="question-number">57.</span> Which condition shows a 69, XXY karyotype?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Hydrops fetalis</li>
+            <li class="option" data-correct="true">B. Partial hydatidiform mole</li>
+            <li class="option" data-correct="false">C. Choriocarcinoma</li>
+            <li class="option" data-correct="false">D. Down syndrome</li>
+            <li class="option" data-correct="false">E. Klinefelter syndrome</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Partial moles are triploid, most commonly 69,XXY.
+        </p>
+    </div>
+
+    <!-- Question 58 -->
+    <div class="question-container" data-question-id="q58">
+        <p class="question-text"><span class="question-number">58.</span> Asherman syndrome, all are true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Pain, infertility and amenorrhea</li>
+            <li class="option" data-correct="true">B. Pain, infertility and menorrhagia</li>
+            <li class="option" data-correct="false">C. Hysteroscopy is beneficial</li>
+            <li class="option" data-correct="false">D. Post aggressive curettage</li>
+            <li class="option" data-correct="false">E. Infection may be the cause</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Asherman syndrome (intrauterine adhesions) causes amenorrhea, not menorrhagia (heavy bleeding).
+        </p>
+    </div>
+
+    <!-- Question 59 -->
+    <div class="question-container" data-question-id="q59">
+        <p class="question-text"><span class="question-number">59.</span> CIN (Cervical Intraepithelial Neoplasia):</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Can occur in squamocolumnar junction</li>
+            <li class="option" data-correct="false">B. Can occur in Vaginal epithelium</li>
+            <li class="option" data-correct="false">C. Can occur in Valval epithelium</li>
+            <li class="option" data-correct="false">D. Its three grades</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. CIN arises at the transformation zone/Squamocolumnar Junction (SCJ).<br>
+            d. It is graded as CIN 1, 2, and 3.<br>
+            Note: While E was marked in the student paper likely grouping lower genital tract neoplasias, A is the correct anatomical definition for CIN.
+        </p>
+    </div>
+
+    <!-- Question 60 -->
+    <div class="question-container" data-question-id="q60">
+        <p class="question-text"><span class="question-number">60.</span> Sheehan syndrome:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Post-partum pituitary necrosis</li>
+            <li class="option" data-correct="false">B. Posterior pituitary gland necrosis</li>
+            <li class="option" data-correct="false">C. Polymenorrhagia</li>
+            <li class="option" data-correct="false">D. Normal fertility</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Sheehan syndrome is ischemic necrosis of the anterior pituitary due to severe postpartum hemorrhage.
+        </p>
+    </div>
+
+    <!-- Question 61 -->
+    <div class="question-container" data-question-id="q61">
+        <p class="question-text"><span class="question-number">61.</span> Endometrial hyperplasia:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Irregularity and cystic expansion of glands (simple)</li>
+            <li class="option" data-correct="false">B. Crowding and budding of glands (complex)</li>
+            <li class="option" data-correct="false">C. Atypical endometrial hyperplasia has 22% of patients with atypical hyperplasia eventually developed cancer.</li>
+            <li class="option" data-correct="false">D. Diagnosis by endometrial biopsy</li>
+            <li class="option" data-correct="true">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. All statements correctly describe the pathology, risk, and diagnosis.
+        </p>
+    </div>
+
+    <!-- Question 62 -->
+    <div class="question-container" data-question-id="q62">
+        <p class="question-text"><span class="question-number">62.</span> Treatment of endometrial hyperplasia is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Individualized</li>
+            <li class="option" data-correct="false">B. May include hormonal therapy, progestin therapy</li>
+            <li class="option" data-correct="false">C. Hysterectomy</li>
+            <li class="option" data-correct="true">D. All of the above</li>
+            <li class="option" data-correct="false">E. None of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Treatment depends on the type (atypia vs no atypia) and fertility desires, ranging from progestins to hysterectomy.
+        </p>
+    </div>
+
+    <!-- Question 63 -->
+    <div class="question-container" data-question-id="q63">
+        <p class="question-text"><span class="question-number">63.</span> Septate uterus:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Recurrent miscarriage</li>
+            <li class="option" data-correct="false">B. Laparotomy is done to correct it</li>
+            <li class="option" data-correct="false">C. Definitive diagnosis of it by 2D ultrasound</li>
+            <li class="option" data-correct="false">D. Fecundity is not affected;</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Septate uterus is strongly associated with recurrent miscarriage.<br>
+            b. Correction is typically hysteroscopic, not laparotomy.<br>
+            c. 3D US or MRI is required for definitive diagnosis.
+        </p>
+    </div>
+
+    <!-- Question 64 -->
+    <div class="question-container" data-question-id="q64">
+        <p class="question-text"><span class="question-number">64.</span> The differentiation of the indifferent gonad and formation of external genitalia depend on:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. The sex-determining gene (SRY) on the X chromosome.</li>
+            <li class="option" data-correct="true">B. When the SRY gene is not present the indifferent gonad forms an ovary.</li>
+            <li class="option" data-correct="false">C. Anti-Müllerian hormone (AMH), produced by the fetal ovaries.</li>
+            <li class="option" data-correct="false">D. The Müllerian ducts will form testes.</li>
+            <li class="option" data-correct="false">E. LH is the main player hormones.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. In the absence of the SRY gene (on Y), the default pathway is ovarian development.
+        </p>
+    </div>
+
+    <!-- Question 65 -->
+    <div class="question-container" data-question-id="q65">
+        <p class="question-text"><span class="question-number">65.</span> Hormone replacement therapy (HRT) all true (except):</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. May contain testosterone</li>
+            <li class="option" data-correct="false">B. Contain Estrogen.</li>
+            <li class="option" data-correct="false">C. Combined progesterone and estrogen (HRT) is better.</li>
+            <li class="option" data-correct="false">D. Help vaginal atrophy.</li>
+            <li class="option" data-correct="true">E. Can cause osteoporosis.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. HRT protects against osteoporosis; it does not cause it.
+        </p>
+    </div>
+
+    <!-- Question 66 -->
+    <div class="question-container" data-question-id="q66">
+        <p class="question-text"><span class="question-number">66.</span> X-Y syndrome (Swyer Syndrome / Gonadal Dysgenesis):</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Usually phenotype is male.</li>
+            <li class="option" data-correct="false">B. Ovarian removal should be done.</li>
+            <li class="option" data-correct="true">C. Liable for testicular malignancy.</li>
+            <li class="option" data-correct="false">D. Can get pregnant by IVF.</li>
+            <li class="option" data-correct="false">E. Genotype is female.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. There is a high risk of malignancy (Gonadoblastoma) in the dysgenetic gonads.
+        </p>
+    </div>
+
+    <!-- Question 67 -->
+    <div class="question-container" data-question-id="q67">
+        <p class="question-text"><span class="question-number">67.</span> Genetics can play role in all below conditions (except):</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Ectopic pregnancy.</li>
+            <li class="option" data-correct="false">B. PCOS.</li>
+            <li class="option" data-correct="false">C. Breast cancer.</li>
+            <li class="option" data-correct="false">D. Amenorrhea.</li>
+            <li class="option" data-correct="false">E. Turner syndrome</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Ectopic pregnancy is primarily caused by anatomical damage (PID, surgery), not genetics.
+        </p>
+    </div>
+
+    <!-- Question 68 -->
+    <div class="question-container" data-question-id="q68">
+        <p class="question-text"><span class="question-number">68.</span> Gonadotropin:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Recombinant FSH is less expensive</li>
+            <li class="option" data-correct="true">B. Urinary gonadotropins depends on its purity.</li>
+            <li class="option" data-correct="false">C. Recombinant FSH is used for ovulation triggering</li>
+            <li class="option" data-correct="false">D. Can be used for endometriosis treatment</li>
+            <li class="option" data-correct="false">E. None of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Urinary preparations vary in purity.<br>
+            c. hCG triggers ovulation.
+        </p>
+    </div>
+
+    <!-- Question 69 -->
+    <div class="question-container" data-question-id="q69">
+        <p class="question-text"><span class="question-number">69.</span> Progesterone:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Injection root is only available.</li>
+            <li class="option" data-correct="false">B. Used alone in HRT.</li>
+            <li class="option" data-correct="false">C. Causes increasing weight.</li>
+            <li class="option" data-correct="true">D. Causes thinning of endometrium.</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Progesterone induces secretory changes and eventual thinning of the endometrium (opposing estrogen).
+        </p>
+    </div>
+
+    <!-- Question 70 -->
+    <div class="question-container" data-question-id="q70">
+        <p class="question-text"><span class="question-number">70.</span> Vaginal septum:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Usually transverse type</li>
+            <li class="option" data-correct="false">B. Complete transverse type can managed conservatively</li>
+            <li class="option" data-correct="false">C. Usually painless menstruation</li>
+            <li class="option" data-correct="true">D. Can be diagnosed accidently</li>
+            <li class="option" data-correct="false">E. All of the above</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Longitudinal septums are often asymptomatic and found incidentally. Transverse septums cause obstruction and pain.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 70</div>
+</div>
+
+<!-- Add more sections here if needed, e.g. <div class="section" data-section-id="s2"> ... </div> -->
+
+
+
+
+
+
+
+
+
+<div class="bottom-nav-container">
+    <a href="#" class="main-button" id="home-button-subject">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <button id="reset-button" class="main-button">
+        <i class="fas fa-sync-alt"></i> Reset Progress
+    </button>
+</div>
+
+<script>
+// ====== SUBJECT PAGE LOGIC (DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING) ======
+const PAGE_ID = window.SUBJECT_SETTINGS.PAGE_ID;
+const ANSWERS_KEY = `${PAGE_ID}_answers`;
+const SCORES_KEY = `${PAGE_ID}_scores`;
+
+document.getElementById('dynamic-title-subject').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+document.getElementById('subject-page-title-display').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+const homeBtnSubject = document.getElementById('home-button-subject');
+if (homeBtnSubject) homeBtnSubject.href = window.SUBJECT_SETTINGS.HOME_LINK;
+
+const allSections = document.querySelectorAll('.section');
+let sectionScores = {};
+
+function saveState(sectionId, questionId, selectedOptionIndex, currentScore, totalQuestionsInSection) {
+    let answers = JSON.parse(localStorage.getItem(ANSWERS_KEY)) || {};
+    if (!answers[sectionId]) answers[sectionId] = {};
+    answers[sectionId][questionId] = {
+        selectedOptionIndex: selectedOptionIndex,
+        answered: true
+    };
+    localStorage.setItem(ANSWERS_KEY, JSON.stringify(answers));
+
+    let scores = JSON.parse(localStorage.getItem(SCORES_KEY)) || {};
+    if (!scores[sectionId]) scores[sectionId] = { score: 0, total: 0}; // Initialize if not exists
+    scores[sectionId] = { score: currentScore, total: totalQuestionsInSection };
+
+    // Update overall total for the page if not already set or if it changed
+    let overallTotal = 0;
+    allSections.forEach(sec => {
+        const secId = sec.dataset.sectionId;
+        const numQs = sec.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        // Ensure section total is also up-to-date in the scores object if initializing
+        if (!scores[secId] || scores[secId].total !== numQs) {
+             scores[secId] = scores[secId] || {score:0}; // preserve score if exists
+             scores[secId].total = numQs;
+        }
+    });
+    scores['all'] = scores['all'] || {};
+    scores['all'].total = overallTotal;
+
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+function applyOptionSelectionLogic(optionElement, questionContainer, isLoadTime = false) {
+    const explanation = questionContainer.querySelector('.explanation');
+    const allOptionsInQuestion = questionContainer.querySelectorAll('.option');
+    const section = questionContainer.closest('.section');
+    const sectionId = section.dataset.sectionId;
+    const scoreDisplay = section.querySelector(`#score-section-${sectionId}`); // Ensure ID matches
+    const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+
+    if (questionContainer.classList.contains('answered') && !isLoadTime) return; // Prevent re-answering
+
+    questionContainer.classList.add('answered');
+    const isCorrect = optionElement.dataset.correct === 'true';
+
+    let feedbackSpan = optionElement.querySelector('.feedback');
+    if (!feedbackSpan) {
+        feedbackSpan = document.createElement('span');
+        feedbackSpan.className = 'feedback';
+        optionElement.appendChild(feedbackSpan);
+    }
+    feedbackSpan.style.display = 'inline'; // Make sure it's visible
+
+    if (isCorrect) {
+        optionElement.classList.add('correct');
+        feedbackSpan.textContent = ' ✓ Correct!';
+        if (!isLoadTime) {
+            sectionScores[sectionId] = (sectionScores[sectionId] || 0) + 1;
+        }
+    } else {
+        optionElement.classList.add('incorrect');
+        feedbackSpan.textContent = ' ✗ Incorrect.';
+        allOptionsInQuestion.forEach(opt => {
+            if (opt.dataset.correct === 'true') {
+                opt.classList.add('reveal-correct'); // Use a distinct class for just revealing
+                let correctFeedback = opt.querySelector('.feedback');
+                if (!correctFeedback) {
+                    correctFeedback = document.createElement('span');
+                    correctFeedback.className = 'feedback';
+                    opt.appendChild(correctFeedback);
+                }
+                correctFeedback.textContent = ' (Correct Answer)'; // Simpler feedback
+                correctFeedback.style.display = 'inline';
+            }
+        });
+    }
+
+    if (explanation) explanation.style.display = 'block';
+    allOptionsInQuestion.forEach(opt => {
+        opt.style.cursor = 'default'; // Disable further clicks by changing cursor
+        // To truly disable, you might remove event listeners or set pointer-events: none
+    });
+
+    if (scoreDisplay) {
+        scoreDisplay.textContent = `Score: ${sectionScores[sectionId] || 0} / ${totalQuestionsInSection}`;
+    }
+
+    if (!isLoadTime) {
+        const optionIndex = Array.from(allOptionsInQuestion).indexOf(optionElement);
+        saveState(sectionId, questionContainer.dataset.questionId, optionIndex, sectionScores[sectionId] || 0, totalQuestionsInSection);
+    }
+}
+
+function loadState() {
+    const savedAnswersData = JSON.parse(localStorage.getItem(ANSWERS_KEY));
+    const savedScoresData = JSON.parse(localStorage.getItem(SCORES_KEY));
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        sectionScores[sectionId] = (savedScoresData && savedScoresData[sectionId]) ? savedScoresData[sectionId].score : 0;
+
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: ${sectionScores[sectionId]} / ${totalQuestionsInSection}`;
+        }
+
+        if (savedAnswersData && savedAnswersData[sectionId]) {
+            const questionsInSection = section.querySelectorAll('.question-container');
+            questionsInSection.forEach(qc => {
+                const questionId = qc.dataset.questionId;
+                const qData = savedAnswersData[sectionId][questionId];
+                if (qData && qData.answered && typeof qData.selectedOptionIndex === 'number') {
+                    const optionsInQ = qc.querySelectorAll('.option');
+                    if (qData.selectedOptionIndex >= 0 && qData.selectedOptionIndex < optionsInQ.length) {
+                        const selectedOptionEl = optionsInQ[qData.selectedOptionIndex];
+                        if (selectedOptionEl) {
+                           applyOptionSelectionLogic(selectedOptionEl, qc, true); // True for isLoadTime
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function resetState() {
+    localStorage.removeItem(ANSWERS_KEY);
+    localStorage.removeItem(SCORES_KEY); // Also remove scores to reset counts
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Reset internal score tracking
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+
+        section.querySelectorAll('.question-container').forEach(qc => {
+            qc.classList.remove('answered');
+            const explanation = qc.querySelector('.explanation');
+            if (explanation) explanation.style.display = 'none';
+
+            qc.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('correct', 'incorrect', 'reveal-correct');
+                opt.style.cursor = 'pointer'; // Re-enable cursor
+                const feedback = opt.querySelector('.feedback');
+                if (feedback) {
+                    feedback.textContent = '';
+                    feedback.style.display = 'none'; // Hide feedback
+                }
+            });
+        });
+
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: 0 / ${totalQuestionsInSection}`;
+        }
+    });
+    // After resetting, re-initialize the total questions for the page in localStorage
+    initializePageTotalQuestions();
+}
+
+function initializePageTotalQuestions() {
+    let overallTotal = 0;
+    const scores = {}; // Start with a fresh scores object for initialization
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const numQs = section.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        scores[sectionId] = { score: 0, total: numQs }; // Initialize section scores
+    });
+    scores['all'] = { total: overallTotal };
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize sectionScores for all sections on the page
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Initialize score to 0
+    });
+
+    // Attempt to load saved state
+    loadState();
+
+    // If no scores are loaded (e.g., first visit or after reset), initialize totals
+    if (!localStorage.getItem(SCORES_KEY)) {
+        initializePageTotalQuestions();
+    } else { // If scores exist, ensure 'all.total' is up-to-date
+        let existingScores = JSON.parse(localStorage.getItem(SCORES_KEY));
+        let currentOverallTotal = 0;
+        allSections.forEach(section => {
+            currentOverallTotal += section.querySelectorAll('.question-container').length;
+        });
+        if (!existingScores.all || existingScores.all.total !== currentOverallTotal) {
+            existingScores.all = existingScores.all || {};
+            existingScores.all.total = currentOverallTotal;
+            localStorage.setItem(SCORES_KEY, JSON.stringify(existingScores));
+        }
+    }
+
+
+    allSections.forEach(section => {
+        const options = section.querySelectorAll('.option');
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                const questionContainer = this.closest('.question-container');
+                if (!questionContainer.classList.contains('answered')) { // Only process if not answered
+                    applyOptionSelectionLogic(this, questionContainer, false); // False for isLoadTime
+                }
+            });
+        });
+    });
+
+    const resetButtonSubject = document.getElementById('reset-button');
+    if (resetButtonSubject) {
+        resetButtonSubject.addEventListener('click', resetState);
+    }
+});
+</script>
+<footer style="text-align: center; padding: 2em 1em 1em; font-size: 14px; color: #3a3a3a; width:100%; box-sizing:border-box;">
+    © <span id="currentYear"></span> Developed by
+    <a href="https://github.com/Philonoist7" target="_blank" class="footer-link">
+      <strong>Ali Hussein</strong>
+    </a>
+    <script>
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+    <style>
+      .footer-link {
+        color: #004992;
+        text-decoration: none;
+        transition: color 0.2s, border-bottom-color 0.2s;
+      }
+      .footer-link:hover {
+        color: #003366;
+        border-bottom: 1.5px solid #003366;
+      }
+    </style>
+    </footer>
+</body>
+</html>

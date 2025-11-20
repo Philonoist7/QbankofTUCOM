@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ====== SUBJECT PAGE SETTINGS ====== -->
+
+<script>
+/*
+    ====== EDIT ONLY THIS BLOCK FOR NEW SUBJECTS ======
+    Change these variables for each new subject page.
+*/
+(function() {
+    // Get filename without extension for PAGE_ID
+    const path = window.location.pathname;
+    const file = path.substring(path.lastIndexOf('/') + 1) || path.substring(path.lastIndexOf('\\') + 1);
+    const pageIdAuto = file.replace(/\.[^/.]+$/, ""); // Remove extension
+
+    window.SUBJECT_SETTINGS = {
+        
+
+
+        PAGE_TITLE: 'Digital Exam MCQs', // <--- EDIT THIS: Title for this subject page.
+        HOME_LINK: 'gynob_qbank.html',      // <--- EDIT THIS: Link back to the group page or main.html.
+
+
+        PAGE_ID: pageIdAuto,      // Automatically set from filename
+    
+    
+    
+    };
+})();
+</script>
+
+<title id="dynamic-title-subject">Subject QBank</title>
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- Google Fonts - Open Sans (example, or keep Montserrat) -->
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Amiri Font for Arabic Text -->
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+
+
+
+<style>
+/* Styles for the question page */
+body {
+    font-family: 'Open Sans', Arial, sans-serif; /* Example: Changed font */
+    line-height: 1.7; /* Increased line height for readability */
+    margin: 0;
+    padding: 20px;
+    background-color: #eef1f5; /* Lighter background */
+    padding-top: 80px; /* Space for fixed header */
+    padding-bottom: 100px; /* Space for bottom nav */
+}
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50; /* Darker header */
+    color: #ecf0f1;
+    padding: 6px 0;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16); /* Softer shadow */
+}
+.fixed-header .made-by-prefix { color: #bdc3c7; } /* Lighter prefix text */
+.fixed-header a { color: #3498db; text-decoration: none; font-weight: bold; }
+.fixed-header a:hover { text-decoration: underline; color: #5dade2; }
+.fixed-header .quran-verse {
+    display: inline-block;
+    font-family: 'Amiri', 'Scheherazade', serif;
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #ffae00;
+    letter-spacing: 0.5px;
+    padding: 0.2em 1em;
+    border-radius: 8px;
+    margin-left: 10px;
+    margin-right: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    direction: rtl;
+}
+@media (max-width: 600px) {
+    .fixed-header .quran-verse {
+        font-size: 1em;
+        padding: 0.2em 0.5em;
+    }
+}
+
+.page-main-title {
+    font-size: 2.2em;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.section {
+    margin-bottom: 35px; /* Increased space between sections */
+    background-color: #ffffff;
+    padding: 25px; /* Increased padding */
+    border-radius: 10px; /* More rounded corners */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Softer, larger shadow */
+    max-width: 800px; /* Max width for content readability */
+    margin-left: auto;
+    margin-right: auto;
+}
+.section-title {
+    font-size: 1.6em; /* Adjusted size */
+    color: #34495e; /* Dark blue-gray */
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eaecee; /* Lighter border */
+    padding-bottom: 12px;
+    font-weight: 600;
+}
+.question-container {
+    margin-bottom: 30px; /* More space between questions */
+    padding: 20px;
+    border: 1px solid #dce4ec; /* Lighter border */
+    border-radius: 8px;
+    background-color: #fdfdfd; /* Very light background for question */
+    transition: box-shadow 0.3s ease;
+}
+.question-container:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.question-container.answered { background-color: #f8f9fa; }
+.question-number {
+    font-weight: 700; /* Bolder question number */
+    color: #007bff; /* Primary color for question number */
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+.question-text {
+    font-size: 1.1em;
+    color: #343a40; /* Standard text color */
+    margin-bottom: 18px; /* More space below question text */
+    line-height: 1.6;
+}
+ul.options { list-style: none; padding: 0; margin: 0; }
+li.option {
+    background-color: #f1f5f9; /* Light gray-blue for options */
+    margin-bottom: 12px; /* More space between options */
+    padding: 12px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-left 0.2s ease;
+    border: 1px solid #d1d9e2;
+    border-left: 4px solid transparent; /* For hover/selection indication */
+    position: relative;
+    user-select: none; /* Prevent text selection on click */
+    font-size: 1em;
+    color: #333;
+}
+li.option:hover:not(.answered li.option) {
+    background-color: #e4e9f0;
+    border-left-color: #007bff; /* Blue accent on hover */
+}
+.question-container.answered li.option { cursor: default; } /* No hover effect after answered */
+.question-container.answered li.option:hover { background-color: #f1f5f9; border-left-color: transparent; } /* Reset hover for answered */
+
+li.option.correct:hover, li.option.reveal-correct:hover { background-color: #d4edda !important; border-left-color: #28a745 !important; }
+li.option.incorrect:hover { background-color: #f8d7da !important; border-left-color: #dc3545 !important; }
+
+li.option.correct {
+    background-color: #d4edda !important; /* Ensure override */
+    border-color: #c3e6cb !important;
+    border-left: 4px solid #28a745 !important; /* Green for correct */
+    color: #155724;
+    font-weight: 600;
+}
+li.option.incorrect {
+    background-color: #f8d7da !important;
+    border-color: #f5c6cb !important;
+    border-left: 4px solid #dc3545 !important; /* Red for incorrect */
+    color: #721c24;
+    font-weight: 600;
+}
+.feedback { display: none; font-weight: bold; margin-left: 10px; }
+li.option.correct .feedback, li.option.incorrect .feedback { display: inline; }
+.correct .feedback { color: #155724; }
+.incorrect .feedback { color: #721c24; }
+
+li.option.reveal-correct { /* Style for showing the correct answer when user was wrong */
+    background-color: #d1ecf1 !important; /* Light info blue */
+    border-color: #bee5eb !important;
+    border-left: 4px solid #17a2b8 !important; /* Info blue */
+    color: #0c5460 !important;
+    font-weight: 600 !important;
+}
+.explanation {
+    display: none;
+    margin-top: 20px; /* More space above explanation */
+    padding: 15px;
+    background-color: #e9ecef; /* Slightly darker explanation background */
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    color: #495057;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+.explanation strong { color: #333; } /* Make "Correct answer:" part darker */
+
+.section-score {
+    margin-top: 30px;
+    font-size: 1.25em; /* Larger score text */
+    font-weight: bold;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    padding: 12px;
+    background-color: #e2f0fb; /* Light blue score background */
+    border: 1px solid #a8cff3; /* Softer blue border */
+    border-radius: 8px;
+}
+.bottom-nav-container {
+    position: fixed;
+    bottom: 0; /* Flush to bottom */
+    left: 0;
+    width: 100%;
+    background-color: #ffffff; /* White background for nav */
+    padding: 8px 0; /* Padding top/bottom */
+    z-index: 1001;
+    display: flex;
+    justify-content: center; /* Center buttons */
+    gap: 20px; /* Increased gap */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* Shadow at the top */
+    border-top: 1px solid #e0e0e0;
+}
+.main-button {
+    background-color: #007bff; /* Primary blue */
+    color: #ffffff;
+    padding: 10px 16px; /* Adjusted padding */
+    font-size: 1em; /* Standard font size */
+    text-decoration: none;
+    font-weight: 600; /* Bolder text */
+    border-radius: 25px; /* Pill shape */
+    box-shadow: 0 3px 7px rgba(0,123,255,0.3); /* Softer shadow related to button color */
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-button i { margin-right: 10px; font-size: 1.1em; } /* Slightly larger icon */
+.main-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,123,255,0.4);
+}
+a.main-button:hover { background-color: #0069d9; } /* Darker blue on hover */
+#reset-button { background-color: #e74c3c; box-shadow: 0 3px 7px rgba(231,76,60,0.3); } /* Red reset button */
+#reset-button:hover { background-color: #c0392b; box-shadow: 0 5px 10px rgba(192,57,43,0.4); }
+
+@media (max-width: 768px) {
+    body { padding: 15px; padding-top: 70px; padding-bottom: 90px; }
+    .page-main-title { font-size: 1.8em; }
+    .section { padding: 20px; }
+    .section-title { font-size: 1.4em; }
+    .question-text { font-size: 1em; }
+    li.option { padding: 10px 15px; font-size: 0.95em;}
+    .section-score { font-size: 1.15em; }
+}
+@media (max-width: 480px) {
+    body { padding: 10px; padding-top: 60px; padding-bottom: 80px; }
+    .page-main-title { font-size: 1.6em; margin-bottom: 20px;}
+    .section { padding: 15px; }
+    .section-title { font-size: 1.3em; margin-bottom: 20px; }
+    .question-container { padding: 15px; }
+    .question-text { font-size: 0.95em; }
+    li.option { padding: 10px 12px; font-size: 0.9em;}
+    .explanation { font-size: 0.9em; padding: 10px;}
+    .section-score { font-size: 1.1em; padding: 10px;}
+    .bottom-nav-container { padding: 10px 0; gap: 15px;}
+    .main-button { padding: 8px 16px; font-size: 0.9em;}
+}
+
+</style>
+</head>
+<body>
+<div class="fixed-header">
+    <span class="quran-verse">وَقُل رَّبِّ زِدْنِي عِلْمًا</span>
+</div>
+
+
+
+<h1 class="page-main-title" id="subject-page-title-display">Subject Questions</h1>
+
+
+<!--
+    ====== ADD YOUR QUESTIONS CONTENT BELOW ======
+    - Each section needs a unique data-section-id (e.g., "s1", "s2").
+      This ID is used for the score display (e.g., score-section-s1).
+    - Each question-container needs a unique data-question-id within its section (e.g., "q1", "q2").
+    - Mark the correct option with data-correct="true".
+-->
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">Gynecology & Obstetrics Questions</h2>
+
+    <!-- Question 1 -->
+    <div class="question-container" data-question-id="q1">
+        <p class="question-text"><span class="question-number">1.</span> ...contraceptives on the incidence of DVT and embolism.</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Decreases the incidence.</li>
+            <li class="option" data-correct="false">B. doesn't affect the incidence.</li>
+            <li class="option" data-correct="false">C. increases thrombosis but not pulmonary embolism.</li>
+            <li class="option" data-correct="true">D. increases the incidence.</li>
+            <li class="option" data-correct="false">E. increases pulmonary embolism but not DVT.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. Combined oral contraceptives (COCs) increase the risk.<br>
+            b. Incorrect.<br>
+            c. Incorrect. DVT can lead to PE; both risks are increased.<br>
+            d. Correct. The estrogen component increases production of clotting factors (VII, X, fibrinogen) and decreases antithrombin III, leading to a hypercoagulable state.<br>
+            e. Incorrect. PE is usually a sequela of DVT.
+        </p>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="question-container" data-question-id="q2">
+        <p class="question-text"><span class="question-number">2.</span> Regarding ovulation can be diagnosed by the following measures, EXCEPT:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. measuring day 14 serum progesterone.</li>
+            <li class="option" data-correct="false">B. Observing a rise in basal body temperature in the 2nd half of the menstrual cycle.</li>
+            <li class="option" data-correct="false">C. study of the cervical mucous.</li>
+            <li class="option" data-correct="false">D. Endometrial histology.</li>
+            <li class="option" data-correct="false">E. Ultrasound.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct (as the Exception). Serum progesterone peaks in the mid-luteal phase (around Day 21), not Day 14 (ovulation day).<br>
+            b. Incorrect. Progesterone causes a thermogenic effect after ovulation.<br>
+            c. Incorrect. Cervical mucus changes (like ferning) disappear after ovulation.<br>
+            d. Incorrect. Secretory changes confirm ovulation.<br>
+            e. Incorrect. Ultrasound can show follicle collapse and fluid in the Pouch of Douglas.
+        </p>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="question-container" data-question-id="q3">
+        <p class="question-text"><span class="question-number">3.</span> When the cervix protrudes well beyond the introitus, in a case of uterine prolapse, the prolapse is called which of the following:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. 1st degree.</li>
+            <li class="option" data-correct="false">B. 2nd degree.</li>
+            <li class="option" data-correct="true">C. 3rd degree.</li>
+            <li class="option" data-correct="false">D. Procedentia.</li>
+            <li class="option" data-correct="false">E. None of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect. Descent is halfway to the hymen.<br>
+            b. Incorrect. Descent is to the level of the hymen (introitus).<br>
+            c. Correct. 3rd degree is when the cervix protrudes beyond the hymen/introitus.<br>
+            d. Incorrect. Procidentia typically refers to complete eversion/4th degree.<br>
+            e. Incorrect.
+        </p>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="question-container" data-question-id="q4">
+        <p class="question-text"><span class="question-number">4.</span> Pelvic endometriosis:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Is a cause of primary dysmenorrhoea.</li>
+            <li class="option" data-correct="false">B. Associated with excessive vaginal discharge.</li>
+            <li class="option" data-correct="false">C. Associated with prolonged use of IUCD.</li>
+            <li class="option" data-correct="false">D. Combined OCP are predisposing factor.</li>
+            <li class="option" data-correct="true">E. Can be diagnosed by laparoscopy.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect. It causes secondary dysmenorrhea.<br>
+            b. Incorrect. Discharge suggests infection.<br>
+            c. Incorrect. No direct causal link.<br>
+            d. Incorrect. COCs are used to treat endometriosis.<br>
+            e. Correct. Laparoscopy with biopsy is the gold standard for diagnosis.
+        </p>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">5.</span> The commonest site for ovarian [metastasis/spread] is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Pouce of Douglus.</li>
+            <li class="option" data-correct="false">B. Liver.</li>
+            <li class="option" data-correct="false">C. Uterus.</li>
+            <li class="option" data-correct="true">D. Peritoneum.</li>
+            <li class="option" data-correct="false">E. Bone.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. A specific site, but generalized peritoneal spread is the broader mechanism.<br>
+            b. Incorrect. Less common than peritoneal spread.<br>
+            c. Incorrect.<br>
+            d. Correct. Ovarian cancer spreads primarily by exfoliation and transcoelomic (peritoneal) seeding.<br>
+            e. Incorrect. Rare site.
+        </p>
+    </div>
+
+    <!-- Question 6 -->
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">6.</span> Types of uterine fibroid degeneration include all EXCEPT:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Red degeneration.</li>
+            <li class="option" data-correct="true">B. Yellow degeneration.</li>
+            <li class="option" data-correct="false">C. Calcification.</li>
+            <li class="option" data-correct="false">D. Hyaline degeneration.</li>
+            <li class="option" data-correct="false">E. Fatty degeneration.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect. Occurs during pregnancy.<br>
+            b. Correct (as the Exception). "Yellow degeneration" is not a distinct classification; the named types are Hyaline, Red, Calcific, Fatty, etc.<br>
+            c. Incorrect. Occurs in post-menopausal women.<br>
+            d. Incorrect. The most common type.<br>
+            e. Incorrect. A recognized type.
+        </p>
+    </div>
+
+    <!-- Question 7 -->
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">7.</span> Risk factors of cervical cancer include all the following [EXCEPT]:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Nulliparity.</li>
+            <li class="option" data-correct="false">B. Multiple sexual partners.</li>
+            <li class="option" data-correct="false">C. History of papilloma virus infection.</li>
+            <li class="option" data-correct="false">D. smoking.</li>
+            <li class="option" data-correct="false">E. sexual activity at early age.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct (as the Exception). High parity (multiparity) is the risk factor for cervical cancer; nulliparity is a risk for endometrial/ovarian cancer.<br>
+            b. Incorrect. Increases HPV risk.<br>
+            c. Incorrect. HPV is the primary cause.<br>
+            d. Incorrect. A known co-factor.<br>
+            e. Incorrect. Transformation zone is vulnerable in youth.
+        </p>
+    </div>
+
+    <!-- Question 8 -->
+    <div class="question-container" data-question-id="q8">
+        <p class="question-text"><span class="question-number">8.</span> What is the most frequent site for metastasis from a malignant gestational trophoblastic neoplasms.</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Brain.</li>
+            <li class="option" data-correct="false">B. Liver.</li>
+            <li class="option" data-correct="false">C. Kidneys.</li>
+            <li class="option" data-correct="false">D. Vulva.</li>
+            <li class="option" data-correct="true">E. Lung.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect. Late complication.<br>
+            b. Incorrect. Indicates poor prognosis.<br>
+            c. Incorrect. Less common.<br>
+            d. Incorrect. Can occur, but not the most frequent.<br>
+            e. Correct. Spread is hematogenous, and lungs are the first capillary bed encountered (80% of metastases).
+        </p>
+    </div>
+
+    <!-- Question 9 -->
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">9.</span> Choriocarcinomas can occur:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. After abortion</li>
+            <li class="option" data-correct="false">B. Spontaneously.</li>
+            <li class="option" data-correct="false">C. After Hydatiform mole.</li>
+            <li class="option" data-correct="false">D. After normal pregnancy.</li>
+            <li class="option" data-correct="true">E. All of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect. Approx 25% of cases.<br>
+            b. Incorrect. Can arise from non-gestational germ cells or undetected loss.<br>
+            c. Incorrect. The most common antecedent (50%).<br>
+            d. Incorrect. Approx 25% of cases.<br>
+            e. Correct. It can follow any type of pregnancy event.
+        </p>
+    </div>
+
+    <!-- Question 10 -->
+    <div class="question-container" data-question-id="q10">
+        <p class="question-text"><span class="question-number">10.</span> Which is a gonadotropin:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. FSH.</li>
+            <li class="option" data-correct="false">B. Oestrogen.</li>
+            <li class="option" data-correct="false">C. Oxytocin.</li>
+            <li class="option" data-correct="false">D. Progesterone.</li>
+            <li class="option" data-correct="false">E. Estradiol.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct. Follicle Stimulating Hormone is a pituitary glycoprotein gonadotropin.<br>
+            b. Incorrect. Steroid hormone.<br>
+            c. Incorrect. Peptide hormone.<br>
+            d. Incorrect. Steroid hormone.<br>
+            e. Incorrect. Steroid hormone.
+        </p>
+    </div>
+
+    <!-- Question 11 -->
+    <div class="question-container" data-question-id="q11">
+        <p class="question-text"><span class="question-number">11.</span> Risk factors for ectopic pregnancy are,except :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. prior ectopic</li>
+            <li class="option" data-correct="false">B. history of infertility</li>
+            <li class="option" data-correct="false">C. prior tubal surgery</li>
+            <li class="option" data-correct="true">D. maternal age of 16-19 years</li>
+            <li class="option" data-correct="false">E. history of PID</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. High recurrence risk.<br>
+            b. Incorrect. Infertility and ART increase risk.<br>
+            c. Incorrect. Scarring increases risk.<br>
+            d. Correct (as the Exception). Risk increases with age (>35), not typically in adolescence.<br>
+            e. Incorrect. PID causes tubal damage.
+        </p>
+    </div>
+
+    <!-- Question 12 -->
+    <div class="question-container" data-question-id="q12">
+        <p class="question-text"><span class="question-number">12.</span> Of the following,the most common benign tumor of the uterus is :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. leiomyosarcoma</li>
+            <li class="option" data-correct="false">B. endometioma</li>
+            <li class="option" data-correct="true">C. leiomyoma</li>
+            <li class="option" data-correct="false">D. adenomyosis</li>
+            <li class="option" data-correct="false">E. krukenburg's</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect. Malignant.<br>
+            b. Incorrect. Usually ovarian.<br>
+            c. Correct. Leiomyomas (fibroids) are the most common benign pelvic tumors.<br>
+            d. Incorrect. Presence of endometrial tissue in myometrium, not a distinct "tumor".<br>
+            e. Incorrect. Metastatic ovarian tumor.
+        </p>
+    </div>
+
+    <!-- Question 13 -->
+    <div class="question-container" data-question-id="q13">
+        <p class="question-text"><span class="question-number">13.</span> which of the following pubertal event would occur even in the absence of ovarian estrogen production:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. thelarche</li>
+            <li class="option" data-correct="false">B. menarche</li>
+            <li class="option" data-correct="true">C. pubarche</li>
+            <li class="option" data-correct="false">D. skeletal growth</li>
+            <li class="option" data-correct="false">E. vaginal cornification</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect. Requires estrogen.<br>
+            b. Incorrect. Requires estrogen.<br>
+            c. Correct. Pubarche (pubic hair) is driven by adrenal androgens (adrenarche), independent of ovarian estrogen.<br>
+            d. Incorrect. Estrogen drives growth spurt/fusion.<br>
+            e. Incorrect. Direct estrogen effect.
+        </p>
+    </div>
+
+    <!-- Question 14 -->
+    <div class="question-container" data-question-id="q14">
+        <p class="question-text"><span class="question-number">14.</span> in ovarian cyst all true except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. may cause pain</li>
+            <li class="option" data-correct="false">B. can be functional</li>
+            <li class="option" data-correct="false">C. discovered by US</li>
+            <li class="option" data-correct="false">D. may reach 10cm</li>
+            <li class="option" data-correct="true">E. always treated by surgery</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            a. Incorrect. Can cause pain via distension or torsion.<br>
+            b. Incorrect. Follicular/corpus luteum cysts are functional.<br>
+            c. Incorrect. US is primary imaging.<br>
+            d. Incorrect. Can be large.<br>
+            e. Correct (as the Exception). Many resolve spontaneously and are managed by observation.
+        </p>
+    </div>
+
+    <!-- Question 15 -->
+    <div class="question-container" data-question-id="q15">
+        <p class="question-text"><span class="question-number">15.</span> all the following symptoms are consistent with uterine fibroids except:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. nausea & vomiting</li>
+            <li class="option" data-correct="false">B. menorrhagia</li>
+            <li class="option" data-correct="false">C. backpain</li>
+            <li class="option" data-correct="false">D. urinary frequency</li>
+            <li class="option" data-correct="false">E. constipation</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct (as the Exception). Nausea is not a typical symptom of fibroids unless a rare acute abdomen occurs.<br>
+            b. Incorrect. Most common symptom.<br>
+            c. Incorrect. Caused by posterior pressure.<br>
+            d. Incorrect. Caused by bladder compression.<br>
+            e. Incorrect. Caused by rectal compression.
+        </p>
+    </div>
+
+    <!-- Question 16 -->
+    <div class="question-container" data-question-id="q16">
+        <p class="question-text"><span class="question-number">16.</span> Which of the following conditions shows 69 XXY :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. hydrops fetalis</li>
+            <li class="option" data-correct="true">B. partial HM</li>
+            <li class="option" data-correct="false">C. choriocarcinoma</li>
+            <li class="option" data-correct="false">D. Down syndrome</li>
+            <li class="option" data-correct="false">E. Klienfelter syndrome</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect. Clinical finding.<br>
+            b. Correct. Partial Hydatidiform Moles are typically triploid (69 chromosomes) due to dispermy.<br>
+            c. Incorrect. Malignancy.<br>
+            d. Incorrect. Trisomy 21.<br>
+            e. Incorrect. 47 XXY.
+        </p>
+    </div>
+
+    <!-- Question 17 -->
+    <div class="question-container" data-question-id="q17">
+        <p class="question-text"><span class="question-number">17.</span> Menorrhagia is :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. intermittent irregular vaginal bleeding</li>
+            <li class="option" data-correct="false">B. commonly presents as postmenopausal bleeding</li>
+            <li class="option" data-correct="true">C. prolonged & heavy menstrual cycle more than 80 ml</li>
+            <li class="option" data-correct="false">D. infrequent spaced cycles every 45 days</li>
+            <li class="option" data-correct="false">E. the main presentation in case of Asherman syndrome</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect. Describes metrorrhagia.<br>
+            b. Incorrect. Menorrhagia occurs in pre-menopausal women.<br>
+            c. Correct. This is the classic clinical definition of heavy menstrual bleeding.<br>
+            d. Incorrect. Describes oligomenorrhea.<br>
+            e. Incorrect. Asherman's causes amenorrhea.
+        </p>
+    </div>
+
+    <!-- Question 18 -->
+    <div class="question-container" data-question-id="q18">
+        <p class="question-text"><span class="question-number">18.</span> The following is a symptom of Climacteric (menopause) :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. obesity</li>
+            <li class="option" data-correct="false">B. premenstrual tension</li>
+            <li class="option" data-correct="true">C. hot flushes</li>
+            <li class="option" data-correct="false">D. menorrhagia</li>
+            <li class="option" data-correct="false">E. repeated vomiting</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect.<br>
+            b. Incorrect. PMS stops with cycles.<br>
+            c. Correct. Vasomotor instability (hot flushes) is the hallmark symptom of estrogen withdrawal.<br>
+            d. Incorrect. Bleeding stops in menopause.<br>
+            e. Incorrect.
+        </p>
+    </div>
+
+    <!-- Question 19 -->
+    <div class="question-container" data-question-id="q19">
+        <p class="question-text"><span class="question-number">19.</span> The following drugs are associated with hirsuitism ,except :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. danazol</li>
+            <li class="option" data-correct="false">B. phenytoin</li>
+            <li class="option" data-correct="false">C. norethisterone</li>
+            <li class="option" data-correct="true">D. finasteride</li>
+            <li class="option" data-correct="false">E. cyclosporine</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect. Androgenic.<br>
+            b. Incorrect. Causes hypertrichosis.<br>
+            c. Incorrect. Androgenic.<br>
+            d. Correct (as the Exception). Finasteride is a 5-alpha reductase inhibitor used to treat hirsutism.<br>
+            e. Incorrect. Causes hypertrichosis.
+        </p>
+    </div>
+
+    <!-- Question 20 -->
+    <div class="question-container" data-question-id="q20">
+        <p class="question-text"><span class="question-number">20.</span> Choclate cyst is a term for a(n):</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. degenerating fibroid</li>
+            <li class="option" data-correct="true">B. endometrioma</li>
+            <li class="option" data-correct="false">C. hemorragic cyst</li>
+            <li class="option" data-correct="false">D. tubo-ovarian abscess</li>
+            <li class="option" data-correct="false">E. ectopic pregnancy</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect.<br>
+            b. Correct. An ovarian cyst filled with old, tarry blood resulting from endometriosis.<br>
+            c. Incorrect. Contains fresh blood.<br>
+            d. Incorrect. Contains pus.<br>
+            e. Incorrect.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 20</div>
+</div>
+
+<!-- Add more sections here if needed, e.g. <div class="section" data-section-id="s2"> ... </div> -->
+
+
+
+
+
+
+
+
+
+<div class="bottom-nav-container">
+    <a href="#" class="main-button" id="home-button-subject">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <button id="reset-button" class="main-button">
+        <i class="fas fa-sync-alt"></i> Reset Progress
+    </button>
+</div>
+
+<script>
+// ====== SUBJECT PAGE LOGIC (DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING) ======
+const PAGE_ID = window.SUBJECT_SETTINGS.PAGE_ID;
+const ANSWERS_KEY = `${PAGE_ID}_answers`;
+const SCORES_KEY = `${PAGE_ID}_scores`;
+
+document.getElementById('dynamic-title-subject').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+document.getElementById('subject-page-title-display').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+const homeBtnSubject = document.getElementById('home-button-subject');
+if (homeBtnSubject) homeBtnSubject.href = window.SUBJECT_SETTINGS.HOME_LINK;
+
+const allSections = document.querySelectorAll('.section');
+let sectionScores = {};
+
+function saveState(sectionId, questionId, selectedOptionIndex, currentScore, totalQuestionsInSection) {
+    let answers = JSON.parse(localStorage.getItem(ANSWERS_KEY)) || {};
+    if (!answers[sectionId]) answers[sectionId] = {};
+    answers[sectionId][questionId] = {
+        selectedOptionIndex: selectedOptionIndex,
+        answered: true
+    };
+    localStorage.setItem(ANSWERS_KEY, JSON.stringify(answers));
+
+    let scores = JSON.parse(localStorage.getItem(SCORES_KEY)) || {};
+    if (!scores[sectionId]) scores[sectionId] = { score: 0, total: 0}; // Initialize if not exists
+    scores[sectionId] = { score: currentScore, total: totalQuestionsInSection };
+
+    // Update overall total for the page if not already set or if it changed
+    let overallTotal = 0;
+    allSections.forEach(sec => {
+        const secId = sec.dataset.sectionId;
+        const numQs = sec.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        // Ensure section total is also up-to-date in the scores object if initializing
+        if (!scores[secId] || scores[secId].total !== numQs) {
+             scores[secId] = scores[secId] || {score:0}; // preserve score if exists
+             scores[secId].total = numQs;
+        }
+    });
+    scores['all'] = scores['all'] || {};
+    scores['all'].total = overallTotal;
+
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+function applyOptionSelectionLogic(optionElement, questionContainer, isLoadTime = false) {
+    const explanation = questionContainer.querySelector('.explanation');
+    const allOptionsInQuestion = questionContainer.querySelectorAll('.option');
+    const section = questionContainer.closest('.section');
+    const sectionId = section.dataset.sectionId;
+    const scoreDisplay = section.querySelector(`#score-section-${sectionId}`); // Ensure ID matches
+    const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+
+    if (questionContainer.classList.contains('answered') && !isLoadTime) return; // Prevent re-answering
+
+    questionContainer.classList.add('answered');
+    const isCorrect = optionElement.dataset.correct === 'true';
+
+    let feedbackSpan = optionElement.querySelector('.feedback');
+    if (!feedbackSpan) {
+        feedbackSpan = document.createElement('span');
+        feedbackSpan.className = 'feedback';
+        optionElement.appendChild(feedbackSpan);
+    }
+    feedbackSpan.style.display = 'inline'; // Make sure it's visible
+
+    if (isCorrect) {
+        optionElement.classList.add('correct');
+        feedbackSpan.textContent = ' ✓ Correct!';
+        if (!isLoadTime) {
+            sectionScores[sectionId] = (sectionScores[sectionId] || 0) + 1;
+        }
+    } else {
+        optionElement.classList.add('incorrect');
+        feedbackSpan.textContent = ' ✗ Incorrect.';
+        allOptionsInQuestion.forEach(opt => {
+            if (opt.dataset.correct === 'true') {
+                opt.classList.add('reveal-correct'); // Use a distinct class for just revealing
+                let correctFeedback = opt.querySelector('.feedback');
+                if (!correctFeedback) {
+                    correctFeedback = document.createElement('span');
+                    correctFeedback.className = 'feedback';
+                    opt.appendChild(correctFeedback);
+                }
+                correctFeedback.textContent = ' (Correct Answer)'; // Simpler feedback
+                correctFeedback.style.display = 'inline';
+            }
+        });
+    }
+
+    if (explanation) explanation.style.display = 'block';
+    allOptionsInQuestion.forEach(opt => {
+        opt.style.cursor = 'default'; // Disable further clicks by changing cursor
+        // To truly disable, you might remove event listeners or set pointer-events: none
+    });
+
+    if (scoreDisplay) {
+        scoreDisplay.textContent = `Score: ${sectionScores[sectionId] || 0} / ${totalQuestionsInSection}`;
+    }
+
+    if (!isLoadTime) {
+        const optionIndex = Array.from(allOptionsInQuestion).indexOf(optionElement);
+        saveState(sectionId, questionContainer.dataset.questionId, optionIndex, sectionScores[sectionId] || 0, totalQuestionsInSection);
+    }
+}
+
+function loadState() {
+    const savedAnswersData = JSON.parse(localStorage.getItem(ANSWERS_KEY));
+    const savedScoresData = JSON.parse(localStorage.getItem(SCORES_KEY));
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        sectionScores[sectionId] = (savedScoresData && savedScoresData[sectionId]) ? savedScoresData[sectionId].score : 0;
+
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: ${sectionScores[sectionId]} / ${totalQuestionsInSection}`;
+        }
+
+        if (savedAnswersData && savedAnswersData[sectionId]) {
+            const questionsInSection = section.querySelectorAll('.question-container');
+            questionsInSection.forEach(qc => {
+                const questionId = qc.dataset.questionId;
+                const qData = savedAnswersData[sectionId][questionId];
+                if (qData && qData.answered && typeof qData.selectedOptionIndex === 'number') {
+                    const optionsInQ = qc.querySelectorAll('.option');
+                    if (qData.selectedOptionIndex >= 0 && qData.selectedOptionIndex < optionsInQ.length) {
+                        const selectedOptionEl = optionsInQ[qData.selectedOptionIndex];
+                        if (selectedOptionEl) {
+                           applyOptionSelectionLogic(selectedOptionEl, qc, true); // True for isLoadTime
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function resetState() {
+    localStorage.removeItem(ANSWERS_KEY);
+    localStorage.removeItem(SCORES_KEY); // Also remove scores to reset counts
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Reset internal score tracking
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+
+        section.querySelectorAll('.question-container').forEach(qc => {
+            qc.classList.remove('answered');
+            const explanation = qc.querySelector('.explanation');
+            if (explanation) explanation.style.display = 'none';
+
+            qc.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('correct', 'incorrect', 'reveal-correct');
+                opt.style.cursor = 'pointer'; // Re-enable cursor
+                const feedback = opt.querySelector('.feedback');
+                if (feedback) {
+                    feedback.textContent = '';
+                    feedback.style.display = 'none'; // Hide feedback
+                }
+            });
+        });
+
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: 0 / ${totalQuestionsInSection}`;
+        }
+    });
+    // After resetting, re-initialize the total questions for the page in localStorage
+    initializePageTotalQuestions();
+}
+
+function initializePageTotalQuestions() {
+    let overallTotal = 0;
+    const scores = {}; // Start with a fresh scores object for initialization
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const numQs = section.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        scores[sectionId] = { score: 0, total: numQs }; // Initialize section scores
+    });
+    scores['all'] = { total: overallTotal };
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize sectionScores for all sections on the page
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Initialize score to 0
+    });
+
+    // Attempt to load saved state
+    loadState();
+
+    // If no scores are loaded (e.g., first visit or after reset), initialize totals
+    if (!localStorage.getItem(SCORES_KEY)) {
+        initializePageTotalQuestions();
+    } else { // If scores exist, ensure 'all.total' is up-to-date
+        let existingScores = JSON.parse(localStorage.getItem(SCORES_KEY));
+        let currentOverallTotal = 0;
+        allSections.forEach(section => {
+            currentOverallTotal += section.querySelectorAll('.question-container').length;
+        });
+        if (!existingScores.all || existingScores.all.total !== currentOverallTotal) {
+            existingScores.all = existingScores.all || {};
+            existingScores.all.total = currentOverallTotal;
+            localStorage.setItem(SCORES_KEY, JSON.stringify(existingScores));
+        }
+    }
+
+
+    allSections.forEach(section => {
+        const options = section.querySelectorAll('.option');
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                const questionContainer = this.closest('.question-container');
+                if (!questionContainer.classList.contains('answered')) { // Only process if not answered
+                    applyOptionSelectionLogic(this, questionContainer, false); // False for isLoadTime
+                }
+            });
+        });
+    });
+
+    const resetButtonSubject = document.getElementById('reset-button');
+    if (resetButtonSubject) {
+        resetButtonSubject.addEventListener('click', resetState);
+    }
+});
+</script>
+<footer style="text-align: center; padding: 2em 1em 1em; font-size: 14px; color: #3a3a3a; width:100%; box-sizing:border-box;">
+    © <span id="currentYear"></span> Developed by
+    <a href="https://github.com/Philonoist7" target="_blank" class="footer-link">
+      <strong>Ali Hussein</strong>
+    </a>
+    <script>
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+    <style>
+      .footer-link {
+        color: #004992;
+        text-decoration: none;
+        transition: color 0.2s, border-bottom-color 0.2s;
+      }
+      .footer-link:hover {
+        color: #003366;
+        border-bottom: 1.5px solid #003366;
+      }
+    </style>
+    </footer>
+</body>
+</html>

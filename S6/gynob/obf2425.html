@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ====== SUBJECT PAGE SETTINGS ====== -->
+
+<script>
+/*
+    ====== EDIT ONLY THIS BLOCK FOR NEW SUBJECTS ======
+    Change these variables for each new subject page.
+*/
+(function() {
+    // Get filename without extension for PAGE_ID
+    const path = window.location.pathname;
+    const file = path.substring(path.lastIndexOf('/') + 1) || path.substring(path.lastIndexOf('\\') + 1);
+    const pageIdAuto = file.replace(/\.[^/.]+$/, ""); // Remove extension
+
+    window.SUBJECT_SETTINGS = {
+        
+
+
+        PAGE_TITLE: 'Obstetric MCQs - Stage 4 Final', // <--- EDIT THIS: Title for this subject page.
+        HOME_LINK: 'gynob_qbank.html',      // <--- EDIT THIS: Link back to the group page or main.html.
+
+
+        PAGE_ID: pageIdAuto,      // Automatically set from filename
+    
+    
+    
+    };
+})();
+</script>
+
+<title id="dynamic-title-subject">Subject QBank</title>
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- Google Fonts - Open Sans (example, or keep Montserrat) -->
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Amiri Font for Arabic Text -->
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+
+
+
+<style>
+/* Styles for the question page */
+body {
+    font-family: 'Open Sans', Arial, sans-serif; /* Example: Changed font */
+    line-height: 1.7; /* Increased line height for readability */
+    margin: 0;
+    padding: 20px;
+    background-color: #eef1f5; /* Lighter background */
+    padding-top: 80px; /* Space for fixed header */
+    padding-bottom: 100px; /* Space for bottom nav */
+}
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50; /* Darker header */
+    color: #ecf0f1;
+    padding: 6px 0;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16); /* Softer shadow */
+}
+.fixed-header .made-by-prefix { color: #bdc3c7; } /* Lighter prefix text */
+.fixed-header a { color: #3498db; text-decoration: none; font-weight: bold; }
+.fixed-header a:hover { text-decoration: underline; color: #5dade2; }
+.fixed-header .quran-verse {
+    display: inline-block;
+    font-family: 'Amiri', 'Scheherazade', serif;
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #ffae00;
+    letter-spacing: 0.5px;
+    padding: 0.2em 1em;
+    border-radius: 8px;
+    margin-left: 10px;
+    margin-right: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    direction: rtl;
+}
+@media (max-width: 600px) {
+    .fixed-header .quran-verse {
+        font-size: 1em;
+        padding: 0.2em 0.5em;
+    }
+}
+
+.page-main-title {
+    font-size: 2.2em;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.section {
+    margin-bottom: 35px; /* Increased space between sections */
+    background-color: #ffffff;
+    padding: 25px; /* Increased padding */
+    border-radius: 10px; /* More rounded corners */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Softer, larger shadow */
+    max-width: 800px; /* Max width for content readability */
+    margin-left: auto;
+    margin-right: auto;
+}
+.section-title {
+    font-size: 1.6em; /* Adjusted size */
+    color: #34495e; /* Dark blue-gray */
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eaecee; /* Lighter border */
+    padding-bottom: 12px;
+    font-weight: 600;
+}
+.question-container {
+    margin-bottom: 30px; /* More space between questions */
+    padding: 20px;
+    border: 1px solid #dce4ec; /* Lighter border */
+    border-radius: 8px;
+    background-color: #fdfdfd; /* Very light background for question */
+    transition: box-shadow 0.3s ease;
+}
+.question-container:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.question-container.answered { background-color: #f8f9fa; }
+.question-number {
+    font-weight: 700; /* Bolder question number */
+    color: #007bff; /* Primary color for question number */
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+.question-text {
+    font-size: 1.1em;
+    color: #343a40; /* Standard text color */
+    margin-bottom: 18px; /* More space below question text */
+    line-height: 1.6;
+}
+ul.options { list-style: none; padding: 0; margin: 0; }
+li.option {
+    background-color: #f1f5f9; /* Light gray-blue for options */
+    margin-bottom: 12px; /* More space between options */
+    padding: 12px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-left 0.2s ease;
+    border: 1px solid #d1d9e2;
+    border-left: 4px solid transparent; /* For hover/selection indication */
+    position: relative;
+    user-select: none; /* Prevent text selection on click */
+    font-size: 1em;
+    color: #333;
+}
+li.option:hover:not(.answered li.option) {
+    background-color: #e4e9f0;
+    border-left-color: #007bff; /* Blue accent on hover */
+}
+.question-container.answered li.option { cursor: default; } /* No hover effect after answered */
+.question-container.answered li.option:hover { background-color: #f1f5f9; border-left-color: transparent; } /* Reset hover for answered */
+
+li.option.correct:hover, li.option.reveal-correct:hover { background-color: #d4edda !important; border-left-color: #28a745 !important; }
+li.option.incorrect:hover { background-color: #f8d7da !important; border-left-color: #dc3545 !important; }
+
+li.option.correct {
+    background-color: #d4edda !important; /* Ensure override */
+    border-color: #c3e6cb !important;
+    border-left: 4px solid #28a745 !important; /* Green for correct */
+    color: #155724;
+    font-weight: 600;
+}
+li.option.incorrect {
+    background-color: #f8d7da !important;
+    border-color: #f5c6cb !important;
+    border-left: 4px solid #dc3545 !important; /* Red for incorrect */
+    color: #721c24;
+    font-weight: 600;
+}
+.feedback { display: none; font-weight: bold; margin-left: 10px; }
+li.option.correct .feedback, li.option.incorrect .feedback { display: inline; }
+.correct .feedback { color: #155724; }
+.incorrect .feedback { color: #721c24; }
+
+li.option.reveal-correct { /* Style for showing the correct answer when user was wrong */
+    background-color: #d1ecf1 !important; /* Light info blue */
+    border-color: #bee5eb !important;
+    border-left: 4px solid #17a2b8 !important; /* Info blue */
+    color: #0c5460 !important;
+    font-weight: 600 !important;
+}
+.explanation {
+    display: none;
+    margin-top: 20px; /* More space above explanation */
+    padding: 15px;
+    background-color: #e9ecef; /* Slightly darker explanation background */
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    color: #495057;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+.explanation strong { color: #333; } /* Make "Correct answer:" part darker */
+
+.section-score {
+    margin-top: 30px;
+    font-size: 1.25em; /* Larger score text */
+    font-weight: bold;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    padding: 12px;
+    background-color: #e2f0fb; /* Light blue score background */
+    border: 1px solid #a8cff3; /* Softer blue border */
+    border-radius: 8px;
+}
+.bottom-nav-container {
+    position: fixed;
+    bottom: 0; /* Flush to bottom */
+    left: 0;
+    width: 100%;
+    background-color: #ffffff; /* White background for nav */
+    padding: 8px 0; /* Padding top/bottom */
+    z-index: 1001;
+    display: flex;
+    justify-content: center; /* Center buttons */
+    gap: 20px; /* Increased gap */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* Shadow at the top */
+    border-top: 1px solid #e0e0e0;
+}
+.main-button {
+    background-color: #007bff; /* Primary blue */
+    color: #ffffff;
+    padding: 10px 16px; /* Adjusted padding */
+    font-size: 1em; /* Standard font size */
+    text-decoration: none;
+    font-weight: 600; /* Bolder text */
+    border-radius: 25px; /* Pill shape */
+    box-shadow: 0 3px 7px rgba(0,123,255,0.3); /* Softer shadow related to button color */
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-button i { margin-right: 10px; font-size: 1.1em; } /* Slightly larger icon */
+.main-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,123,255,0.4);
+}
+a.main-button:hover { background-color: #0069d9; } /* Darker blue on hover */
+#reset-button { background-color: #e74c3c; box-shadow: 0 3px 7px rgba(231,76,60,0.3); } /* Red reset button */
+#reset-button:hover { background-color: #c0392b; box-shadow: 0 5px 10px rgba(192,57,43,0.4); }
+
+@media (max-width: 768px) {
+    body { padding: 15px; padding-top: 70px; padding-bottom: 90px; }
+    .page-main-title { font-size: 1.8em; }
+    .section { padding: 20px; }
+    .section-title { font-size: 1.4em; }
+    .question-text { font-size: 1em; }
+    li.option { padding: 10px 15px; font-size: 0.95em;}
+    .section-score { font-size: 1.15em; }
+}
+@media (max-width: 480px) {
+    body { padding: 10px; padding-top: 60px; padding-bottom: 80px; }
+    .page-main-title { font-size: 1.6em; margin-bottom: 20px;}
+    .section { padding: 15px; }
+    .section-title { font-size: 1.3em; margin-bottom: 20px; }
+    .question-container { padding: 15px; }
+    .question-text { font-size: 0.95em; }
+    li.option { padding: 10px 12px; font-size: 0.9em;}
+    .explanation { font-size: 0.9em; padding: 10px;}
+    .section-score { font-size: 1.1em; padding: 10px;}
+    .bottom-nav-container { padding: 10px 0; gap: 15px;}
+    .main-button { padding: 8px 16px; font-size: 0.9em;}
+}
+
+</style>
+</head>
+<body>
+<div class="fixed-header">
+    <span class="quran-verse">وَقُل رَّبِّ زِدْنِي عِلْمًا</span>
+</div>
+
+
+
+<h1 class="page-main-title" id="subject-page-title-display">Subject Questions</h1>
+
+
+<!--
+    ====== ADD YOUR QUESTIONS CONTENT BELOW ======
+    - Each section needs a unique data-section-id (e.g., "s1", "s2").
+      This ID is used for the score display (e.g., score-section-s1).
+    - Each question-container needs a unique data-question-id within its section (e.g., "q1", "q2").
+    - Mark the correct option with data-correct="true".
+-->
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">Obstetrics & Gynecology Questions</h2>
+
+    <!-- Question 1 -->
+    <div class="question-container" data-question-id="q1">
+        <p class="question-text"><span class="question-number">1.</span> The greatest diameter of the fetal head is</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Occipitofrontal</li>
+            <li class="option" data-correct="true">B. Occipitomental</li>
+            <li class="option" data-correct="false">C. Suboccipit bregmatic</li>
+            <li class="option" data-correct="false">D. Bitemporal</li>
+            <li class="option" data-correct="false">E. Biparietal</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Occipitomental is 13.5 cm (brow presentation), the largest anteroposterior diameter.<br>
+            a. Occipitofrontal is 11.5 cm.<br>
+            c. Suboccipitobregmatic is 9.5 cm.<br>
+            d. Bitemporal is 8.0 cm.<br>
+            e. Biparietal is 9.5 cm.
+        </p>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="question-container" data-question-id="q2">
+        <p class="question-text"><span class="question-number">2.</span> What's true : Molding of the fetal head:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Usually cause brain damage</li>
+            <li class="option" data-correct="false">B. Becomes progressively easier as gestational age increase</li>
+            <li class="option" data-correct="false">C. Increase the difficulty of delivery</li>
+            <li class="option" data-correct="true">D. Does NOT have time to occur in breech delivery</li>
+            <li class="option" data-correct="false">E. Does not happen when maternal pelvis is adequate.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. In breech delivery, the aftercoming head passes through the pelvis rapidly, allowing little time for molding.<br>
+            a. Normal molding is physiological.<br>
+            b. It becomes harder as ossification increases with age.<br>
+            c. It decreases difficulty by reducing head diameters.
+        </p>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="question-container" data-question-id="q3">
+        <p class="question-text"><span class="question-number">3.</span> The following are all risk factors for placental abruption EXCEPT:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Hypertension</li>
+            <li class="option" data-correct="false">B. Pre-eclampsia</li>
+            <li class="option" data-correct="true">C. Diabetes</li>
+            <li class="option" data-correct="false">D. Alcohol</li>
+            <li class="option" data-correct="false">E. Tobacco use</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Diabetes is a risk factor for polyhydramnios and macrosomia, but not a primary direct risk factor for abruption compared to vascular disorders.<br>
+            a, b, d, e. Hypertension, Alcohol, and Tobacco are established risk factors.
+        </p>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="question-container" data-question-id="q4">
+        <p class="question-text"><span class="question-number">4.</span> The following are all common fetal complications of multiple pregnancy EXCEPT</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Preterm labour</li>
+            <li class="option" data-correct="false">B. Intrauterine growth retardation</li>
+            <li class="option" data-correct="false">C. Malpresentation</li>
+            <li class="option" data-correct="false">D. Jaundice</li>
+            <li class="option" data-correct="true">E. Shoulder dystocia</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Shoulder dystocia is associated with macrosomia. Twins are usually smaller/IUGR, making shoulder dystocia less common than in singletons.<br>
+            a, b, c, d. These are very common complications in twins.
+        </p>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">5.</span> A multigravida woman presents in labor, by vaginal examination you feel the fontanelle, sinciput and orbital ridges the presentation is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Transverse</li>
+            <li class="option" data-correct="false">B. Face</li>
+            <li class="option" data-correct="false">C. Breech</li>
+            <li class="option" data-correct="true">D. Brow</li>
+            <li class="option" data-correct="false">E. Cephalic</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Brow presentation is characterized by palpating the anterior fontanelle, sinciput (forehead), and orbital ridges.<br>
+            b. Face presentation would involve palpating the chin.
+        </p>
+    </div>
+
+    <!-- Question 6 -->
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">6.</span> Uncontrolled hyperthyroidism in pregnancy is associated with all of the following except</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Thyroid storm (thyrotoxic crisis)</li>
+            <li class="option" data-correct="false">B. Heart failure.</li>
+            <li class="option" data-correct="false">C. Miscarriage</li>
+            <li class="option" data-correct="true">D. Hypotension</li>
+            <li class="option" data-correct="false">E. Premature labour.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Hyperthyroidism is associated with hypertension (or widened pulse pressure), not hypotension.<br>
+            a, b, c, e. These are known complications of the hyperdynamic state caused by hyperthyroidism.
+        </p>
+    </div>
+
+    <!-- Question 7 -->
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">7.</span> Which of the following is not a consequence of massive obstetric haemorrhage</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Acute hypovolaemia</li>
+            <li class="option" data-correct="true">B. Hepatic cirrhosis.</li>
+            <li class="option" data-correct="false">C. Sudden and rapid cardiovascular decompensation.</li>
+            <li class="option" data-correct="false">D. Disseminated intravascular coagulopathy (DIC).</li>
+            <li class="option" data-correct="false">E. Pulmonary oedema.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Hepatic cirrhosis is a chronic disease, not an acute consequence of hemorrhage.<br>
+            a, c, d. These are direct acute consequences of massive blood loss.<br>
+            e. Pulmonary edema can occur due to aggressive fluid resuscitation.
+        </p>
+    </div>
+
+    <!-- Question 8 -->
+    <div class="question-container" data-question-id="q8">
+        <p class="question-text"><span class="question-number">8.</span> For cord prolapse management, what's true if baby is dead:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Vacuum delivery in full cervical dilatation..</li>
+            <li class="option" data-correct="false">B. Forceps delivery in previous 3 caesarean</li>
+            <li class="option" data-correct="false">C. Internal version in transverse lie.</li>
+            <li class="option" data-correct="false">D. Caesarean section in 3 cm dilatation</li>
+            <li class="option" data-correct="true">E. Vaginal delivery in cephalic presentation with previous vaginal deliveries</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. If the fetus is dead, maternal safety is the priority. Vaginal delivery is preferred to avoid surgical risks.<br>
+            d. C-section is avoided for a dead fetus unless there is a maternal indication.
+        </p>
+    </div>
+
+    <!-- Question 9 -->
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">9.</span> Diagnosis of cephalopelvic disproportion during labour is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. There is inefficient uterine contraction.</li>
+            <li class="option" data-correct="false">B. Fetal head descend rapidly.</li>
+            <li class="option" data-correct="false">C. Thin cervix.</li>
+            <li class="option" data-correct="true">D. Progressive excessive molding.</li>
+            <li class="option" data-correct="false">E. Liquor changed from meconium to white color</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Progressive excessive molding and caput succedaneum despite contractions indicate a mismatch between head and pelvis (CPD).<br>
+            b. Rapid descent rules out CPD.
+        </p>
+    </div>
+
+    <!-- Question 10 -->
+    <div class="question-container" data-question-id="q10">
+        <p class="question-text"><span class="question-number">10.</span> Regarding Secondary postpartum haemorrhage:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. diagnosed when bleeding occurs in first 24 hours</li>
+            <li class="option" data-correct="false">B. Breast feeding is contraindicated in those patients.</li>
+            <li class="option" data-correct="false">C. The commonest cause is cervical tear.</li>
+            <li class="option" data-correct="true">D. Choriocarcinoma could be a cause.</li>
+            <li class="option" data-correct="false">E. All of the above are true.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Choriocarcinoma is a rare but possible cause of late postpartum bleeding.<br>
+            a. Secondary PPH occurs after 24 hours.<br>
+            c. The commonest cause is retained placental tissue or endometritis.
+        </p>
+    </div>
+
+    <!-- Question 11 -->
+    <div class="question-container" data-question-id="q11">
+        <p class="question-text"><span class="question-number">11.</span> For uterine inversion; what's true?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Can occur before baby delivery.</li>
+            <li class="option" data-correct="true">B. Can occur before placental delivery.</li>
+            <li class="option" data-correct="false">C. It is very common.</li>
+            <li class="option" data-correct="false">D. Caused by bad first stage of labour management.</li>
+            <li class="option" data-correct="false">E. Never be fatal.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Inversion often occurs before placental delivery or during attempts to deliver it (cord traction).<br>
+            d. It is caused by mismanagement of the third stage.
+        </p>
+    </div>
+
+    <!-- Question 12 -->
+    <div class="question-container" data-question-id="q12">
+        <p class="question-text"><span class="question-number">12.</span> Initial treatment to arrest preterm labour include all of the following except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. External cardiotocography (CTG) monitoring.</li>
+            <li class="option" data-correct="false">B. Tocolysis.</li>
+            <li class="option" data-correct="false">C. Corticosteroids administration.</li>
+            <li class="option" data-correct="false">D. Bed rest & hydration.</li>
+            <li class="option" data-correct="true">E. Oxytocin administration.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Oxytocin stimulates contractions and is used for induction, not to arrest labor.<br>
+            a, b, c, d. These are standard management steps for preterm labor.
+        </p>
+    </div>
+
+    <!-- Question 13 -->
+    <div class="question-container" data-question-id="q13">
+        <p class="question-text"><span class="question-number">13.</span> How long does the uterus takes to become not palpable per abdomen after delivery ?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. One week.</li>
+            <li class="option" data-correct="true">B. Two weeks.</li>
+            <li class="option" data-correct="false">C. Three weeks.</li>
+            <li class="option" data-correct="false">D. Four weeks.</li>
+            <li class="option" data-correct="false">E. Six weeks.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. The uterus involutes and descends into the pelvis, becoming non-palpable abdominally by approximately 10-14 days (2 weeks).
+        </p>
+    </div>
+
+    <!-- Question 14 -->
+    <div class="question-container" data-question-id="q14">
+        <p class="question-text"><span class="question-number">14.</span> A perineal tear involving perineal muscles, external and internal anal sphincter and rectal mucosa is categorized as:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. First degree.</li>
+            <li class="option" data-correct="false">B. Second degree.</li>
+            <li class="option" data-correct="false">C. Third degree.</li>
+            <li class="option" data-correct="true">D. Fourth degree.</li>
+            <li class="option" data-correct="false">E. None of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Fourth degree tears involve the anal sphincter complex AND the rectal mucosa.<br>
+            c. Third degree involves the sphincter but spares the mucosa.
+        </p>
+    </div>
+
+    <!-- Question 15 -->
+    <div class="question-container" data-question-id="q15">
+        <p class="question-text"><span class="question-number">15.</span> In routine chemical tests performed on amniotic fluid, fetal lung maturity can be detected by:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Creatinine measurement.</li>
+            <li class="option" data-correct="false">B. Alpha feto protein.</li>
+            <li class="option" data-correct="true">C. Lecithin-sphingomyelin ratio (L/S ratio).</li>
+            <li class="option" data-correct="false">D. Bilirubin scan.</li>
+            <li class="option" data-correct="false">E. Cytokine.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. The L/S ratio measures surfactant production; a ratio >2.0 indicates maturity.
+        </p>
+    </div>
+
+    <!-- Question 16 -->
+    <div class="question-container" data-question-id="q16">
+        <p class="question-text"><span class="question-number">16.</span> A 38 weeks pregnant primiparous woman in the emergency room. While being examine she has a convulsion. Most likely she has:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Eclampsia.</li>
+            <li class="option" data-correct="false">B. Epilepsy.</li>
+            <li class="option" data-correct="false">C. Space occupying lesion.</li>
+            <li class="option" data-correct="false">D. Hypoglycemia.</li>
+            <li class="option" data-correct="false">E. Hypernatremia.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. In a pregnant woman near term, a new-onset seizure is Eclampsia until proven otherwise.
+        </p>
+    </div>
+
+    <!-- Question 17 -->
+    <div class="question-container" data-question-id="q17">
+        <p class="question-text"><span class="question-number">17.</span> For a pregnant woman with a transverse lie true;</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. External version can be done before labour.</li>
+            <li class="option" data-correct="false">B. Obstructed labour occur if untreated.</li>
+            <li class="option" data-correct="false">C. Rupture uterus may be a complication.</li>
+            <li class="option" data-correct="false">D. Cord prolapse may occur.</li>
+            <li class="option" data-correct="true">E. All of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. All options are correct: ECV can be attempted, but if labour starts, it leads to obstruction, potential rupture, and high risk of cord prolapse.
+        </p>
+    </div>
+
+    <!-- Question 18 -->
+    <div class="question-container" data-question-id="q18">
+        <p class="question-text"><span class="question-number">18.</span> The following maneuvers are used to manage shoulder dystocia except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. gentle traction</li>
+            <li class="option" data-correct="false">B. MacRoberts' maneuver</li>
+            <li class="option" data-correct="true">C. fundal pressure</li>
+            <li class="option" data-correct="false">D. Woods' Corkscrew Maneuver</li>
+            <li class="option" data-correct="false">E. suprapubic pressure</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Fundal pressure is CONTRAINDICATED in shoulder dystocia as it impacts the shoulder further and risks uterine rupture.<br>
+            a, b, d, e. These are standard maneuvers for shoulder dystocia.
+        </p>
+    </div>
+
+    <!-- Question 19 -->
+    <div class="question-container" data-question-id="q19">
+        <p class="question-text"><span class="question-number">19.</span> Prerequisites for instrumental delivery include which of the following:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Contracted pelvis</li>
+            <li class="option" data-correct="false">B. 8 cm cervical dilatation</li>
+            <li class="option" data-correct="true">C. Ruptured membranes</li>
+            <li class="option" data-correct="false">D. Face presentation</li>
+            <li class="option" data-correct="false">E. Full bladder</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Ruptured membranes and full dilation (10 cm) are absolute prerequisites.<br>
+            a. Contracted pelvis is a contraindication.<br>
+            e. Bladder must be empty.
+        </p>
+    </div>
+
+    <!-- Question 20 -->
+    <div class="question-container" data-question-id="q20">
+        <p class="question-text"><span class="question-number">20.</span> Therapeutic termination of Pregnancy for patients with cardiac disease should be offered in the following conditions except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Dilated cardiomyopathy.</li>
+            <li class="option" data-correct="false">B. Marfan s Syndrome with dilated aortic root</li>
+            <li class="option" data-correct="false">C. Severe Obstructive Lesions .</li>
+            <li class="option" data-correct="false">D. Pulmonary hypertension .</li>
+            <li class="option" data-correct="true">E. Mitral regurgitation</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Mitral regurgitation is generally well-tolerated in pregnancy. The other conditions carry extremely high maternal mortality risk (WHO Class IV).
+        </p>
+    </div>
+
+    <!-- Question 21 -->
+    <div class="question-container" data-question-id="q21">
+        <p class="question-text"><span class="question-number">21.</span> Which of the following is not true regarding intrauterine growth restriction?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. It is associated with premature labour.</li>
+            <li class="option" data-correct="false">B. It may be associated with a low socio-economic status.</li>
+            <li class="option" data-correct="true">C. These babies are at an increased risk of developing respiratory distress syndrome.</li>
+            <li class="option" data-correct="false">D. It may be associated with raised serum AFP at 16 weeks followed by normal scan at 18 weeks.</li>
+            <li class="option" data-correct="false">E. There may be neonatal hypoglycaemia in the babies born with IUGR.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. IUGR fetuses often have accelerated lung maturation due to stress, so they are at a relatively lower risk of RDS compared to AGA preterms (though they have other risks).
+        </p>
+    </div>
+
+    <!-- Question 22 -->
+    <div class="question-container" data-question-id="q22">
+        <p class="question-text"><span class="question-number">22.</span> Which of the following statement is correct regarding the early pregnancy loss?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Is usually due to hormone deficiency.</li>
+            <li class="option" data-correct="true">B. Is due to an abnormal karyotype in approximately 50% of cases.</li>
+            <li class="option" data-correct="false">C. Intrauterine pregnancy can not co-exist with tubal pregnancy.</li>
+            <li class="option" data-correct="false">D. An intrauterine pregnancy should be visible on transvaginal scan if the HCG is >1000 iu /l.</li>
+            <li class="option" data-correct="false">E. Always needs evacuation.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Chromosomal abnormalities account for 50-60% of first-trimester miscarriages.<br>
+            d. Discriminatory zone is usually 1500-2000 IU/L.
+        </p>
+    </div>
+
+    <!-- Question 23 -->
+    <div class="question-container" data-question-id="q23">
+        <p class="question-text"><span class="question-number">23.</span> A woman is found to have oligohydramnios at 30/40 . Which of the following is the most likely cause ?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Duodenal atresia .</li>
+            <li class="option" data-correct="false">B. Placental choriangioma.</li>
+            <li class="option" data-correct="false">C. Diabetes</li>
+            <li class="option" data-correct="false">D. Oesophageal atresia.</li>
+            <li class="option" data-correct="true">E. Renal agenesis.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Renal agenesis leads to decreased urine production, which is the main source of amniotic fluid.<br>
+            a, b, c, d. These are causes of Polyhydramnios.
+        </p>
+    </div>
+
+    <!-- Question 24 -->
+    <div class="question-container" data-question-id="q24">
+        <p class="question-text"><span class="question-number">24.</span> Which of the following is not an increased risk in multiple pregnancy?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Placenta praevia.</li>
+            <li class="option" data-correct="true">B. Diabetes mellitus.</li>
+            <li class="option" data-correct="false">C. Pre-eclampsia.</li>
+            <li class="option" data-correct="false">D. Malpresentation.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. While risk increases slightly, Pre-eclampsia, Previa, and Malpresentation are much more significantly and classically associated with multiple pregnancy complications than Diabetes.
+        </p>
+    </div>
+
+    <!-- Question 25 -->
+    <div class="question-container" data-question-id="q25">
+        <p class="question-text"><span class="question-number">25.</span> Which of the drugs is not commonly used in postpartum haemorrhage?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Mifepristone.</li>
+            <li class="option" data-correct="false">B. Misoprostol.</li>
+            <li class="option" data-correct="false">C. Oxytocin.</li>
+            <li class="option" data-correct="false">D. Ergotamine.</li>
+            <li class="option" data-correct="false">E. All of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Mifepristone is an anti-progestogen used for abortion; it relaxes the uterus and would worsen PPH.<br>
+            b, c, d. These are uterotonics used to treat PPH.
+        </p>
+    </div>
+
+    <!-- Question 26 -->
+    <div class="question-container" data-question-id="q26">
+        <p class="question-text"><span class="question-number">26.</span> The following complications are more common after instrumental delivery except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Anaemia.</li>
+            <li class="option" data-correct="false">B. Prolonged perineal discomfort.</li>
+            <li class="option" data-correct="true">C. Mastitis.</li>
+            <li class="option" data-correct="false">D. Obstetric palsy.</li>
+            <li class="option" data-correct="false">E. Puerperal infection.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Mastitis is related to breastfeeding, not the mode of delivery.<br>
+            a, b, d, e. Instrumental delivery increases trauma, bleeding, and infection risks.
+        </p>
+    </div>
+
+    <!-- Question 27 -->
+    <div class="question-container" data-question-id="q27">
+        <p class="question-text"><span class="question-number">27.</span> Progress in labour is measured by which of the following :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. The frequency of uterine contractions.</li>
+            <li class="option" data-correct="false">B. The force of uterine contractions.</li>
+            <li class="option" data-correct="true">C. Descent of the presenting part.</li>
+            <li class="option" data-correct="false">D. Cervical length.</li>
+            <li class="option" data-correct="false">E. The length of time since rupture of membranes.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Progress is strictly defined by Cervical Dilation and Descent of the presenting part.
+        </p>
+    </div>
+
+    <!-- Question 28 -->
+    <div class="question-container" data-question-id="q28">
+        <p class="question-text"><span class="question-number">28.</span> Consequences of placental abruption include all except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Hypovolaemic shock.</li>
+            <li class="option" data-correct="false">B. Fetal distress.</li>
+            <li class="option" data-correct="true">C. Amniotic fluid embolus.</li>
+            <li class="option" data-correct="false">D. Increased perinatal mortality.</li>
+            <li class="option" data-correct="false">E. Intrauterine death.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Amniotic Fluid Embolus is a separate entity. Shock, fetal distress, and death are direct consequences of abruption.
+        </p>
+    </div>
+
+    <!-- Question 29 -->
+    <div class="question-container" data-question-id="q29">
+        <p class="question-text"><span class="question-number">29.</span> A patient went into shock immediately after normal delivery , likely cause is :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Postpartum haemorrhage.</li>
+            <li class="option" data-correct="false">B. Amniotic fluid embolism.</li>
+            <li class="option" data-correct="true">C. Uterine inversion.</li>
+            <li class="option" data-correct="false">D. Eclampsia.</li>
+            <li class="option" data-correct="false">E. All of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Neurogenic shock occurring immediately after delivery (often due to cord traction) is characteristic of Uterine Inversion.
+        </p>
+    </div>
+
+    <!-- Question 30 -->
+    <div class="question-container" data-question-id="q30">
+        <p class="question-text"><span class="question-number">30.</span> Indications for induction of labour include:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Pregnancy induced hypertension.</li>
+            <li class="option" data-correct="false">B. Bad obstetric history.</li>
+            <li class="option" data-correct="false">C. Diabetes.</li>
+            <li class="option" data-correct="false">D. Heart disease.</li>
+            <li class="option" data-correct="true">E. All of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. All listed conditions are common indications to induce labor to prevent maternal or fetal complications.
+        </p>
+    </div>
+
+    <!-- Question 31 -->
+    <div class="question-container" data-question-id="q31">
+        <p class="question-text"><span class="question-number">31.</span> Which of the following statement is not correct regarding miscarriage?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. If recurrent, it can be associated with parental chromosomal translocation.</li>
+            <li class="option" data-correct="true">B. If recurrent, it can be associated with sickle cell trait.</li>
+            <li class="option" data-correct="false">C. The clinical diagnosis of incomplete miscarriage is assisted by digital examination of the cervical canal.</li>
+            <li class="option" data-correct="false">D. Cervical incompetence causes recurrent second trimester miscarriage.</li>
+            <li class="option" data-correct="false">E. Missed miscarriage should be suspected if the uterine size is smaller than that expected for gestational age.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Sickle cell trait is not a recognized cause of recurrent miscarriage.
+        </p>
+    </div>
+
+    <!-- Question 32 -->
+    <div class="question-container" data-question-id="q32">
+        <p class="question-text"><span class="question-number">32.</span> Which of the following complication is associated with multiple births?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Increased incidence of congenital abnormalities.</li>
+            <li class="option" data-correct="false">B. Increased incidence of growth retardation.</li>
+            <li class="option" data-correct="false">C. Increased incidence of postpartum haemorrhage.</li>
+            <li class="option" data-correct="true">D. Decreased incidence of preterm labour.</li>
+            <li class="option" data-correct="false">E. All of the above.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. This is the false statement (answer to "Which is NOT true" in context). Multiple births have an Increased incidence of preterm labor.
+        </p>
+    </div>
+
+    <!-- Question 33 -->
+    <div class="question-container" data-question-id="q33">
+        <p class="question-text"><span class="question-number">33.</span> Placenta previa is characterized by all except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Painless bleeding.</li>
+            <li class="option" data-correct="false">B. Causeless bleeding.</li>
+            <li class="option" data-correct="false">C. Recurrent bleeding.</li>
+            <li class="option" data-correct="false">D. Presents after 1st trimester.</li>
+            <li class="option" data-correct="true">E. High risk / (High head).</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. "High risk" is vague and not a specific characteristic of the bleeding itself. The classic triad is Painless, Causeless, Recurrent.
+        </p>
+    </div>
+
+    <!-- Question 34 -->
+    <div class="question-container" data-question-id="q34">
+        <p class="question-text"><span class="question-number">34.</span> All of the following are used for induction of labour ,except :</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. PGF2a tablet .</li>
+            <li class="option" data-correct="false">B. PGE1 tablet .</li>
+            <li class="option" data-correct="false">C. PGE2 gel .</li>
+            <li class="option" data-correct="false">D. Misoprostol .</li>
+            <li class="option" data-correct="false">E. All of the above .</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. PGF2a (Carboprost) is used for PPH, not induction (too toxic/side effects). PGE1 (Misoprostol) and PGE2 (Dinoprostone) are used for induction.
+        </p>
+    </div>
+
+    <!-- Question 35 -->
+    <div class="question-container" data-question-id="q35">
+        <p class="question-text"><span class="question-number">35.</span> Which of the following is not true regarding placental abruption?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. May have no associated vaginal bleeding.</li>
+            <li class="option" data-correct="false">B. Is an indication for delivery.</li>
+            <li class="option" data-correct="false">C. Has a higher incidence with maternal cocaine abuse.</li>
+            <li class="option" data-correct="true">D. May be identified using ultrasound to demonstrate retroplacental clot.</li>
+            <li class="option" data-correct="false">E. The diagnosis of concealed abruption can be easily confused with that of acute appendicitis..</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Ultrasound is not sensitive for abruption (<50%); a negative scan does not rule it out. It is a clinical diagnosis.
+        </p>
+    </div>
+
+    <!-- Question 36 -->
+    <div class="question-container" data-question-id="q36">
+        <p class="question-text"><span class="question-number">36.</span> Which of the following is true regarding ABO incompatibility between mother and fetus?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. May affect the first pregnancy.</li>
+            <li class="option" data-correct="false">B. Worsens with successive pregnancies.</li>
+            <li class="option" data-correct="false">C. Usually causes significant anaemia of the fetus at birth.</li>
+            <li class="option" data-correct="false">D. Often requires exchange transfusion.</li>
+            <li class="option" data-correct="false">E. Is caused by the Rh(D) antigen.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. ABO incompatibility can affect the first pregnancy because isohemagglutinins exist naturally. It is usually mild.
+        </p>
+    </div>
+
+    <!-- Question 37 -->
+    <div class="question-container" data-question-id="q37">
+        <p class="question-text"><span class="question-number">37.</span> The following drug has been shown to be effective in the treatment of preterm labour:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Atosiban.</li>
+            <li class="option" data-correct="false">B. Pethidine.</li>
+            <li class="option" data-correct="false">C. Mefenamic acid.</li>
+            <li class="option" data-correct="false">D. Labetalol.</li>
+            <li class="option" data-correct="false">E. Calcium gluconate.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Atosiban is an Oxytocin receptor antagonist specifically approved as a tocolytic.
+        </p>
+    </div>
+
+    <!-- Question 38 -->
+    <div class="question-container" data-question-id="q38">
+        <p class="question-text"><span class="question-number">38.</span> Second trimester bleeding may be due to which of the following cause?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Missed abortion</li>
+            <li class="option" data-correct="false">B. Premature labour</li>
+            <li class="option" data-correct="false">C. Erythroblastosis</li>
+            <li class="option" data-correct="true">D. Threatened abortion</li>
+            <li class="option" data-correct="false">E. Monilial infection.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Threatened abortion is the most appropriate term for vaginal bleeding with a closed cervix and viable fetus up to 20-24 weeks.
+        </p>
+    </div>
+
+    <!-- Question 39 -->
+    <div class="question-container" data-question-id="q39">
+        <p class="question-text"><span class="question-number">39.</span> Which of the following term best describes the renal pathology of preeclampsia?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Atheromatous plaques.</li>
+            <li class="option" data-correct="false">B. Glomerular hypertrophy.</li>
+            <li class="option" data-correct="true">C. Glomerular capillary endotheliosis.</li>
+            <li class="option" data-correct="false">D. Tubular vacuolization.</li>
+            <li class="option" data-correct="false">E. Mesangial cell hypertrophy.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Glomerular capillary endotheliosis is the pathognomonic renal lesion of preeclampsia.
+        </p>
+    </div>
+
+    <!-- Question 40 -->
+    <div class="question-container" data-question-id="q40">
+        <p class="question-text"><span class="question-number">40.</span> Contraindications to tocolytics include all of the following except:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Chorioamnionitis.</li>
+            <li class="option" data-correct="false">B. Eclampsia.</li>
+            <li class="option" data-correct="true">C. Preterm labour.</li>
+            <li class="option" data-correct="false">D. Fetal death.</li>
+            <li class="option" data-correct="false">E. Mature fetus.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Preterm labour is the INDICATION for tocolysis, not a contraindication.
+        </p>
+    </div>
+
+    <!-- Question 41 -->
+    <div class="question-container" data-question-id="q41">
+        <p class="question-text"><span class="question-number">41.</span> Which is false regarding eclampsia ?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. May occur before , during or after delivery .</li>
+            <li class="option" data-correct="false">B. Treatment include magnesium sulphate .</li>
+            <li class="option" data-correct="false">C. May cause maternal death .</li>
+            <li class="option" data-correct="true">D. Conservative management is suitable(no need for urgent delivery).</li>
+            <li class="option" data-correct="false">E. Hydralazine is suitable to control blood pressure.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Conservative management is NOT suitable. The definitive treatment is stabilization and delivery.
+        </p>
+    </div>
+
+    <!-- Question 42 -->
+    <div class="question-container" data-question-id="q42">
+        <p class="question-text"><span class="question-number">42.</span> Which association is false ?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Presentation-vertex.</li>
+            <li class="option" data-correct="false">B. Station- one cm above ischial spine .</li>
+            <li class="option" data-correct="false">C. Denominator- mentum in face presentation.</li>
+            <li class="option" data-correct="true">D. Lie- occiput anterior.</li>
+            <li class="option" data-correct="false">E. Anteroposterior diameter of the pelvic outlet-13.5 cm.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. "Occiput anterior" is a Position, not a Lie (which is Longitudinal, Transverse, etc.).
+        </p>
+    </div>
+
+    <!-- Question 43 -->
+    <div class="question-container" data-question-id="q43">
+        <p class="question-text"><span class="question-number">43.</span> In thromboembolism , the risk factors specific to pregnancy include all of the following except :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Multiple pregnancy.</li>
+            <li class="option" data-correct="false">B. Pre eclampsia.</li>
+            <li class="option" data-correct="true">C. Smoking.</li>
+            <li class="option" data-correct="false">D. Sepsis.</li>
+            <li class="option" data-correct="false">E. Grand multiparity.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Smoking is a general risk factor, but Pre-eclampsia, Multiple Pregnancy, and Sepsis are high-weight "pregnancy-specific" physiological risks for VTE.
+        </p>
+    </div>
+
+    <!-- Question 44 -->
+    <div class="question-container" data-question-id="q44">
+        <p class="question-text"><span class="question-number">44.</span> In breech presentation , which statement is false ?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Congenital uterine abnormalities are maternal risk factor.</li>
+            <li class="option" data-correct="false">B. The commonest type is extended-frank-breech.</li>
+            <li class="option" data-correct="true">C. The best method of delivering a singleton term breech is by vaginal delivery.</li>
+            <li class="option" data-correct="false">D. Multiple gestation is a contraindication to ECV.</li>
+            <li class="option" data-correct="false">E. Forceps can be used in the delivery of the head.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Planned Caesarean Section is generally considered safer for the fetus in singleton term breech than vaginal delivery.
+        </p>
+    </div>
+
+    <!-- Question 45 -->
+    <div class="question-container" data-question-id="q45">
+        <p class="question-text"><span class="question-number">45.</span> All of the following are suggestive of CPD(cephalopelvic disproportion) except :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Fetal head is not engaged.</li>
+            <li class="option" data-correct="false">B. Despite efficient uterine contractions , progress is slow or arrested.</li>
+            <li class="option" data-correct="true">C. Head is well applied to the cervix.</li>
+            <li class="option" data-correct="false">D. Severe moulding and caput formation.</li>
+            <li class="option" data-correct="false">E. Haematuria.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. If the head is well applied to the cervix, it indicates good fit. In CPD, the head remains high and the cervix balloons.
+        </p>
+    </div>
+
+    <!-- Question 46 -->
+    <div class="question-container" data-question-id="q46">
+        <p class="question-text"><span class="question-number">46.</span> Whats true about postpartum haemorrhage?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Blood loss is >or equal to 250 ml by definition.</li>
+            <li class="option" data-correct="true">B. In major obstetric haemorrhage , the blood loss is > or equal to 2500 ml.</li>
+            <li class="option" data-correct="false">C. Commonest cause of primary postpartum haemorrhage is infection.</li>
+            <li class="option" data-correct="false">D. Do not administer blood if the blood pressure was normal.</li>
+            <li class="option" data-correct="false">E. In case of uterine inversion , the first choice in the management is surgery.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Massive/Major hemorrhage is often categorized as >1500-2500ml. The other options are strictly false (PPH >500ml, Primary is Atony).
+        </p>
+    </div>
+
+    <!-- Question 47 -->
+    <div class="question-container" data-question-id="q47">
+        <p class="question-text"><span class="question-number">47.</span> Late deceleration indicates:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Head compression.</li>
+            <li class="option" data-correct="false">B. Cord compression.</li>
+            <li class="option" data-correct="true">C. Fetal hypoxia.</li>
+            <li class="option" data-correct="false">D. Breech presentation.</li>
+            <li class="option" data-correct="false">E. Normal finding on CTG.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Late decelerations indicate Uteroplacental Insufficiency leading to fetal hypoxia.
+        </p>
+    </div>
+
+    <!-- Question 48 -->
+    <div class="question-container" data-question-id="q48">
+        <p class="question-text"><span class="question-number">48.</span> In otherwise uncomplicated preterm labour, evidence suggests that the use of tocolytics delays delivery By ?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. 24 hours.</li>
+            <li class="option" data-correct="true">B. 48 hours.</li>
+            <li class="option" data-correct="false">C. 72 hours.</li>
+            <li class="option" data-correct="false">D. 7 days.</li>
+            <li class="option" data-correct="false">E. 14 days.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Tocolytics are proven to delay delivery by about 48 hours, allowing time for steroid administration.
+        </p>
+    </div>
+
+    <!-- Question 49 -->
+    <div class="question-container" data-question-id="q49">
+        <p class="question-text"><span class="question-number">49.</span> What type of morbidity is less likely to be associated with vacuum extraction than with forceps delivery?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Cephalohematoma.</li>
+            <li class="option" data-correct="false">B. Low apgar score at 5 minutes.</li>
+            <li class="option" data-correct="false">C. Neonatal jaundice.</li>
+            <li class="option" data-correct="false">D. Retinal haemorrhage.</li>
+            <li class="option" data-correct="true">E. Vaginal and perineal trauma</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Forceps delivery is associated with higher risk of maternal trauma (3rd/4th degree tears) than Vacuum.
+        </p>
+    </div>
+
+    <!-- Question 50 -->
+    <div class="question-container" data-question-id="q50">
+        <p class="question-text"><span class="question-number">50.</span> Delivery of the placenta is by:</p>
+        <ul class="options">
+            <li class="option" data-correct="true">B. Controlled cord traction</li>
+            <!-- Other options assumed based on standard MCQs if not provided, but keeping simple per instruction -->
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Active management of the third stage involving Controlled Cord Traction is the standard of care.
+        </p>
+    </div>
+
+    <!-- Question 51 -->
+    <div class="question-container" data-question-id="q51">
+        <p class="question-text"><span class="question-number">51.</span> A 20 year female in labor ,on vaginal examination : fully dilated cervix, cephalic presentation ,with sensation of urge to push ,so she is in which stage of labor?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Latent phase of first stage</li>
+            <li class="option" data-correct="false">B. Third stage</li>
+            <li class="option" data-correct="false">C. Active phase of first stage</li>
+            <li class="option" data-correct="true">D. Active phase of second stage</li>
+            <li class="option" data-correct="false">E. Passive phase of second stage</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Full dilation plus the urge to push defines the Active second stage.
+        </p>
+    </div>
+
+    <!-- Question 52 -->
+    <div class="question-container" data-question-id="q52">
+        <p class="question-text"><span class="question-number">52.</span> In a vertex presentation, the position is determined by the relationship of what fetal part to the Mother's pelvis:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Sinciput.</li>
+            <li class="option" data-correct="false">B. Acromian</li>
+            <li class="option" data-correct="true">C. Occiput.</li>
+            <li class="option" data-correct="false">D. Sacrum.</li>
+            <li class="option" data-correct="false">E. Mentum.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. In vertex presentation, the denominator is the Occiput.
+        </p>
+    </div>
+
+    <!-- Question 53 -->
+    <div class="question-container" data-question-id="q53">
+        <p class="question-text"><span class="question-number">53.</span> External cephalic version can be performed for a breech presentation in a pregnant woman with which of the following:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Major uterine anomaly</li>
+            <li class="option" data-correct="false">B. Multiple pregnancy</li>
+            <li class="option" data-correct="false">C. Oligohydramnios</li>
+            <li class="option" data-correct="false">D. Placenta praevia</li>
+            <li class="option" data-correct="true">E. Term gestation</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. ECV is performed at Term (36-37 weeks). The other options are contraindications.
+        </p>
+    </div>
+
+    <!-- Question 54 -->
+    <div class="question-container" data-question-id="q54">
+        <p class="question-text"><span class="question-number">54.</span> Mauriceau Smellie Veit maneuver is used for:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Delivery of cephalic presentation</li>
+            <li class="option" data-correct="false">B. Delivery of brow presentation</li>
+            <li class="option" data-correct="false">C. Delivery of the shoulder</li>
+            <li class="option" data-correct="true">D. Delivery of the aftercoming head in breech</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. MSV maneuver is specifically designed for the delivery of the aftercoming head in breech presentation.
+        </p>
+    </div>
+
+    <!-- Question 55 -->
+    <div class="question-container" data-question-id="q55">
+        <p class="question-text"><span class="question-number">55.</span> The relation of the fetal parts to one another determines:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Position of the fetus.</li>
+            <li class="option" data-correct="false">B. Presentation of the fetus.</li>
+            <li class="option" data-correct="false">C. Lie of the fetus.</li>
+            <li class="option" data-correct="true">D. Attitude of the fetus.</li>
+            <li class="option" data-correct="false">E. Placental position.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Attitude refers to the flexion or extension of fetal parts relative to the fetal trunk and each other.
+        </p>
+    </div>
+
+    <!-- Question 56 -->
+    <div class="question-container" data-question-id="q56">
+        <p class="question-text"><span class="question-number">56.</span> Gestational diabetes is associated with an increase risk of all the following,EXCEPT:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Cesarean section</li>
+            <li class="option" data-correct="false">B. Shoulder dystocia</li>
+            <li class="option" data-correct="false">C. Fetal macrosomia</li>
+            <li class="option" data-correct="false">D. Intrauterine fetal death</li>
+            <li class="option" data-correct="true">E. Intrauterine growth restriction</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. GDM is associated with Macrosomia, not restriction. IUGR is associated with pre-gestational diabetes with vasculopathy.
+        </p>
+    </div>
+
+    <!-- Question 57 -->
+    <div class="question-container" data-question-id="q57">
+        <p class="question-text"><span class="question-number">57.</span> Infants of mother with gestational diabetes have an increased risk of the following, EXCEPT:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Hypoglycemia</li>
+            <li class="option" data-correct="true">B. Hypoinsulinemia</li>
+            <li class="option" data-correct="false">C. Hypocalcemia</li>
+            <li class="option" data-correct="false">D. Hyper bilirubinemia</li>
+            <li class="option" data-correct="false">E. Polycythemia</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. The fetus has Hyperinsulinemia (high insulin) in response to maternal hyperglycemia.
+        </p>
+    </div>
+
+    <!-- Question 58 -->
+    <div class="question-container" data-question-id="q58">
+        <p class="question-text"><span class="question-number">58.</span> Glucose tolerance test:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Is used as a screening test for diabetes.</li>
+            <li class="option" data-correct="true">B. Is considered to be a diagnostic test for diabetes.</li>
+            <li class="option" data-correct="false">C. Is performed in a non-fasting state.</li>
+            <li class="option" data-correct="false">D. Should be avoided during pregnancy as it needs a loading dose of glucose.</li>
+            <li class="option" data-correct="false">E. 50 mg of glucose should be given to the patient.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. The OGTT is the diagnostic test. The screening test is the Glucose Challenge Test (GCT 50g).
+        </p>
+    </div>
+
+    <!-- Question 59 -->
+    <div class="question-container" data-question-id="q59">
+        <p class="question-text"><span class="question-number">59.</span> Term is defined as:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. 32 to 34 completed weeks of gestation</li>
+            <li class="option" data-correct="false">B. 34 to 36 completed weeks of gestation</li>
+            <li class="option" data-correct="false">C. 36 to 37 completed weeks of gestation</li>
+            <li class="option" data-correct="true">D. 37 to 40 completed weeks of gestation</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Term pregnancy is defined as 37 to 42 weeks (or 37-40 completed).
+        </p>
+    </div>
+
+    <!-- Question 60 -->
+    <div class="question-container" data-question-id="q60">
+        <p class="question-text"><span class="question-number">60.</span> Which of the following gastrointestinal problems is relieved during pregnancy?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Constipation</li>
+            <li class="option" data-correct="true">B. Duodenal ulcer</li>
+            <li class="option" data-correct="false">C. Haemorrhoids</li>
+            <li class="option" data-correct="false">D. Reflex oesophagitis</li>
+            <li class="option" data-correct="false">E. Ptylism</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Peptic/Duodenal ulcer disease often improves due to reduced gastric acid secretion. The others are aggravated.
+        </p>
+    </div>
+
+    <!-- Question 61 -->
+    <div class="question-container" data-question-id="q61">
+        <p class="question-text"><span class="question-number">61.</span> Normal range of Amniotic Fluid Index (AFI) during third trimester is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. 5-10 mm</li>
+            <li class="option" data-correct="false">B. 5-10 cm</li>
+            <li class="option" data-correct="false">C. 5-15 cm</li>
+            <li class="option" data-correct="true">D. 10-25 cm</li>
+            <li class="option" data-correct="false">E. 25-35 cm</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Normal AFI is typically defined as 5-25 cm (or 8-18). 10-25 cm is the best range provided.
+        </p>
+    </div>
+
+    <!-- Question 62 -->
+    <div class="question-container" data-question-id="q62">
+        <p class="question-text"><span class="question-number">62.</span> Which one of the following is the maternal cause of polyhydramnios?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Chorioangioma</li>
+            <li class="option" data-correct="false">B. Twin to twin transfusion</li>
+            <li class="option" data-correct="false">C. Foetal hydrops</li>
+            <li class="option" data-correct="false">D. Maternal administration of Indomethacin</li>
+            <li class="option" data-correct="true">E. Uncontrolled diabetes</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Uncontrolled Diabetes is a maternal cause (hyperglycemia causes fetal polyuria). A, B, C are fetal/placental causes.
+        </p>
+    </div>
+
+    <!-- Question 63 -->
+    <div class="question-container" data-question-id="q63">
+        <p class="question-text"><span class="question-number">63.</span> In a pregnant diabetic woman, requirement of insulin is maximum during:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. First trimester</li>
+            <li class="option" data-correct="false">B. Second trimester</li>
+            <li class="option" data-correct="true">C. Third trimester</li>
+            <li class="option" data-correct="false">D. Labour</li>
+            <li class="option" data-correct="false">E. Postnatal period</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Insulin resistance peaks in the Third Trimester due to maximal levels of HPL and cortisol.
+        </p>
+    </div>
+
+    <!-- Question 64 -->
+    <div class="question-container" data-question-id="q64">
+        <p class="question-text"><span class="question-number">64.</span> Which one of the following is true regarding warfarin?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Cannot cross the placenta</li>
+            <li class="option" data-correct="true">B. Can cause saddle nose deformity in the foetus</li>
+            <li class="option" data-correct="false">C. Antidote is protaminc sulphate</li>
+            <li class="option" data-correct="false">D. Levels are monitored by Activated Partial Thromboplastin Time (APTT)</li>
+            <li class="option" data-correct="false">E. Administered by subcutaneous route</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Warfarin crosses the placenta and causes fetal warfarin syndrome (skeletal defects). Antidote is Vitamin K.
+        </p>
+    </div>
+
+    <!-- Question 65 -->
+    <div class="question-container" data-question-id="q65">
+        <p class="question-text"><span class="question-number">65.</span> Risk factors for development of thromboembolic disease in pregnancy are all except :</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Emergency caesarean section</li>
+            <li class="option" data-correct="false">B. Maternal age >35</li>
+            <li class="option" data-correct="false">C. Obesity(weight >80 kg)</li>
+            <li class="option" data-correct="false">D. Pre-eclampsia</li>
+            <li class="option" data-correct="true">E. Preterm labour</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Preterm labour itself is not a direct pro-thrombotic risk factor like the others (Surgery, Age, Obesity, Pre-eclampsia).
+        </p>
+    </div>
+
+    <!-- Question 66 -->
+    <div class="question-container" data-question-id="q66">
+        <p class="question-text"><span class="question-number">66.</span> For the detection of amount of fetal red cells entering maternal circulation, which one the following tests can be used?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Indirect Coomb's test</li>
+            <li class="option" data-correct="false">B. Direct Coomb's test</li>
+            <li class="option" data-correct="true">C. Kleihauer-Betke test</li>
+            <li class="option" data-correct="false">D. Apt test</li>
+            <li class="option" data-correct="false">E. Benedicts test</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. The Kleihauer-Betke (KB) test quantifies fetal hemoglobin in maternal blood.
+        </p>
+    </div>
+
+    <!-- Question 67 -->
+    <div class="question-container" data-question-id="q67">
+        <p class="question-text"><span class="question-number">67.</span> In which case of antepartum haemorrhage mother is not in danger?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Placenta previa</li>
+            <li class="option" data-correct="true">B. Vasa previa</li>
+            <li class="option" data-correct="false">C. Placental abruption</li>
+            <li class="option" data-correct="false">D. Ruptured uterus</li>
+            <li class="option" data-correct="false">E. Cervical cancer</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. In Vasa Previa, the bleeding vessels are fetal. The fetus exsanguinates, but the mother loses no blood.
+        </p>
+    </div>
+
+    <!-- Question 68 -->
+    <div class="question-container" data-question-id="q68">
+        <p class="question-text"><span class="question-number">68.</span> Maximum duration of second stage of labour in a primigravida without epidural analgesia is:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. 1/2 hour</li>
+            <li class="option" data-correct="false">B. 1 hour</li>
+            <li class="option" data-correct="true">C. 2 hours</li>
+            <li class="option" data-correct="false">D. 3 hours</li>
+            <li class="option" data-correct="false">E. 4 hours</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Prolonged second stage in a nullipara without epidural is > 2 hours.
+        </p>
+    </div>
+
+    <!-- Question 69 -->
+    <div class="question-container" data-question-id="q69">
+        <p class="question-text"><span class="question-number">69.</span> These conditions are indications for caesarean section. Which one is an absolute indication for C/S:</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Twin pregnancy</li>
+            <li class="option" data-correct="false">B. Breech presentation</li>
+            <li class="option" data-correct="false">C. Severe PET</li>
+            <li class="option" data-correct="true">D. Major degree placenta previa</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Major Placenta Previa (covering the os) is an absolute indication as vaginal delivery is impossible.
+        </p>
+    </div>
+
+    <!-- Question 70 -->
+    <div class="question-container" data-question-id="q70">
+        <p class="question-text"><span class="question-number">70.</span> The most common type of anemia in pregnancy is due to :</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Iron deficiency.</li>
+            <li class="option" data-correct="false">B. Sickle cell disease.</li>
+            <li class="option" data-correct="false">C. Folate deficiency.</li>
+            <li class="option" data-correct="false">D. Hemolytic disease.</li>
+            <li class="option" data-correct="false">E. Vitamin B12.</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Iron deficiency anemia accounts for approx. 90% of anemia cases in pregnancy.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 70</div>
+</div>
+
+<!-- Add more sections here if needed, e.g. <div class="section" data-section-id="s2"> ... </div> -->
+
+
+
+
+
+
+
+
+
+<div class="bottom-nav-container">
+    <a href="#" class="main-button" id="home-button-subject">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <button id="reset-button" class="main-button">
+        <i class="fas fa-sync-alt"></i> Reset Progress
+    </button>
+</div>
+
+<script>
+// ====== SUBJECT PAGE LOGIC (DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING) ======
+const PAGE_ID = window.SUBJECT_SETTINGS.PAGE_ID;
+const ANSWERS_KEY = `${PAGE_ID}_answers`;
+const SCORES_KEY = `${PAGE_ID}_scores`;
+
+document.getElementById('dynamic-title-subject').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+document.getElementById('subject-page-title-display').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+const homeBtnSubject = document.getElementById('home-button-subject');
+if (homeBtnSubject) homeBtnSubject.href = window.SUBJECT_SETTINGS.HOME_LINK;
+
+const allSections = document.querySelectorAll('.section');
+let sectionScores = {};
+
+function saveState(sectionId, questionId, selectedOptionIndex, currentScore, totalQuestionsInSection) {
+    let answers = JSON.parse(localStorage.getItem(ANSWERS_KEY)) || {};
+    if (!answers[sectionId]) answers[sectionId] = {};
+    answers[sectionId][questionId] = {
+        selectedOptionIndex: selectedOptionIndex,
+        answered: true
+    };
+    localStorage.setItem(ANSWERS_KEY, JSON.stringify(answers));
+
+    let scores = JSON.parse(localStorage.getItem(SCORES_KEY)) || {};
+    if (!scores[sectionId]) scores[sectionId] = { score: 0, total: 0}; // Initialize if not exists
+    scores[sectionId] = { score: currentScore, total: totalQuestionsInSection };
+
+    // Update overall total for the page if not already set or if it changed
+    let overallTotal = 0;
+    allSections.forEach(sec => {
+        const secId = sec.dataset.sectionId;
+        const numQs = sec.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        // Ensure section total is also up-to-date in the scores object if initializing
+        if (!scores[secId] || scores[secId].total !== numQs) {
+             scores[secId] = scores[secId] || {score:0}; // preserve score if exists
+             scores[secId].total = numQs;
+        }
+    });
+    scores['all'] = scores['all'] || {};
+    scores['all'].total = overallTotal;
+
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+function applyOptionSelectionLogic(optionElement, questionContainer, isLoadTime = false) {
+    const explanation = questionContainer.querySelector('.explanation');
+    const allOptionsInQuestion = questionContainer.querySelectorAll('.option');
+    const section = questionContainer.closest('.section');
+    const sectionId = section.dataset.sectionId;
+    const scoreDisplay = section.querySelector(`#score-section-${sectionId}`); // Ensure ID matches
+    const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+
+    if (questionContainer.classList.contains('answered') && !isLoadTime) return; // Prevent re-answering
+
+    questionContainer.classList.add('answered');
+    const isCorrect = optionElement.dataset.correct === 'true';
+
+    let feedbackSpan = optionElement.querySelector('.feedback');
+    if (!feedbackSpan) {
+        feedbackSpan = document.createElement('span');
+        feedbackSpan.className = 'feedback';
+        optionElement.appendChild(feedbackSpan);
+    }
+    feedbackSpan.style.display = 'inline'; // Make sure it's visible
+
+    if (isCorrect) {
+        optionElement.classList.add('correct');
+        feedbackSpan.textContent = ' ✓ Correct!';
+        if (!isLoadTime) {
+            sectionScores[sectionId] = (sectionScores[sectionId] || 0) + 1;
+        }
+    } else {
+        optionElement.classList.add('incorrect');
+        feedbackSpan.textContent = ' ✗ Incorrect.';
+        allOptionsInQuestion.forEach(opt => {
+            if (opt.dataset.correct === 'true') {
+                opt.classList.add('reveal-correct'); // Use a distinct class for just revealing
+                let correctFeedback = opt.querySelector('.feedback');
+                if (!correctFeedback) {
+                    correctFeedback = document.createElement('span');
+                    correctFeedback.className = 'feedback';
+                    opt.appendChild(correctFeedback);
+                }
+                correctFeedback.textContent = ' (Correct Answer)'; // Simpler feedback
+                correctFeedback.style.display = 'inline';
+            }
+        });
+    }
+
+    if (explanation) explanation.style.display = 'block';
+    allOptionsInQuestion.forEach(opt => {
+        opt.style.cursor = 'default'; // Disable further clicks by changing cursor
+        // To truly disable, you might remove event listeners or set pointer-events: none
+    });
+
+    if (scoreDisplay) {
+        scoreDisplay.textContent = `Score: ${sectionScores[sectionId] || 0} / ${totalQuestionsInSection}`;
+    }
+
+    if (!isLoadTime) {
+        const optionIndex = Array.from(allOptionsInQuestion).indexOf(optionElement);
+        saveState(sectionId, questionContainer.dataset.questionId, optionIndex, sectionScores[sectionId] || 0, totalQuestionsInSection);
+    }
+}
+
+function loadState() {
+    const savedAnswersData = JSON.parse(localStorage.getItem(ANSWERS_KEY));
+    const savedScoresData = JSON.parse(localStorage.getItem(SCORES_KEY));
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        sectionScores[sectionId] = (savedScoresData && savedScoresData[sectionId]) ? savedScoresData[sectionId].score : 0;
+
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: ${sectionScores[sectionId]} / ${totalQuestionsInSection}`;
+        }
+
+        if (savedAnswersData && savedAnswersData[sectionId]) {
+            const questionsInSection = section.querySelectorAll('.question-container');
+            questionsInSection.forEach(qc => {
+                const questionId = qc.dataset.questionId;
+                const qData = savedAnswersData[sectionId][questionId];
+                if (qData && qData.answered && typeof qData.selectedOptionIndex === 'number') {
+                    const optionsInQ = qc.querySelectorAll('.option');
+                    if (qData.selectedOptionIndex >= 0 && qData.selectedOptionIndex < optionsInQ.length) {
+                        const selectedOptionEl = optionsInQ[qData.selectedOptionIndex];
+                        if (selectedOptionEl) {
+                           applyOptionSelectionLogic(selectedOptionEl, qc, true); // True for isLoadTime
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function resetState() {
+    localStorage.removeItem(ANSWERS_KEY);
+    localStorage.removeItem(SCORES_KEY); // Also remove scores to reset counts
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Reset internal score tracking
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+
+        section.querySelectorAll('.question-container').forEach(qc => {
+            qc.classList.remove('answered');
+            const explanation = qc.querySelector('.explanation');
+            if (explanation) explanation.style.display = 'none';
+
+            qc.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('correct', 'incorrect', 'reveal-correct');
+                opt.style.cursor = 'pointer'; // Re-enable cursor
+                const feedback = opt.querySelector('.feedback');
+                if (feedback) {
+                    feedback.textContent = '';
+                    feedback.style.display = 'none'; // Hide feedback
+                }
+            });
+        });
+
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: 0 / ${totalQuestionsInSection}`;
+        }
+    });
+    // After resetting, re-initialize the total questions for the page in localStorage
+    initializePageTotalQuestions();
+}
+
+function initializePageTotalQuestions() {
+    let overallTotal = 0;
+    const scores = {}; // Start with a fresh scores object for initialization
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const numQs = section.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        scores[sectionId] = { score: 0, total: numQs }; // Initialize section scores
+    });
+    scores['all'] = { total: overallTotal };
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize sectionScores for all sections on the page
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Initialize score to 0
+    });
+
+    // Attempt to load saved state
+    loadState();
+
+    // If no scores are loaded (e.g., first visit or after reset), initialize totals
+    if (!localStorage.getItem(SCORES_KEY)) {
+        initializePageTotalQuestions();
+    } else { // If scores exist, ensure 'all.total' is up-to-date
+        let existingScores = JSON.parse(localStorage.getItem(SCORES_KEY));
+        let currentOverallTotal = 0;
+        allSections.forEach(section => {
+            currentOverallTotal += section.querySelectorAll('.question-container').length;
+        });
+        if (!existingScores.all || existingScores.all.total !== currentOverallTotal) {
+            existingScores.all = existingScores.all || {};
+            existingScores.all.total = currentOverallTotal;
+            localStorage.setItem(SCORES_KEY, JSON.stringify(existingScores));
+        }
+    }
+
+
+    allSections.forEach(section => {
+        const options = section.querySelectorAll('.option');
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                const questionContainer = this.closest('.question-container');
+                if (!questionContainer.classList.contains('answered')) { // Only process if not answered
+                    applyOptionSelectionLogic(this, questionContainer, false); // False for isLoadTime
+                }
+            });
+        });
+    });
+
+    const resetButtonSubject = document.getElementById('reset-button');
+    if (resetButtonSubject) {
+        resetButtonSubject.addEventListener('click', resetState);
+    }
+});
+</script>
+<footer style="text-align: center; padding: 2em 1em 1em; font-size: 14px; color: #3a3a3a; width:100%; box-sizing:border-box;">
+    © <span id="currentYear"></span> Developed by
+    <a href="https://github.com/Philonoist7" target="_blank" class="footer-link">
+      <strong>Ali Hussein</strong>
+    </a>
+    <script>
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+    <style>
+      .footer-link {
+        color: #004992;
+        text-decoration: none;
+        transition: color 0.2s, border-bottom-color 0.2s;
+      }
+      .footer-link:hover {
+        color: #003366;
+        border-bottom: 1.5px solid #003366;
+      }
+    </style>
+    </footer>
+</body>
+</html>
