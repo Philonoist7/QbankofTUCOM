@@ -158,9 +158,6 @@
             width: fit-content;
             box-shadow: 0 2px 12px rgba(0,0,0,0.09);
             font-size: 1.0em; /* Adjusted font size */
-            /* For RTL text (like Arabic) */
-            /* direction: rtl; */
-            /* text-align: right; */
             transition: box-shadow 0.2s;
         }
         #pin-board h2 {
@@ -169,24 +166,42 @@
             font-size: 1.2em; /* Adjusted font size */
             color: #b8860b;
             letter-spacing: 0.5px;
-            /* text-align: right; */ /* For RTL */
         }
         #pin-board ul {
             margin: 0;
             padding-left: 20px; /* Standard LTR padding */
-            /* padding-right: 0; */ /* For RTL */
             color: #7a6600;
             font-size: 0.95em; /* Adjusted font size */
             list-style-position: outside; /* Standard LTR list style */
-            /* direction: rtl; */ /* For RTL */
-            /* text-align: right; */ /* For RTL */
         }
         #pin-board li {
             margin-bottom: 5px; /* Space between list items */
             line-height: 1.6;
             word-break: break-word;
-            /* padding-right: 0; */ /* For RTL */
-            /* margin-right: 24px; */ /* For RTL */
+        }
+
+        .back-main-btn {
+            position: relative;
+            top: auto;
+            left: auto;
+            width: 44px;
+            height: 44px;
+            background: var(--primary-color, #007bff);
+            color: #fff;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+            border: none;
+            text-decoration: none;
+            z-index: 1;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .back-main-btn:hover {
+            background: var(--primary-hover-color, #0056b3);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
         }
 
         @media (max-width: 768px) { /* Adjust breakpoint for tablets */
@@ -202,12 +217,9 @@
             }
             #pin-board h2 {
                 font-size: 1.15em;
-                /* padding-right: 10px; */ /* For RTL */
             }
             #pin-board ul {
                 font-size: 0.85em;
-                /* padding-left: 10px; */ /* For LTR */
-                /* padding-right: 10px; */ /* For RTL */
             }
             #pin-board li {
                 font-size: 0.95em;
@@ -258,18 +270,8 @@
             .container {
                 gap: 10px;
                 padding: 5px;
-                 /* Enable flex-direction for better stacking on small screens if needed */
-                /* flex-direction: column; */
-                /* align-items: center; */
             }
             .subject-box {
-                /* If stacking vertically, width can be larger */
-                /* min-width: 80vw;  */
-                /* max-width: 90vw; */
-                /* height: auto; */
-                /* min-height: 0; */
-
-                /* For grid layout on small screens */
                 min-width: calc(50% - 20px); /* Two boxes per row with gap */
                 max-width: calc(50% - 20px);
                 height: 130px;
@@ -284,75 +286,34 @@
                 font-size: 0.8em;
             }
         }
-        .back-main-btn {
-            position: relative;
-            top: auto;
-            left: auto;
-            width: 44px;
-            height: 44px;
-            background: var(--primary-color, #007bff);
-            color: #fff;
-            border-radius: var(--border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5em;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.09);
-            border: none;
-            text-decoration: none;
-            z-index: 1;
-            transition: background 0.2s, box-shadow 0.2s;
-        }
-        .back-main-btn:hover {
-            background: var(--primary-hover-color, #0056b3);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-        }
-
-
-
-        /* ====== END CUSTOM ICON COLORS ====== */
-
-
     </style>
-
-   
     
     <script>
-    /*
-        ====== EDIT ONLY THIS BLOCK FOR NEW MAIN PAGE VARIANTS ======
-        Change these variables for each new main page or to quickly update subjects.
-    */
     window.MAIN_PAGE_SETTINGS = {
         TITLE: 'QBank of TUCOM - S4',
         SUBJECTS: [
-            // No subjects yet
+            {
+            name: 'Obstetric MCQs',
+            link: 'ob/ob_qbank.html',
+            colorClass: 'ob',
+            iconClass: 'fas fa-venus',
+            pageId: 'ob_qbank'
+            },
+
+            
         ]
     };
-    /*
-        ====== SHORTCUT: HOW TO HANDLE PROGRESS FOR EACH SUBJECT ======
-        - To use a summary from a group page (like ENT or Ophthalmology), add its pageId to SUMMARY_SUBJECTS.
-        - The summary must be saved in localStorage as `${pageId}_summary_scores` and `${pageId}_summary_answers`.
-        - For normal subjects, progress is calculated from their own localStorage keys.
-    */
     window.MAIN_PROGRESS_SHORTCUT = {
-        SUMMARY_SUBJECTS: []
+        SUMMARY_SUBJECTS: ['ob_qbank']
     };
     </script>
 </head>
-
- <style>
-
- /* ====== CUSTOM ICON COLORS FOR SUBJECTS ====== */
-        /* Add your custom subject color classes here if needed */
-        /* Example: .subject-box.subject i { color: #yourcolor; } */
-
-        .subject-box.editme i { color: #e7a33c; } /* Example: Red for  */
-        
-
-</style>
       
-
-
+<style>
+    .subject-box.surgery i { color: #d35400; }
+    .subject-box.gynob i { color: #005624; }
+    .subject-box.pediatrics i { color: #2980b9; }
+</style>
 
 <body>
     <div class="fixed-header">
@@ -366,10 +327,9 @@
         <h1 class="page-title" id="main-page-title-display"></h1>
     </div>
 
-
     <!-- ====== PIN BOARD CONTENT ====== -->
-    <div id="pin-board"> <!-- Remove dir="rtl" and text-align:right if not using Arabic -->
-        <h2>📌 Pin Board</h2> <!-- <--- EDIT THIS: Pin board title -->
+    <div id="pin-board">
+        <h2>📌 Pin Board</h2>
         <ul>
             <li>Join our <a href="https://t.me/Qbank_TUCOM" target="_blank">Telegram channel</a> to check the latest update.</li>
         </ul>
@@ -395,33 +355,33 @@
             const boxLink = document.createElement('a');
             boxLink.href = subject.link;
             boxLink.classList.add('subject-box');
-            if (subject.colorClass) { // Add colorClass if provided
+            if (subject.colorClass) {
                 boxLink.classList.add(subject.colorClass);
             }
 
             const icon = document.createElement('i');
-            icon.className = subject.iconClass || 'fas fa-book'; // Default icon
+            icon.className = subject.iconClass || 'fas fa-book';
             boxLink.appendChild(icon);
 
             const subjectNameTextNode = document.createTextNode(subject.name);
-            const subjectNameContainer = document.createElement('div'); // Wrapper for text
-            subjectNameContainer.style.flexGrow = "1"; // Allow text to take available space
+            const subjectNameContainer = document.createElement('div');
+            subjectNameContainer.style.flexGrow = "1";
             subjectNameContainer.style.display = "flex";
-            subjectNameContainer.style.alignItems = "center"; // Vertically center text if it wraps
+            subjectNameContainer.style.alignItems = "center";
             subjectNameContainer.appendChild(subjectNameTextNode);
             boxLink.appendChild(subjectNameContainer);
 
 
             const progressSpan = document.createElement('span');
             progressSpan.classList.add('progress-display');
-            progressSpan.id = `${subject.pageId}-progress`; // Use pageId for unique ID
+            progressSpan.id = `${subject.pageId}-progress`;
             progressSpan.textContent = 'Loading...';
             boxLink.appendChild(progressSpan);
 
             subjectsContainer.appendChild(boxLink);
         });
 
-        function getProgress(pageIdToLoad) { // Renamed parameter to avoid conflict
+        function getProgress(pageIdToLoad) {
             let attempted = 0, total = 0;
             const pageIds = Array.isArray(pageIdToLoad) ? pageIdToLoad : [pageIdToLoad];
 
@@ -470,7 +430,6 @@
                             if (parsedScores && parsedScores.all && typeof parsedScores.all.total === 'number') {
                                 total += parsedScores.all.total;
                             } else if (parsedScores && typeof parsedScores === 'object' && !parsedScores.all) {
-                                // Fallback for older structure or if 'all' is missing but section totals exist
                                 Object.values(parsedScores).forEach(sectionScoreData => {
                                     if (sectionScoreData && typeof sectionScoreData.total === 'number') {
                                         total += sectionScoreData.total;
@@ -481,13 +440,8 @@
                     }
                 }
             });
-            if (total < attempted && total === 0) { // If total is 0 but questions were attempted (e.g. from summary pages not yet reflecting total)
-                 // This scenario might indicate an issue if `total` is genuinely 0 from the source page,
-                 // but for display purposes on main, showing attempted might be better than "0/0".
-                 // However, if total is correctly fetched and is > 0, it should be used.
-                 // Let's assume if total is 0, it means the source page hasn't saved its total yet or isn't a QBank page.
-            } else if (total < attempted) {
-                total = attempted; // Ensure total is at least the number of attempted questions
+            if (total < attempted) {
+                total = attempted;
             }
             return { attempted, total };
         }
@@ -507,6 +461,24 @@
                 progressElement.textContent = attempted > 0 ? `${attempted} / ?` : `Not Started`;
             }
         });
+
+        // ====== SAVE SUMMARY FOR MAIN PAGE ======
+        function saveSummaryForMainPage() {
+            const allPageIds = SETTINGS.SUBJECTS.map(s => s.pageId);
+            let totalAttempted = 0;
+            let totalQuestions = 0;
+
+            allPageIds.forEach(pageId => {
+                const { attempted, total } = getProgress(pageId);
+                totalAttempted += attempted;
+                totalQuestions += total;
+            });
+
+            // Save summary for index.html to read
+            localStorage.setItem('stage_four_summary_answers', JSON.stringify({ attempted: totalAttempted }));
+            localStorage.setItem('stage_four_summary_scores', JSON.stringify({ total: totalQuestions }));
+        }
+        saveSummaryForMainPage();
     });
     </script>
 
