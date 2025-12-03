@@ -1,0 +1,2256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ====== SUBJECT PAGE SETTINGS ====== -->
+
+<script>
+/*
+    ====== EDIT ONLY THIS BLOCK FOR NEW SUBJECTS ======
+    Change these variables for each new subject page.
+*/
+(function() {
+    // Get filename without extension for PAGE_ID
+    const path = window.location.pathname;
+    const file = path.substring(path.lastIndexOf('/') + 1) || path.substring(path.lastIndexOf('\\') + 1);
+    const pageIdAuto = file.replace(/\.[^/.]+$/, ""); // Remove extension
+
+    window.SUBJECT_SETTINGS = {
+        
+
+
+        PAGE_TITLE: 'وزاري 2025 MCQs', // <--- EDIT THIS: Title for this subject page.
+        HOME_LINK: 'pediatric_qbank.html',      // <--- EDIT THIS: Link back to the group page or main.html.
+       
+       
+       
+       
+        PAGE_ID: pageIdAuto,      // Automatically set from filename
+    
+    
+    
+    };
+})();
+</script>
+
+<title id="dynamic-title-subject">Subject QBank</title>
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- Google Fonts - Open Sans (example, or keep Montserrat) -->
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Amiri Font for Arabic Text -->
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+
+
+
+<style>
+/* Styles for the question page */
+body {
+    font-family: 'Open Sans', Arial, sans-serif; /* Example: Changed font */
+    line-height: 1.7; /* Increased line height for readability */
+    margin: 0;
+    padding: 20px;
+    background-color: #eef1f5; /* Lighter background */
+    padding-top: 80px; /* Space for fixed header */
+    padding-bottom: 100px; /* Space for bottom nav */
+}
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50; /* Darker header */
+    color: #ecf0f1;
+    padding: 6px 0;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16); /* Softer shadow */
+}
+.fixed-header .made-by-prefix { color: #bdc3c7; } /* Lighter prefix text */
+.fixed-header a { color: #3498db; text-decoration: none; font-weight: bold; }
+.fixed-header a:hover { text-decoration: underline; color: #5dade2; }
+.fixed-header .quran-verse {
+    display: inline-block;
+    font-family: 'Amiri', 'Scheherazade', serif;
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #ffae00;
+    letter-spacing: 0.5px;
+    padding: 0.2em 1em;
+    border-radius: 8px;
+    margin-left: 10px;
+    margin-right: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    direction: rtl;
+}
+@media (max-width: 600px) {
+    .fixed-header .quran-verse {
+        font-size: 1em;
+        padding: 0.2em 0.5em;
+    }
+}
+
+.page-main-title {
+    font-size: 2.2em;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.section {
+    margin-bottom: 35px; /* Increased space between sections */
+    background-color: #ffffff;
+    padding: 25px; /* Increased padding */
+    border-radius: 10px; /* More rounded corners */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Softer, larger shadow */
+    max-width: 800px; /* Max width for content readability */
+    margin-left: auto;
+    margin-right: auto;
+}
+.section-title {
+    font-size: 1.6em; /* Adjusted size */
+    color: #34495e; /* Dark blue-gray */
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eaecee; /* Lighter border */
+    padding-bottom: 12px;
+    font-weight: 600;
+}
+.question-container {
+    margin-bottom: 30px; /* More space between questions */
+    padding: 20px;
+    border: 1px solid #dce4ec; /* Lighter border */
+    border-radius: 8px;
+    background-color: #fdfdfd; /* Very light background for question */
+    transition: box-shadow 0.3s ease;
+}
+.question-container:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.question-container.answered { background-color: #f8f9fa; }
+.question-number {
+    font-weight: 700; /* Bolder question number */
+    color: #007bff; /* Primary color for question number */
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+.question-text {
+    font-size: 1.1em;
+    color: #343a40; /* Standard text color */
+    margin-bottom: 18px; /* More space below question text */
+    line-height: 1.6;
+}
+ul.options { list-style: none; padding: 0; margin: 0; }
+li.option {
+    background-color: #f1f5f9; /* Light gray-blue for options */
+    margin-bottom: 12px; /* More space between options */
+    padding: 12px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-left 0.2s ease;
+    border: 1px solid #d1d9e2;
+    border-left: 4px solid transparent; /* For hover/selection indication */
+    position: relative;
+    user-select: none; /* Prevent text selection on click */
+    font-size: 1em;
+    color: #333;
+}
+li.option:hover:not(.answered li.option) {
+    background-color: #e4e9f0;
+    border-left-color: #007bff; /* Blue accent on hover */
+}
+.question-container.answered li.option { cursor: default; } /* No hover effect after answered */
+.question-container.answered li.option:hover { background-color: #f1f5f9; border-left-color: transparent; } /* Reset hover for answered */
+
+li.option.correct:hover, li.option.reveal-correct:hover { background-color: #d4edda !important; border-left-color: #28a745 !important; }
+li.option.incorrect:hover { background-color: #f8d7da !important; border-left-color: #dc3545 !important; }
+
+li.option.correct {
+    background-color: #d4edda !important; /* Ensure override */
+    border-color: #c3e6cb !important;
+    border-left: 4px solid #28a745 !important; /* Green for correct */
+    color: #155724;
+    font-weight: 600;
+}
+li.option.incorrect {
+    background-color: #f8d7da !important;
+    border-color: #f5c6cb !important;
+    border-left: 4px solid #dc3545 !important; /* Red for incorrect */
+    color: #721c24;
+    font-weight: 600;
+}
+.feedback { display: none; font-weight: bold; margin-left: 10px; }
+li.option.correct .feedback, li.option.incorrect .feedback { display: inline; }
+.correct .feedback { color: #155724; }
+.incorrect .feedback { color: #721c24; }
+
+li.option.reveal-correct { /* Style for showing the correct answer when user was wrong */
+    background-color: #d1ecf1 !important; /* Light info blue */
+    border-color: #bee5eb !important;
+    border-left: 4px solid #17a2b8 !important; /* Info blue */
+    color: #0c5460 !important;
+    font-weight: 600 !important;
+}
+.explanation {
+    display: none;
+    margin-top: 20px; /* More space above explanation */
+    padding: 15px;
+    background-color: #e9ecef; /* Slightly darker explanation background */
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    color: #495057;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+.explanation strong { color: #333; } /* Make "Correct answer:" part darker */
+
+.section-score {
+    margin-top: 30px;
+    font-size: 1.25em; /* Larger score text */
+    font-weight: bold;
+    color: #2c3e50; /* Match header text color */
+    text-align: center;
+    padding: 12px;
+    background-color: #e2f0fb; /* Light blue score background */
+    border: 1px solid #a8cff3; /* Softer blue border */
+    border-radius: 8px;
+}
+.bottom-nav-container {
+    position: fixed;
+    bottom: 0; /* Flush to bottom */
+    left: 0;
+    width: 100%;
+    background-color: #ffffff; /* White background for nav */
+    padding: 8px 0; /* Padding top/bottom */
+    z-index: 1001;
+    display: flex;
+    justify-content: center; /* Center buttons */
+    gap: 20px; /* Increased gap */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* Shadow at the top */
+    border-top: 1px solid #e0e0e0;
+}
+.main-button {
+    background-color: #007bff; /* Primary blue */
+    color: #ffffff;
+    padding: 10px 16px; /* Adjusted padding */
+    font-size: 1em; /* Standard font size */
+    text-decoration: none;
+    font-weight: 600; /* Bolder text */
+    border-radius: 25px; /* Pill shape */
+    box-shadow: 0 3px 7px rgba(0,123,255,0.3); /* Softer shadow related to button color */
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-button i { margin-right: 10px; font-size: 1.1em; } /* Slightly larger icon */
+.main-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,123,255,0.4);
+}
+a.main-button:hover { background-color: #0069d9; } /* Darker blue on hover */
+#reset-button { background-color: #e74c3c; box-shadow: 0 3px 7px rgba(231,76,60,0.3); } /* Red reset button */
+#reset-button:hover { background-color: #c0392b; box-shadow: 0 5px 10px rgba(192,57,43,0.4); }
+
+@media (max-width: 768px) {
+    body { padding: 15px; padding-top: 70px; padding-bottom: 90px; }
+    .page-main-title { font-size: 1.8em; }
+    .section { padding: 20px; }
+    .section-title { font-size: 1.4em; }
+    .question-text { font-size: 1em; }
+    li.option { padding: 10px 15px; font-size: 0.95em;}
+    .section-score { font-size: 1.15em; }
+}
+@media (max-width: 480px) {
+    body { padding: 10px; padding-top: 60px; padding-bottom: 80px; }
+    .page-main-title { font-size: 1.6em; margin-bottom: 20px;}
+    .section { padding: 15px; }
+    .section-title { font-size: 1.3em; margin-bottom: 20px; }
+    .question-container { padding: 15px; }
+    .question-text { font-size: 0.95em; }
+    li.option { padding: 10px 12px; font-size: 0.9em;}
+    .explanation { font-size: 0.9em; padding: 10px;}
+    .section-score { font-size: 1.1em; padding: 10px;}
+    .bottom-nav-container { padding: 10px 0; gap: 15px;}
+    .main-button { padding: 8px 16px; font-size: 0.9em;}
+}
+
+</style>
+</head>
+<body>
+<div class="fixed-header">
+    <span class="quran-verse">وَقُل رَّبِّ زِدْنِي عِلْمًا</span>
+</div>
+
+
+
+<h1 class="page-main-title" id="subject-page-title-display">Subject Questions</h1>
+
+
+<!--
+    ====== ADD YOUR QUESTIONS CONTENT BELOW ======
+    - Each section needs a unique data-section-id (e.g., "s1", "s2").
+      This ID is used for the score display (e.g., score-section-s1).
+    - Each question-container needs a unique data-question-id within its section (e.g., "q1", "q2").
+    - Mark the correct option with data-correct="true".
+-->
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">Pediatrics Questions</h2>
+
+    <!-- Question 1 -->
+    <div class="question-container" data-question-id="q1">
+        <p class="question-text"><span class="question-number">1.</span> A 6-year-old child presents with pallor and decreased urine output following a recent episode of bloody diarrhea. Urinalysis reveals hematuria and proteinuria. A peripheral blood smear shows the presence of schistocytes. Which of the following is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Acute post-streptococcal glomerulonephritis</li>
+            <li class="option" data-correct="true">B) Hemolytic uremic syndrome</li>
+            <li class="option" data-correct="false">C) IgA nephropathy</li>
+            <li class="option" data-correct="false">D) Nephrotic syndrome</li>
+            <li class="option" data-correct="false">E) Henoch-Schönlein purpura</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Presents with tea-colored urine and edema after infection, not bloody diarrhea.<br>
+            b. Correct: HUS triad is microangiopathic hemolytic anemia (schistocytes), thrombocytopenia, and AKI, often following bloody diarrhea (STEC).<br>
+            c. Incorrect: Recurrent gross hematuria with URI; no schistocytes.<br>
+            d. Incorrect: Massive proteinuria and edema, not hemolysis.<br>
+            e. Incorrect: Palpable purpura and arthralgia, not the hemolytic picture seen here.<br>
+        </p>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="question-container" data-question-id="q2">
+        <p class="question-text"><span class="question-number">2.</span> An 11-month-old child is brought in for a routine check-up. The child babbles, has a social smile, and passes objects from one hand to the other. However, the child is unable to sit independently or crawl. All other developmental parameters are within normal limits. Which of the following best describes this child’s condition?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Normal development for age</li>
+            <li class="option" data-correct="false">B) Fine motor delay</li>
+            <li class="option" data-correct="false">C) Social and language delay</li>
+            <li class="option" data-correct="true">D) Gross motor delay</li>
+            <li class="option" data-correct="false">E) Global developmental delay</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: An 11-month-old should sit alone (typically by 6-7 months).<br>
+            b. Incorrect: Transferring objects is appropriate for this age.<br>
+            c. Incorrect: Babbling and smiling are appropriate.<br>
+            d. Correct: Inability to sit independently at 11 months indicates isolated gross motor delay.<br>
+            e. Incorrect: Only one domain (gross motor) is affected.<br>
+        </p>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="question-container" data-question-id="q3">
+        <p class="question-text"><span class="question-number">3.</span> A 7-year-old child presents with fatigue and pallor. Initial laboratory investigations including CBC and peripheral blood smear are inconclusive. ESR is markedly elevated. There are no signs of infection, joint pain, rash, or other systemic symptoms. What is the most appropriate next step in the evaluation of this patient?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Antinuclear antibody (ANA) test</li>
+            <li class="option" data-correct="true">B) Bone marrow aspiration</li>
+            <li class="option" data-correct="false">C) Chest X-ray</li>
+            <li class="option" data-correct="false">D) Abdominal ultrasound</li>
+            <li class="option" data-correct="false">E) Serum ferritin and iron studies</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Low yield without systemic signs like rash or arthritis.<br>
+            b. Correct: Pallor, fatigue, and markedly elevated ESR raise concern for malignancy (Leukemia), requiring marrow evaluation even if the smear is inconclusive.<br>
+            c. Incorrect: Less specific than marrow exam for this presentation.<br>
+            d. Incorrect: Leukemia is more common than abdominal tumors in this presentation.<br>
+            e. Incorrect: Iron deficiency does not typically cause markedly elevated ESR.<br>
+        </p>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="question-container" data-question-id="q4">
+        <p class="question-text"><span class="question-number">4.</span> A newborn is noted to have bilateral cataracts on examination. On auscultation, a heart murmur is detected. Which of the following is the most likely cause of these findings?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Down syndrome</li>
+            <li class="option" data-correct="true">B) Congenital rubella syndrome</li>
+            <li class="option" data-correct="false">C) Toxoplasmosis infection</li>
+            <li class="option" data-correct="false">D) Congenital cytomegalovirus infection</li>
+            <li class="option" data-correct="false">E) Marfan syndrome</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Associated with AV canal defects, not typically cataracts.<br>
+            b. Correct: Classic triad of cataracts, deafness, and congenital heart disease (PDA/PS).<br>
+            c. Incorrect: Associated with chorioretinitis and intracranial calcifications.<br>
+            d. Incorrect: Associated with hearing loss and periventricular calcifications.<br>
+            e. Incorrect: Associated with lens subluxation later in life, not congenital cataracts.<br>
+        </p>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="question-container" data-question-id="q5">
+        <p class="question-text"><span class="question-number">5.</span> A woman delivers a baby vaginally after prolonged rupture of membranes lasting 15–20 hours. The newborn appears clinically well. What is the most appropriate initial investigation to assess for potential neonatal infection?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Complete blood count (CBC)</li>
+            <li class="option" data-correct="true">B) Blood culture</li>
+            <li class="option" data-correct="false">C) Chest X-ray</li>
+            <li class="option" data-correct="false">D) C-reactive protein (CRP)</li>
+            <li class="option" data-correct="false">E) Urine culture</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: CBC can be nonspecific in the early neonatal period.<br>
+            b. Correct: Blood culture is the gold standard diagnostic test to identify bacteremia if sepsis workup is initiated.<br>
+            c. Incorrect: Only indicated if respiratory symptoms are present.<br>
+            d. Incorrect: CRP often has a lag time.<br>
+            e. Incorrect: UTIs are not a common cause of early-onset sepsis.<br>
+        </p>
+    </div>
+
+    <!-- Question 6 -->
+    <div class="question-container" data-question-id="q6">
+        <p class="question-text"><span class="question-number">6.</span> A newborn is assessed at 1 minute after birth with the following findings: • Heart rate: above 100 beats per minute • Respiratory effort : (active) • Muscle tone: flexed arms and legs • Reflex irritability: active • Color: pink body with blue extremities. What is the Apgar score of this newborn?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) 7</li>
+            <li class="option" data-correct="false">B) 8</li>
+            <li class="option" data-correct="true">C) 9</li>
+            <li class="option" data-correct="false">D) 10</li>
+            <li class="option" data-correct="false">E) 6</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            Calculation: HR>100 (2) + Resp Active (2) + Reflex Active (2) + Acrocyanosis (1) + Tone (2) = 9.<br>
+            Note: "Flexed arms and legs" is sometimes scored as 1, leading to an 8, but the provided solution marks 9, implying good tone was assessed.<br>
+        </p>
+    </div>
+
+    <!-- Question 7 -->
+    <div class="question-container" data-question-id="q7">
+        <p class="question-text"><span class="question-number">7.</span> A 2-year-old child with acute diarrhea presents with dry mucous membranes, sunken eyes, decreased skin turgor, and is alert but thirsty. Which of the following is the most appropriate initial management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Immediate intravenous fluids</li>
+            <li class="option" data-correct="true">B) Oral rehydration therapy (about 750 ml) with close monitoring</li>
+            <li class="option" data-correct="false">C) Keep NPO (nothing by mouth) and observe</li>
+            <li class="option" data-correct="false">D) Start antibiotics immediately</li>
+            <li class="option" data-correct="false">E) Give anti-diarrheal medication</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: IV fluids are for severe dehydration/shock.<br>
+            b. Correct: Signs indicate moderate dehydration. ORT is the standard of care (50-100ml/kg).<br>
+            c. Incorrect: NPO worsens dehydration.<br>
+            d. Incorrect: Antibiotics are not routinely indicated for acute gastroenteritis.<br>
+            e. Incorrect: Anti-diarrheals are contraindicated in children.<br>
+        </p>
+    </div>
+
+    <!-- Question 8 -->
+    <div class="question-container" data-question-id="q8">
+        <p class="question-text"><span class="question-number">8.</span> A 12-year-old child is diagnosed with beta thalassemia trait after routine blood tests reveal mild microcytic hypochromic anemia with normal iron studies. What is the most appropriate management for this condition?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Regular blood transfusions</li>
+            <li class="option" data-correct="false">B) Iron supplementation</li>
+            <li class="option" data-correct="false">C) Folic acid supplementation</li>
+            <li class="option" data-correct="true">D) Regular monitoring without specific treatment</li>
+            <li class="option" data-correct="false">E) Splenectomy</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            a. Incorrect: Only for Thalassemia Major.<br>
+            b. Incorrect: Contraindicated as it leads to iron overload in non-iron-deficient patients.<br>
+            c. Incorrect: Not mandatory for asymptomatic carriers.<br>
+            d. Correct: Beta thalassemia trait is a carrier state; usually asymptomatic and requires no treatment.<br>
+            e. Incorrect: Reserved for severe hemolysis.<br>
+        </p>
+    </div>
+
+    <!-- Question 9 -->
+    <div class="question-container" data-question-id="q9">
+        <p class="question-text"><span class="question-number">9.</span> A 2-year-old child with severe malnutrition is brought to the emergency department. The child is lethargic, hypoglycemic on testing, and refuses to eat or drink anything orally. Vital signs are stable but the child appears weak. What is the most appropriate initial management to correct hypoglycemia and provide nutritional support?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Give oral glucose solution</li>
+            <li class="option" data-correct="false">B) Start intravenous dextrose infusion</li>
+            <li class="option" data-correct="true">C) Begin nasogastric tube feeding with dextrose-containing fluids</li>
+            <li class="option" data-correct="false">D) Administer intramuscular glucagon</li>
+            <li class="option" data-correct="false">E) Observe and wait for the child to eat spontaneously</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Aspiration risk in a lethargic child.<br>
+            b. Incorrect: IV fluids carry a high risk of heart failure in severe malnutrition unless shock is present.<br>
+            c. Correct: NGT is the safest route to correct hypoglycemia and start refeeding in a lethargic/refusing child who is not in shock.<br>
+            d. Incorrect: Ineffective due to glycogen depletion.<br>
+        </p>
+    </div>
+
+    <!-- Question 10 -->
+    <div class="question-container" data-question-id="q10">
+        <p class="question-text"><span class="question-number">10.</span> Poliovirus primarily affects which part of the nervous system, leading to the characteristic flaccid paralysis seen in poliomyelitis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Dorsal root ganglia</li>
+            <li class="option" data-correct="true">B) Anterior horn cells of the spinal cord</li>
+            <li class="option" data-correct="false">C) Cerebellar Purkinje cells</li>
+            <li class="option" data-correct="false">D) Corticospinal tract</li>
+            <li class="option" data-correct="false">E) Peripheral nerve myelin sheath</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Affects sensory processing.<br>
+            b. Correct: Polio destroys lower motor neurons in the anterior horn, causing flaccid paralysis.<br>
+            c. Incorrect: Causes ataxia.<br>
+            d. Incorrect: Causes spasticity (UMN).<br>
+            e. Incorrect: Involved in Guillain-Barré.<br>
+        </p>
+    </div>
+
+    <!-- Question 11 -->
+    <div class="question-container" data-question-id="q11">
+        <p class="question-text"><span class="question-number">11.</span> A newborn has a total serum bilirubin level of 7 mg/dL. The baby’s blood group is O negative, and the mother’s blood group is A positive. What is the most appropriate management at this point?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Immediate phototherapy</li>
+            <li class="option" data-correct="false">B) Exchange transfusion</li>
+            <li class="option" data-correct="true">C) Reassure and monitor bilirubin levels</li>
+            <li class="option" data-correct="false">D) Start intravenous immunoglobulin (IVIG)</li>
+            <li class="option" data-correct="false">E) Administer anti-D immunoglobulin to the mother</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            Explanation: There is no ABO incompatibility (Mom A, Baby O) and no Rh incompatibility (Mom Rh+, Baby Rh-). A level of 7 mg/dL is physiologic. Reassurance is appropriate.<br>
+        </p>
+    </div>
+
+    <!-- Question 12 -->
+    <div class="question-container" data-question-id="q12">
+        <p class="question-text"><span class="question-number">12.</span> A child presents with fever, cough, conjunctivitis, and coryza. On oral examination, you notice small white spots on the buccal mucosa opposite the molars. A few days later, a maculopapular rash appears, starting on the face and spreading downwards. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Rubella</li>
+            <li class="option" data-correct="true">B) Measles</li>
+            <li class="option" data-correct="false">C) Scarlet fever</li>
+            <li class="option" data-correct="false">D) Chickenpox</li>
+            <li class="option" data-correct="false">E) Kawasaki disease</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            a. Incorrect: Milder prodrome, suboccipital nodes.<br>
+            b. Correct: The "3 Cs" (Cough, Coryza, Conjunctivitis) + Koplik spots + cephalocaudal rash are pathognomonic for Measles.<br>
+            c. Incorrect: Sandpaper rash.<br>
+            d. Incorrect: Vesicular rash.<br>
+            e. Incorrect: Prolonged fever >5 days, non-purulent conjunctivitis.<br>
+        </p>
+    </div>
+
+    <!-- Question 13 -->
+    <div class="question-container" data-question-id="q13">
+        <p class="question-text"><span class="question-number">13.</span> A toddler suddenly chokes while eating peanuts and presents with decreased breath sounds on the right side. What would you expect to find on the chest X-ray?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Right lung hyperinflation</li>
+            <li class="option" data-correct="true">B) Right lung collapse (atelectasis)</li>
+            <li class="option" data-correct="false">C) Left lung hyperinflation</li>
+            <li class="option" data-correct="false">D) Bilateral pulmonary infiltrates</li>
+            <li class="option" data-correct="false">E) Normal chest X-ray</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: Foreign body aspiration can cause check-valve obstruction (hyperinflation) or complete obstruction (atelectasis/collapse). The provided answer selects collapse, a definitive sign of complete airway obstruction.<br>
+        </p>
+    </div>
+
+    <!-- Question 14 -->
+    <div class="question-container" data-question-id="q14">
+        <p class="question-text"><span class="question-number">14.</span> A patient diagnosed with kala-azar (visceral leishmaniasis) starts receiving treatment. Which of the following is typically the earliest sign of clinical recovery?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Decrease in spleen size</li>
+            <li class="option" data-correct="false">B) Increase in appetite</li>
+            <li class="option" data-correct="false">C) Resolution of anemia</li>
+            <li class="option" data-correct="true">D) Fever subsides</li>
+            <li class="option" data-correct="false">E) Weight gain</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            Explanation: Fever is usually the first symptom to resolve (days), followed by appetite improvement, while splenomegaly takes weeks or months to regress.<br>
+        </p>
+    </div>
+
+    <!-- Question 15 -->
+    <div class="question-container" data-question-id="q15">
+        <p class="question-text"><span class="question-number">15.</span> A 9-month-old infant has a sudden onset of high fever lasting for 3 days. The fever abruptly resolves, and shortly after, a pink maculopapular rash appears, starting on the trunk and spreading to the limbs. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Measles</li>
+            <li class="option" data-correct="false">B) Rubella</li>
+            <li class="option" data-correct="true">C) Roseola (Exanthem Subitum)</li>
+            <li class="option" data-correct="false">D) Scarlet fever</li>
+            <li class="option" data-correct="false">E) Chickenpox</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Rash overlaps with fever.<br>
+            c. Correct: Classic presentation of high fever followed by defervescence and immediate appearance of rash (Roseola/HHV-6).<br>
+            d. Incorrect: Rash coincides with fever.<br>
+        </p>
+    </div>
+
+    <!-- Question 16 -->
+    <div class="question-container" data-question-id="q16">
+        <p class="question-text"><span class="question-number">16.</span> A 7-year-old child with post-streptococcal glomerulonephritis presents with hematuria, edema, headache, and blurred vision. Which of the following is the most important clinical parameter to assess immediately?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Urine output</li>
+            <li class="option" data-correct="false">B) Serum creatinine</li>
+            <li class="option" data-correct="true">C) Blood pressure and signs of hypertensive emergency</li>
+            <li class="option" data-correct="false">D) Serum electrolytes</li>
+            <li class="option" data-correct="false">E) C-reactive protein (CRP)</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            Explanation: Headache and blurred vision suggest hypertensive encephalopathy, a life-threatening complication of PSGN requiring immediate BP management.<br>
+        </p>
+    </div>
+
+    <!-- Question 17 -->
+    <div class="question-container" data-question-id="q17">
+        <p class="question-text"><span class="question-number">17.</span> A 2-year-old child has a brief generalized seizure lasting less than 5 minutes during a febrile illness. There is no focal neurological deficit, and the child recovers fully within minutes. What is the most appropriate management and advice for the parents?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Start daily antiepileptic medication</li>
+            <li class="option" data-correct="false">B) Admit for long-term EEG monitoring</li>
+            <li class="option" data-correct="true">C) Reassure parents and explain the benign nature of simple febrile seizures</li>
+            <li class="option" data-correct="false">D) Perform brain MRI urgently</li>
+            <li class="option" data-correct="false">E) Start antibiotic therapy</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            Explanation: This describes a simple febrile seizure. It is benign, does not cause brain damage, and requires no specific workup or maintenance medication.<br>
+        </p>
+    </div>
+
+    <!-- Question 18 -->
+    <div class="question-container" data-question-id="q18">
+        <p class="question-text"><span class="question-number">18.</span> An unresponsive patient is found to have no breathing. You check the carotid pulse for 10 seconds and find no pulse. What is the next best step?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Deliver 5 rescue breaths before starting chest compressions</li>
+            <li class="option" data-correct="true">B) Start immediate chest compressions (CPR)</li>
+            <li class="option" data-correct="false">C) Call for emergency help and wait</li>
+            <li class="option" data-correct="false">D) Open the airway and observe for breathing</li>
+            <li class="option" data-correct="false">E) Administer oxygen via mask</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: Per BLS guidelines (C-A-B), if there is no pulse and no breathing, immediate chest compressions are the priority.<br>
+        </p>
+    </div>
+
+    <!-- Question 19 -->
+    <div class="question-container" data-question-id="q19">
+        <p class="question-text"><span class="question-number">19.</span> A child presents with hemolytic anemia, splenomegaly, and a family history of similar symptoms. Peripheral blood smear shows spherocytes. The mean corpuscular hemoglobin concentration (MCHC) is 40 g/dL. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A) Hereditary spherocytosis</li>
+            <li class="option" data-correct="false">B) Sickle cell anemia</li>
+            <li class="option" data-correct="false">C) Thalassemia major</li>
+            <li class="option" data-correct="false">D) Autoimmune hemolytic anemia</li>
+            <li class="option" data-correct="false">E) G6PD deficiency</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct: High MCHC (>36) is specific for Hereditary Spherocytosis (due to cellular dehydration). Spherocytes and family history confirm the diagnosis.<br>
+            d. Incorrect: Autoimmune HA can show spherocytes but MCHC is rarely this high.<br>
+        </p>
+    </div>
+
+    <!-- Question 20 -->
+    <div class="question-container" data-question-id="q20">
+        <p class="question-text"><span class="question-number">20.</span> A newborn screening reveals high TSH and low free T4 levels, but the infant is clinically normal and asymptomatic. What is the appropriate management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Reassure and observe</li>
+            <li class="option" data-correct="true">B) Start levothyroxine therapy immediately</li>
+            <li class="option" data-correct="false">C) Repeat thyroid function tests in 1 month</li>
+            <li class="option" data-correct="false">D) Start iodine supplementation</li>
+            <li class="option" data-correct="false">E) Refer for thyroid ultrasound only</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: Congenital hypothyroidism requires immediate treatment with Levothyroxine to prevent irreversible intellectual disability, even if the infant is asymptomatic.<br>
+        </p>
+    </div>
+
+    <!-- Question 21 -->
+    <div class="question-container" data-question-id="q21">
+        <p class="question-text"><span class="question-number">21.</span> A child with prolonged seizures has been treated with intravenous diazepam, but the seizures continue. What is the next best step?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Administer rectal diazepam</li>
+            <li class="option" data-correct="false">B) Give intravenous midazolam</li>
+            <li class="option" data-correct="true">C) Give intravenous phenobarbital or phenytoin</li>
+            <li class="option" data-correct="false">D) Wait and observe</li>
+            <li class="option" data-correct="false">E) Perform immediate intubation</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: c<br>
+            Why not the other options? <br>
+A) Rectal diazepam → Used before IV access or at home, not after IV diazepam failure. <br>
+B) IV midazolam → Another benzodiazepine; less preferred after diazepam failure (same drug class).<br>
+D) Wait and observe → Dangerous; status epilepticus requires continuous active treatment.<br>
+E) Immediate intubation → Considered if airway is compromised, but not the next step in seizure control. </p>
+    </div>
+
+    <!-- Question 22 -->
+    <div class="question-container" data-question-id="q22">
+        <p class="question-text"><span class="question-number">22.</span> A 15-month-old child with no prior vaccinations presents to the clinic. Which of the following vaccines should not be given at this age?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Measles, Mumps, and Rubella (MMR) vaccine</li>
+            <li class="option" data-correct="false">B) Pentavalent vaccine (DPT, Hib, HepB)</li>
+            <li class="option" data-correct="false">C) Oral Polio Vaccine (OPV)</li>
+            <li class="option" data-correct="true">D) Bacillus Calmette-Guérin (BCG) vaccine</li>
+            <li class="option" data-correct="false">E) Pneumococcal conjugate vaccine (PCV)</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            Explanation: BCG is typically given at birth. After 1 year of age, its efficacy is variable, and it is rarely given without prior tuberculin testing; in many schedules, it is omitted for catch-up >1 year.<br>
+        </p>
+    </div>
+
+    <!-- Question 23 -->
+    <div class="question-container" data-question-id="q23">
+        <p class="question-text"><span class="question-number">23.</span> A 4-month-old infant presents with cough, wheezing, nasal flaring, and increased work of breathing. On examination, oxygen saturation is borderline low. What is the most appropriate initial management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Antibiotics and corticosteroids</li>
+            <li class="option" data-correct="true">B) Supportive care with oxygen and fluids</li>
+            <li class="option" data-correct="false">C) Bronchodilators and antivirals</li>
+            <li class="option" data-correct="false">D) Immediate intubation and mechanical ventilation</li>
+            <li class="option" data-correct="false">E) High-dose intravenous steroids</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: Diagnosis is Bronchiolitis (viral). Guidelines recommend supportive care (O2, hydration). Steroids and bronchodilators are not routinely effective.<br>
+        </p>
+    </div>
+
+    <!-- Question 24 -->
+    <div class="question-container" data-question-id="q24">
+        <p class="question-text"><span class="question-number">24.</span> A 6-year-old child presents with high fever, flank pain, vomiting, and signs of a urinary tract infection. Urinalysis confirms infection. What is the most appropriate next step?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Start oral antibiotics and send home</li>
+            <li class="option" data-correct="true">B) Admit for intravenous antibiotics and perform renal ultrasound</li>
+            <li class="option" data-correct="false">C) Observe without antibiotics</li>
+            <li class="option" data-correct="false">D) Start prophylactic antibiotics only</li>
+            <li class="option" data-correct="false">E) Schedule outpatient urine culture and follow-up in 1 week</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: Systemic toxicity (vomiting, high fever) in pyelonephritis requires admission for IV antibiotics and imaging (ultrasound) to rule out complications.<br>
+        </p>
+    </div>
+
+    <!-- Question 25 -->
+    <div class="question-container" data-question-id="q25">
+        <p class="question-text"><span class="question-number">25.</span> A 3-week-old exclusively breastfed infant presents with mild but persistent jaundice. The baby is otherwise thriving, feeding well, and shows no signs of illness. Bilirubin levels remain mildly elevated but stable. What is the best approach regarding scheduled vaccinations?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Delay all vaccinations until jaundice resolves</li>
+            <li class="option" data-correct="true">B) Proceed with scheduled vaccinations as planned</li>
+            <li class="option" data-correct="false">C) Administer vaccinations only after phototherapy</li>
+            <li class="option" data-correct="false">D) Postpone vaccinations until formula feeding is started</li>
+            <li class="option" data-correct="false">E) Only give hepatitis B vaccine and delay others</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: Breast milk jaundice is benign in a thriving infant and is not a contraindication to vaccination.<br>
+        </p>
+    </div>
+
+    <!-- Question 26 -->
+    <div class="question-container" data-question-id="q26">
+        <p class="question-text"><span class="question-number">26.</span> A 10-day-old infant has 6 to 8 wet diapers and 3 to 4 stools per day. What is the most appropriate feeding recommendation?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Supplement with formula due to insufficient intake</li>
+            <li class="option" data-correct="true">B) Continue exclusive breastfeeding as the baby is feeding well</li>
+            <li class="option" data-correct="false">C) Reduce breastfeeding frequency to prevent overfeeding</li>
+            <li class="option" data-correct="false">D) Start solid foods to increase calorie intake</li>
+            <li class="option" data-correct="false">E) Begin vitamin supplementation and stop breastfeeding</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: The output (wet diapers and stools) indicates excellent hydration and adequate intake. Exclusive breastfeeding should continue.<br>
+        </p>
+    </div>
+
+    <!-- Question 27 -->
+    <div class="question-container" data-question-id="q27">
+        <p class="question-text"><span class="question-number">27.</span> A child with no prior varicella vaccination is exposed to a classmate diagnosed with chickenpox. What is the most appropriate immediate management to reduce the risk of severe varicella infection?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Start oral acyclovir immediately</li>
+            <li class="option" data-correct="true">B) Administer varicella zoster immunoglobulin (VZIG)</li>
+            <li class="option" data-correct="false">C) Begin routine varicella vaccination now</li>
+            <li class="option" data-correct="false">D) Observe and wait for the child to eat spontaneously</li>
+            <li class="option" data-correct="false">E) Give intravenous antibiotics prophylactically</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Note: The source marks B (VZIG). Standard guidelines for *healthy* children usually recommend the Varicella Vaccine (Option C) for post-exposure prophylaxis. VZIG is typically reserved for high-risk/immunocompromised groups.<br>
+        </p>
+    </div>
+
+    <!-- Question 28 -->
+    <div class="question-container" data-question-id="q28">
+        <p class="question-text"><span class="question-number">28.</span> A child presents with edema, hypopigmented hair, and features of protein deficiency. The weight-for-age is approximately 50% of the expected value. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Marasmus</li>
+            <li class="option" data-correct="false">B) Kwashiorkor</li>
+            <li class="option" data-correct="true">C) Marasmic-Kwashiorkor</li>
+            <li class="option" data-correct="false">D) Severe acute malnutrition without edema</li>
+            <li class="option" data-correct="false">E) Vitamin A deficiency</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            a. Incorrect: Marasmus is wasting without edema.<br>
+            b. Incorrect: Kwashiorkor has edema but less severe weight loss.<br>
+            c. Correct: Features of both edema (Kwashiorkor) and severe wasting/low weight (Marasmus) define Marasmic-Kwashiorkor.<br>
+        </p>
+    </div>
+
+    <!-- Question 29 -->
+    <div class="question-container" data-question-id="q29">
+        <p class="question-text"><span class="question-number">29.</span> A patient with diabetes mellitus has been admitted 3-4 times with diabetic ketoacidosis (DKA) and severe hypoglycemia episodes. The patient also has a history of anxiety and marked glycemic variability. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A) Type 1 diabetes mellitus with brittle diabetes</li>
+            <li class="option" data-correct="false">B) Type 2 diabetes mellitus</li>
+            <li class="option" data-correct="false">C) Maturity-onset diabetes of the young (MODY)</li>
+            <li class="option" data-correct="false">D) Latent autoimmune diabetes in adults (LADA)</li>
+            <li class="option" data-correct="false">E) Secondary diabetes due to medications</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            Explanation: "Brittle diabetes" refers to hard-to-control Type 1 DM with wide swings between DKA and hypoglycemia, often associated with psychosocial factors.<br>
+        </p>
+    </div>
+
+    <!-- Question 30 -->
+    <div class="question-container" data-question-id="q30">
+        <p class="question-text"><span class="question-number">30.</span> A 10 kg child presents with the following signs: unable to drink or drink poorly, very sunken eyes, and skin pinch that recoils slowly (more than 2 seconds). What is the most appropriate initial intravenous fluid management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) IV normal saline 100 ml over 1 hour</li>
+            <li class="option" data-correct="true">B) IV normal saline 300 ml over 30 minutes</li>
+            <li class="option" data-correct="false">C) Oral rehydration solution only</li>
+            <li class="option" data-correct="false">D) IV dextrose 5% in water 500 ml over 1 hour</li>
+            <li class="option" data-correct="false">E) IV potassium chloride 10 mEq over 30 minutes</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: Severe dehydration requires a rapid IV bolus of 30ml/kg. For 10kg, this is 300ml.<br>
+        </p>
+    </div>
+
+    <!-- Question 31 -->
+    <div class="question-container" data-question-id="q31">
+        <p class="question-text"><span class="question-number">31.</span> A child suddenly develops generalized urticaria, swelling, difficulty breathing, and hypotension shortly after eating an unknown substance at a school party. What is the most appropriate immediate management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Administer oral antihistamines</li>
+            <li class="option" data-correct="true">B) Give intramuscular epinephrine immediately</li>
+            <li class="option" data-correct="false">C) Start intravenous corticosteroids only</li>
+            <li class="option" data-correct="false">D) Observe and monitor in hospital without treatment</li>
+            <li class="option" data-correct="false">E) Give inhaled bronchodilators alone</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: This is anaphylaxis. IM Epinephrine is the life-saving treatment of choice.<br>
+        </p>
+    </div>
+
+    <!-- Question 32 -->
+    <div class="question-container" data-question-id="q32">
+        <p class="question-text"><span class="question-number">32.</span> Which of the following conditions is not a permanent contraindication to breastfeeding?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Maternal HIV infection in high-resource settings</li>
+            <li class="option" data-correct="false">B) Active untreated tuberculosis</li>
+            <li class="option" data-correct="true">C) Mastitis</li>
+            <li class="option" data-correct="false">D) Galactosemia in the infant</li>
+            <li class="option" data-correct="false">E) Herpes simplex virus lesions on the breast</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            Explanation: Mastitis is not a contraindication; breastfeeding should continue to drain the infection.<br>
+        </p>
+    </div>
+
+    <!-- Question 33 -->
+    <div class="question-container" data-question-id="q33">
+        <p class="question-text"><span class="question-number">33.</span> A child presents with a sore throat, fever, a rough sandpaper-like rash over the trunk, and a “strawberry” tongue. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Measles</li>
+            <li class="option" data-correct="true">B) Scarlet fever</li>
+            <li class="option" data-correct="false">C) Kawasaki disease</li>
+            <li class="option" data-correct="false">D) Rubella</li>
+            <li class="option" data-correct="false">E) Toxic shock syndrome</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: The triad of pharyngitis, "sandpaper" rash, and strawberry tongue is characteristic of Scarlet Fever (Group A Strep).<br>
+        </p>
+    </div>
+
+    <!-- Question 34 -->
+    <div class="question-container" data-question-id="q34">
+        <p class="question-text"><span class="question-number">34.</span> A child presents with foul-smelling, bloody diarrhea. Which of the following organisms is least likely to cause bloody stools?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Shigella</li>
+            <li class="option" data-correct="false">B) Entamoeba histolytica</li>
+            <li class="option" data-correct="false">C) Salmonella</li>
+            <li class="option" data-correct="true">D) Giardia lamblia</li>
+            <li class="option" data-correct="false">E) Campylobacter jejuni</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            Explanation: Giardia causes malabsorption (steatorrhea/greasy stools), not invasive bloody diarrhea (dysentery).<br>
+        </p>
+    </div>
+
+    <!-- Question 35 -->
+    <div class="question-container" data-question-id="q35">
+        <p class="question-text"><span class="question-number">35.</span> A newborn develops mild jaundice shortly after birth. The mother’s blood group is O positive, and the baby’s blood group is A positive. What is the most likely cause?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Rh incompatibility</li>
+            <li class="option" data-correct="true">B) ABO incompatibility</li>
+            <li class="option" data-correct="false">C) G6PD deficiency</li>
+            <li class="option" data-correct="false">D) Neonatal hepatitis</li>
+            <li class="option" data-correct="false">E) Physiological jaundice</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: ABO incompatibility occurs when the mother is O and the baby is A or B, leading to hemolysis.<br>
+        </p>
+    </div>
+
+    <!-- Question 36 -->
+    <div class="question-container" data-question-id="q36">
+        <p class="question-text"><span class="question-number">36.</span> A 2-year-old child presents with delayed motor milestones and increased muscle tone predominantly on one side of the body. Which of the following is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Spastic diplegia</li>
+            <li class="option" data-correct="true">B) Spastic hemiplegia</li>
+            <li class="option" data-correct="false">C) Ataxic cerebral palsy</li>
+            <li class="option" data-correct="false">D) Hypotonic cerebral palsy</li>
+            <li class="option" data-correct="false">E) Muscular dystrophy</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: Cerebral palsy affecting one side (arm and leg) is classified as Hemiplegia.<br>
+        </p>
+    </div>
+
+    <!-- Question 37 -->
+    <div class="question-container" data-question-id="q37">
+        <p class="question-text"><span class="question-number">37.</span> A child presents with abdominal distension, pale bulky stools, weight loss, poor growth despite a good diet, and failure to thrive. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Cystic fibrosis</li>
+            <li class="option" data-correct="true">B) Celiac disease</li>
+            <li class="option" data-correct="false">C) Lactose intolerance</li>
+            <li class="option" data-correct="false">D) Giardia lamblia infection</li>
+            <li class="option" data-correct="false">E) Protein-energy malnutrition</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: Symptoms of malabsorption (pale bulky stools) and FTT despite intake suggest Celiac disease.<br>
+        </p>
+    </div>
+
+    <!-- Question 38 -->
+    <div class="question-container" data-question-id="q38">
+        <p class="question-text"><span class="question-number">38.</span> A 7-year-old child presents with right lower abdominal pain, fever, and vomiting. On examination, there is tenderness at McBurney’s point and guarding. However, the child also has a cough and decreased breath sounds at the right lower lung field. What is the most important differential diagnosis to consider?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Acute appendicitis</li>
+            <li class="option" data-correct="true">B) Lower lobe pneumonia</li>
+            <li class="option" data-correct="false">C) Mesenteric lymphadenitis</li>
+            <li class="option" data-correct="false">D) Intussusception</li>
+            <li class="option" data-correct="false">E) Urinary tract infection</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: Right lower lobe pneumonia can cause referred pain to the RLQ, mimicking appendicitis. The presence of cough and lung signs makes this the critical differential.<br>
+        </p>
+    </div>
+
+    <!-- Question 39 -->
+    <div class="question-container" data-question-id="q39">
+        <p class="question-text"><span class="question-number">39.</span> A newborn has a swelling over the parietal region of the scalp that does not cross the suture lines. The swelling appeared shortly after delivery and is non-tender. What is the appropriate management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Immediate surgical drainage</li>
+            <li class="option" data-correct="true">B) Observation and supportive care</li>
+            <li class="option" data-correct="false">C) Start intravenous antibiotics</li>
+            <li class="option" data-correct="false">D) Perform urgent neuroimaging</li>
+            <li class="option" data-correct="false">E) Apply pressure dressing</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: Cephalohematoma (does not cross suture lines) resolves spontaneously. No intervention is needed.<br>
+        </p>
+    </div>
+
+    <!-- Question 40 -->
+    <div class="question-container" data-question-id="q40">
+        <p class="question-text"><span class="question-number">40.</span> Which of the following is not a recognized complication of rickets?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Bone deformities</li>
+            <li class="option" data-correct="false">B) Delayed growth</li>
+            <li class="option" data-correct="false">C) Hypocalcemic seizures</li>
+            <li class="option" data-correct="true">D) Intracranial calcification</li>
+            <li class="option" data-correct="false">E) Dental enamel defects</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            Explanation: Intracranial calcification is seen in TORCH infections (Toxoplasmosis, CMV), not Rickets.<br>
+        </p>
+    </div>
+
+    <!-- Question 41 -->
+    <div class="question-container" data-question-id="q41">
+        <p class="question-text"><span class="question-number">41.</span> What is the most common serious complication of Kawasaki disease?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A) Coronary artery aneurysm</li>
+            <li class="option" data-correct="false">B) Pericardial effusion</li>
+            <li class="option" data-correct="false">C) Myocarditis</li>
+            <li class="option" data-correct="false">D) Heart block</li>
+            <li class="option" data-correct="false">E) Endocarditis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            Explanation: Coronary artery aneurysms occur in 20-25% of untreated cases and are the most serious sequelae.<br>
+        </p>
+    </div>
+
+    <!-- Question 42 -->
+    <div class="question-container" data-question-id="q42">
+        <p class="question-text"><span class="question-number">42.</span> A child with known cyanotic congenital heart disease suddenly becomes cyanotic, irritable, and starts rapid breathing. What is the first-line treatment to relieve this episode?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Intravenous fluids</li>
+            <li class="option" data-correct="false">B) Morphine administration</li>
+            <li class="option" data-correct="false">C) Immediate surgery</li>
+            <li class="option" data-correct="false">D) Beta-blockers</li>
+            <li class="option" data-correct="true">E) Oxygen therapy</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            Explanation: <br>
+
+                A) IV fluids → helpful but not first-line.<br>
+                B) Morphine → second-line after oxygen.<br>
+                C) Immediate surgery → not done during acute spell.<br>
+                D) Beta-blockers → useful but not first-line in acute management.<br>
+        
+        </p>
+    </div>
+
+    <!-- Question 43 -->
+    <div class="question-container" data-question-id="q43">
+        <p class="question-text"><span class="question-number">43.</span> A 12-year-old child with mumps develops headache, neck stiffness, and photophobia. Which of the following is the most likely complication?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Orchitis</li>
+            <li class="option" data-correct="true">B) Aseptic meningitis</li>
+            <li class="option" data-correct="false">C) Bacterial meningitis</li>
+            <li class="option" data-correct="false">D) Encephalitis</li>
+            <li class="option" data-correct="false">E) Otitis media</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: Mumps is a common cause of aseptic (viral) meningitis.<br>
+        </p>
+    </div>
+
+    <!-- Question 44 -->
+    <div class="question-container" data-question-id="q44">
+        <p class="question-text"><span class="question-number">44.</span> A 6-month-old infant with a bulging fontanelle requires evaluation for possible meningitis. In which of the following scenarios is lumbar puncture considered safe?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Infant with focal neurological signs</li>
+            <li class="option" data-correct="false">B) Infant with Glasgow Coma Scale (GCS) score < 7</li>
+            <li class="option" data-correct="true">C) Infant with bulging fontanelle but no focal neurological signs or seizures</li>
+            <li class="option" data-correct="false">D) Infant with seizures and altered consciousness</li>
+            <li class="option" data-correct="false">E) Infant with signs of brain herniation</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            Explanation: A bulging fontanelle alone in an infant with open sutures is not a contraindication to LP, whereas focal signs or low GCS suggest herniation risk.<br>
+        </p>
+    </div>
+
+    <!-- Question 45 -->
+    <div class="question-container" data-question-id="q45">
+        <p class="question-text"><span class="question-number">45.</span> A 2-year-old child presents with a continuous “machine-like” heart murmur best heard at the left infraclavicular area. Echocardiography confirms a persistent abnormal connection between the aorta and pulmonary artery. What is the preferred treatment?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Medical management with NSAIDs</li>
+            <li class="option" data-correct="false">B) Surgical ligation via thoracotomy</li>
+            <li class="option" data-correct="true">C) Device closure by catheterization</li>
+            <li class="option" data-correct="false">D) Observation without intervention</li>
+            <li class="option" data-correct="false">E) Balloon angioplasty</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            Explanation: For a 2-year-old with PDA, transcatheter device closure is the standard of care. NSAIDs are for premies.<br>
+        </p>
+    </div>
+
+    <!-- Question 46 -->
+    <div class="question-container" data-question-id="q46">
+        <p class="question-text"><span class="question-number">46.</span> A 3-year-old child presents with delayed speech, poor eye contact, and repetitive hand-flapping movements. Which of the following is a characteristic feature of this condition (Autism spectrum disorder)?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Aggressive behavior</li>
+            <li class="option" data-correct="true">B) Repetitive behaviors</li>
+            <li class="option" data-correct="false">C) Visual hallucinations</li>
+            <li class="option" data-correct="false">D) Hyperactivity only</li>
+            <li class="option" data-correct="false">E) Severe intellectual disability in all cases</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: Restricted, repetitive patterns of behavior (like hand-flapping) are a core diagnostic criterion for ASD.<br>
+        </p>
+    </div>
+
+    <!-- Question 47 -->
+    <div class="question-container" data-question-id="q47">
+        <p class="question-text"><span class="question-number">47.</span> A child presents with sudden onset of bright red “slapped cheek” rash on the face, followed by a lacy, reticular rash on the trunk and limbs. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Measles</li>
+            <li class="option" data-correct="true">B) Erythema infectiosum (Fifth disease)</li>
+            <li class="option" data-correct="false">C) Scarlet fever</li>
+            <li class="option" data-correct="false">D) Rubella</li>
+            <li class="option" data-correct="false">E) Roseola infantum</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            Explanation: "Slapped cheek" and lacy reticular rash are pathognomonic for Parvovirus B19 (Fifth disease).<br>
+        </p>
+    </div>
+
+    <!-- Question 48 -->
+    <div class="question-container" data-question-id="q48">
+        <p class="question-text"><span class="question-number">48.</span> A 12-month-old girl presents with appropriate weight and length for age, good head control, sitting without support, and babbling. She has no history of illness, feeding well, and shows age-appropriate social interaction. What would you expect from her clinical and laboratory parameters?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A) Anemia and delayed milestones</li>
+            <li class="option" data-correct="false">B) Elevated inflammatory markers</li>
+            <li class="option" data-correct="false">C) Developmental delay</li>
+            <li class="option" data-correct="true">D) All parameters within normal range</li>
+            <li class="option" data-correct="false">E) Signs of malnutrition</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            Explanation: The child is healthy and meeting all milestones; normal parameters are expected.<br>
+        </p>
+    </div>
+
+    <!-- Question 49 -->
+    <div class="question-container" data-question-id="q49">
+        <p class="question-text"><span class="question-number">49.</span> A child with known G6PD deficiency, who was treated with a blood transfusion 4 months ago, presents now with right upper quadrant abdominal pain, fever, and jaundice. The child is unvaccinated. Laboratory tests reveal low hemoglobin, elevated conjugated bilirubin, and markedly raised liver enzymes (ALT 980 IU/L, AST 840 IU/L). What is the most likely cause of this presentation?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A) Acute hepatitis B infection</li>
+            <li class="option" data-correct="false">B) Hemolytic crisis due to G6PD deficiency</li>
+            <li class="option" data-correct="false">C) Autoimmune hepatitis</li>
+            <li class="option" data-correct="false">D) Acute viral hepatitis A</li>
+            <li class="option" data-correct="false">E) Biliary atresia</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Correct: Transfusion 4 months ago (incubation period) + unvaccinated + massive transaminitis (>800) + conjugated bilirubin points to Hepatitis B.<br>
+            b. Incorrect: G6PD hemolysis causes unconjugated bilirubin and does not raise ALT/AST to these levels.<br>
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 49</div>
+</div>
+
+
+<div class="section" data-section-id="1">
+    <h2 class="section-title">Pediatrics Questions</h2>
+
+    <!-- Question 50 -->
+    <div class="question-container" data-question-id="q50">
+        <p class="question-text"><span class="question-number">50.</span> A young boy presents with progressive muscle weakness and a positive Gowers sign (using hands to climb up legs when rising from the floor). Which of the following best describes the pattern of inheritance of this condition?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Autosomal dominant</li>
+            <li class="option" data-correct="false">B. Autosomal recessive</li>
+            <li class="option" data-correct="true">C. X-linked recessive</li>
+            <li class="option" data-correct="false">D. Mitochondrial inheritance</li>
+            <li class="option" data-correct="false">E. Y-linked inheritance</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. The clinical presentation (progressive weakness, Gowers sign) is classic for Duchenne Muscular Dystrophy (DMD), which is an X-linked recessive disorder caused by mutations in the dystrophin gene.<br>
+            a, b, d, e. These are incorrect inheritance patterns for DMD.
+        </p>
+    </div>
+
+    <!-- Question 51 -->
+    <div class="question-container" data-question-id="q51">
+        <p class="question-text"><span class="question-number">51.</span> A child is diagnosed with iron deficiency anemia and started on oral iron therapy. After one month, his hemoglobin level returns to normal. Which of the following statements is incorrect regarding the management of this condition?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Oral iron therapy should be continued for at least 2–3 months after normalization of hemoglobin</li>
+            <li class="option" data-correct="false">B. Iron stores need to be replenished even after hemoglobin is corrected</li>
+            <li class="option" data-correct="true">C. Oral iron therapy should be stopped once hemoglobin is normal after 1 month</li>
+            <li class="option" data-correct="false">D. Compliance with iron therapy is important for treatment success</li>
+            <li class="option" data-correct="false">E. Dietary advice should accompany medical therapy for iron deficiency anemia</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. This is the incorrect statement. Iron therapy must continue for 2–3 months after hemoglobin normalizes to replenish the body's iron stores (ferritin). Stopping early leads to recurrence.<br>
+            a, b, d, e. These are all correct principles of managing iron deficiency anemia.
+        </p>
+    </div>
+
+    <!-- Question 52 -->
+    <div class="question-container" data-question-id="q52">
+        <p class="question-text"><span class="question-number">52.</span> A 5-year-old child with a small ventricular septal defect (VSD) and poor oral hygiene is scheduled for a dental procedure involving gingival manipulation. Which of the following is the most appropriate management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. No antibiotic prophylaxis is needed</li>
+            <li class="option" data-correct="false">B. Daily prophylactic antibiotics for 3 days</li>
+            <li class="option" data-correct="false">C. Start amoxicillin 50 mg/kg twice daily for 5 days</li>
+            <li class="option" data-correct="true">D. Single dose of amoxicillin 50 mg/kg 30–60 minutes before the procedure</li>
+            <li class="option" data-correct="false">E. Refer to cardiology before proceeding with dental care</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Based on traditional protocols often tested in exams, a single dose of amoxicillin is the intended prophylaxis regimen.<br>
+            a. Note: Under current AHA/NICE guidelines, prophylaxis is not recommended for VSDs, but D remains the standard answer for "appropriate regimen" in many question banks.<br>
+            b, c. These are incorrect dosing regimens.<br>
+            e. Unnecessary delay for a routine procedure.
+        </p>
+    </div>
+
+    <!-- Question 53 -->
+    <div class="question-container" data-question-id="q53">
+        <p class="question-text"><span class="question-number">53.</span> A 6-year-old child is diagnosed with pertussis. He has two unvaccinated younger siblings at home. What is the most appropriate prophylactic treatment for the household contacts?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. No prophylaxis is needed</li>
+            <li class="option" data-correct="false">B. Azithromycin for 3 days</li>
+            <li class="option" data-correct="true">C. Azithromycin for 5 days</li>
+            <li class="option" data-correct="false">D. Erythromycin for 5 days</li>
+            <li class="option" data-correct="false">E. Erythromycin for 14 days</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. This is the CDC-recommended prophylactic regimen for pertussis contacts (10 mg/kg on day 1, then 5 mg/kg for days 2-5).<br>
+            b. Azithromycin course is 5 days, not 3.<br>
+            e. Erythromycin requires a 14-day course, not 5, and has higher gastrointestinal side effects.
+        </p>
+    </div>
+
+    <!-- Question 54 -->
+    <div class="question-container" data-question-id="q54">
+        <p class="question-text"><span class="question-number">54.</span> A 7-year-old child is brought to the clinic due to frequent brief episodes of staring and unresponsiveness during class, lasting a few seconds. The child resumes activity immediately afterward without confusion. Which of the following EEG findings is most characteristic of this condition?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Sharp waves and focal discharges</li>
+            <li class="option" data-correct="false">B. Triphasic waves</li>
+            <li class="option" data-correct="true">C. Generalized 3 Hz spike-and-wave discharges</li>
+            <li class="option" data-correct="false">D. Polyspike and slow wave discharges</li>
+            <li class="option" data-correct="false">E. Delta waves over the temporal lobe</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Generalized 3 Hz spike-and-wave discharges is the pathognomonic EEG finding for Childhood Absence Epilepsy.<br>
+            a. Suggests focal epilepsy.<br>
+            b. Associated with metabolic encephalopathy.<br>
+            d. Associated with Lennox-Gastaut syndrome.
+        </p>
+    </div>
+
+    <!-- Question 55 -->
+    <div class="question-container" data-question-id="q55">
+        <p class="question-text"><span class="question-number">55.</span> A 3-year-old child is brought to the emergency department with pinpoint pupils, excessive salivation, vomiting, diarrhea, and muscle twitching after accidental ingestion of a pesticide at home. Which of the following is the most appropriate initial treatment?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Flumazenil</li>
+            <li class="option" data-correct="true">B. Atropine</li>
+            <li class="option" data-correct="false">C. Naloxone</li>
+            <li class="option" data-correct="false">D. Diazepam</li>
+            <li class="option" data-correct="false">E. Acetylcysteine</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. The child presents with cholinergic crisis (organophosphate poisoning). Atropine is the antidote for the muscarinic effects.<br>
+            a. Antidote for benzodiazepines.<br>
+            c. Antidote for opioids.<br>
+            e. Antidote for acetaminophen.
+        </p>
+    </div>
+
+    <!-- Question 56 -->
+    <div class="question-container" data-question-id="q56">
+        <p class="question-text"><span class="question-number">56.</span> A 4-month-old infant presents for a routine immunization visit. The child has mild nasal congestion and rhinorrhea but is active, feeding well, and afebrile. What is the most appropriate management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Delay vaccination until symptoms fully resolve</li>
+            <li class="option" data-correct="false">B. Order complete blood count before immunization</li>
+            <li class="option" data-correct="false">C. Administer acetaminophen and postpone vaccines for 1 week</li>
+            <li class="option" data-correct="true">D. Reassure the parents and administer the scheduled immunizations</li>
+            <li class="option" data-correct="false">E. Refer to a pediatric infectious disease specialist</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Mild acute illness (with or without low-grade fever) is not a contraindication to vaccination.<br>
+            a, c. Unnecessary delays create missed opportunities for protection.<br>
+            b, e. Unnecessary investigations/referrals for a healthy appearing infant with a cold.
+        </p>
+    </div>
+
+    <!-- Question 57 -->
+    <div class="question-container" data-question-id="q57">
+        <p class="question-text"><span class="question-number">57.</span> A child with chronic kidney disease has persistently elevated serum phosphate levels. Which of the following dietary recommendations is inappropriate in managing this condition?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Limit phosphate-rich processed foods</li>
+            <li class="option" data-correct="false">B. Avoid cola beverages</li>
+            <li class="option" data-correct="true">C. Increase milk and cheese intake</li>
+            <li class="option" data-correct="false">D. Use phosphate binders with meals</li>
+            <li class="option" data-correct="false">E. Reduce intake of high-phosphorus meats</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Dairy products are very high in phosphorus and should be restricted in CKD patients with hyperphosphatemia. This recommendation is inappropriate.<br>
+            a, b, e. These are high-phosphorus foods; limiting them is correct.<br>
+            d. Binders are standard therapy to reduce absorption.
+        </p>
+    </div>
+
+    <!-- Question 58 -->
+    <div class="question-container" data-question-id="q58">
+        <p class="question-text"><span class="question-number">58.</span> A 2-year-old child presents with recurrent respiratory infections, eczema, and multiple episodes of otitis media. What is the most appropriate initial investigation to evaluate this child’s immune status?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Chest X-ray</li>
+            <li class="option" data-correct="false">B. Sweat chloride test</li>
+            <li class="option" data-correct="true">C. Serum immunoglobulin levels</li>
+            <li class="option" data-correct="false">D. Complete blood count with differential</li>
+            <li class="option" data-correct="false">E. Skin allergy testing</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. The clinical triad (recurrent infections, eczema, and otitis) raises concern for immunodeficiency (e.g., Wiskott-Aldrich). Quantitative immunoglobulins are the primary screening test.<br>
+            b. Used for Cystic Fibrosis.<br>
+            d. Useful but less specific for immune function than Ig levels.
+        </p>
+    </div>
+
+    <!-- Question 59 -->
+    <div class="question-container" data-question-id="q59">
+        <p class="question-text"><span class="question-number">59.</span> A child presents with sudden onset high fever, drooling, muffled voice, and stridor. You suspect epiglottitis. What is the most appropriate immediate management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Obtain lateral neck X-ray before any intervention</li>
+            <li class="option" data-correct="false">B. Perform throat examination with tongue depressor</li>
+            <li class="option" data-correct="true">C. Secure airway and notify ENT specialist urgently</li>
+            <li class="option" data-correct="false">D. Start oral antibiotics and observe at home</li>
+            <li class="option" data-correct="false">E. Administer nebulized epinephrine and discharge</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Epiglottitis is a medical emergency with a high risk of complete airway obstruction. The priority is securing the airway in a controlled setting (OR).<br>
+            a, b. These can agitate the child and precipitate airway collapse.<br>
+            e. Epinephrine is for croup, not epiglottitis.
+        </p>
+    </div>
+
+    <!-- Question 60 -->
+    <div class="question-container" data-question-id="q60">
+        <p class="question-text"><span class="question-number">60.</span> A child presents with progressive symmetrical weakness and absent reflexes. A lumbar puncture is performed. What would you expect to find in the cerebrospinal fluid (CSF) analysis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Elevated white blood cells with normal protein</li>
+            <li class="option" data-correct="false">B. Normal protein and white blood cells</li>
+            <li class="option" data-correct="true">C. Elevated protein with normal white blood cells</li>
+            <li class="option" data-correct="false">D. Decreased protein with elevated white blood cells</li>
+            <li class="option" data-correct="false">E. Presence of bacteria on Gram stain</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Elevated protein with normal white blood cells is "albuminocytologic dissociation," the hallmark CSF finding in Guillain-Barré Syndrome.<br>
+            a. Viral meningitis.<br>
+            e. Bacterial meningitis.
+        </p>
+    </div>
+
+    <!-- Question 61 -->
+    <div class="question-container" data-question-id="q61">
+        <p class="question-text"><span class="question-number">61.</span> A child with acute leukemia undergoing chemotherapy develops nausea, vomiting, muscle cramps, and decreased urine output. Laboratory investigations reveal hyperuricemia, hyperkalemia, hyperphosphatemia, hypocalcemia and elevated creatinine. What is the best preventive measure to avoid this complication?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Restrict fluid intake</li>
+            <li class="option" data-correct="true">B. Administer intravenous fluids and allopurinol</li>
+            <li class="option" data-correct="false">C. Use diuretics only</li>
+            <li class="option" data-correct="false">D. Start dialysis immediately</li>
+            <li class="option" data-correct="false">E. Avoid allopurinol due to side effects</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. The child has Tumor Lysis Syndrome (TLS). Prevention involves aggressive hydration and hypouricemic agents (Allopurinol) to prevent uric acid nephropathy.<br>
+            a. Fluid restriction worsens TLS.<br>
+            d. Dialysis is for treatment of established severe failure, not prevention.
+        </p>
+    </div>
+
+    <!-- Question 62 -->
+    <div class="question-container" data-question-id="q62">
+        <p class="question-text"><span class="question-number">62.</span> A child presents with chronic productive cough, recurrent respiratory infections, and clubbing. Which of the following is the most appropriate investigation to confirm the suspected diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Chest X-ray</li>
+            <li class="option" data-correct="true">B. High-resolution computed tomography (HRCT) of the chest</li>
+            <li class="option" data-correct="false">C. Pulmonary function tests</li>
+            <li class="option" data-correct="false">D. Sputum culture</li>
+            <li class="option" data-correct="false">E. Bronchoscopy</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. The clinical picture suggests Bronchiectasis. HRCT is the gold standard for diagnosing bronchiectasis.<br>
+            a. Low sensitivity.<br>
+            d. Identifies organisms but does not confirm the structural diagnosis.
+        </p>
+    </div>
+
+    <!-- Question 63 -->
+    <div class="question-container" data-question-id="q63">
+        <p class="question-text"><span class="question-number">63.</span> A newborn presents with central cyanosis shortly after birth. The cyanosis does not improve despite administration of 100% oxygen. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Tetralogy of Fallot</li>
+            <li class="option" data-correct="true">B. Transposition of the great arteries</li>
+            <li class="option" data-correct="false">C. Pneumonia</li>
+            <li class="option" data-correct="false">D. Meconium aspiration syndrome</li>
+            <li class="option" data-correct="false">E. Congenital diaphragmatic hernia</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Transposition of the great arteries (TGA) is the most common cause of cyanotic CHD in the immediate newborn period. Lack of response to oxygen indicates a right-to-left shunt/parallel circulation.<br>
+            a. TOF typically presents later; TGA is statistically more likely for immediate severe cyanosis.<br>
+            c, d. Lung pathologies usually show some improvement with oxygen.
+        </p>
+    </div>
+
+    <!-- Question 64 -->
+    <div class="question-container" data-question-id="q64">
+        <p class="question-text"><span class="question-number">64.</span> A child with poorly controlled asthma presents with sudden onset shortness of breath and chest pain. On examination, breath sounds are decreased on one side. What is the most appropriate next step?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Administer nebulized bronchodilators only</li>
+            <li class="option" data-correct="true">B. Obtain an urgent chest X-ray</li>
+            <li class="option" data-correct="false">C. Start oral corticosteroids and observe</li>
+            <li class="option" data-correct="false">D. Perform immediate needle decompression without imaging</li>
+            <li class="option" data-correct="false">E. Order pulmonary function tests</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Symptoms suggest a pneumothorax. In a stable patient, a chest X-ray is the diagnostic step.<br>
+            d. Needle decompression is reserved for Tension Pneumothorax (hemodynamic collapse), not described here.
+        </p>
+    </div>
+
+    <!-- Question 65 -->
+    <div class="question-container" data-question-id="q65">
+        <p class="question-text"><span class="question-number">65.</span> A child presents with right upper quadrant abdominal pain, fever, a palpable liver, persistent nosebleeds, and jaundice. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Acute viral hepatitis</li>
+            <li class="option" data-correct="true">B. Fulminant hepatic failure</li>
+            <li class="option" data-correct="false">C. Biliary atresia</li>
+            <li class="option" data-correct="false">D. Cirrhosis</li>
+            <li class="option" data-correct="false">E. Hemophilia</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. The combination of liver signs (jaundice, hepatomegaly) with coagulopathy (persistent nosebleeds) defines liver failure.<br>
+            c. Presents in infancy.<br>
+            e. Would explain bleeding but not the fever/jaundice/hepatomegaly.
+        </p>
+    </div>
+
+    <!-- Question 66 -->
+    <div class="question-container" data-question-id="q66">
+        <p class="question-text"><span class="question-number">66.</span> A boy newly diagnosed with type 1 diabetes mellitus is started on insulin therapy. Which of the following is not part of the initial treatment and management guidance?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Education about insulin administration</li>
+            <li class="option" data-correct="false">B. Monitoring blood glucose levels regularly</li>
+            <li class="option" data-correct="true">C. Screening for long-term complications such as retinopathy and nephropathy</li>
+            <li class="option" data-correct="false">D. Dietary counseling and exercise advice</li>
+            <li class="option" data-correct="false">E. Prevention of hypoglycemia</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Screening for retinopathy and nephropathy typically begins 3–5 years after diagnosis, not at initial diagnosis.<br>
+            a, b, d, e. These are all essential immediate components of T1DM management.
+        </p>
+    </div>
+
+    <!-- Question 67 -->
+    <div class="question-container" data-question-id="q67">
+        <p class="question-text"><span class="question-number">67.</span> Parents of a child with Down syndrome come for counseling regarding their next pregnancy. What is the most appropriate initial investigation or advice?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Perform amniocentesis in the next pregnancy only</li>
+            <li class="option" data-correct="true">B. Send karyotyping for both parents</li>
+            <li class="option" data-correct="false">C. Recommend preimplantation genetic diagnosis without testing</li>
+            <li class="option" data-correct="false">D. Advise no further pregnancies</li>
+            <li class="option" data-correct="false">E. No investigation needed as risk is negligible</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. While most Down syndrome is due to non-disjunction, about 4% is due to translocation. If the child has a translocation, one parent may be a carrier, significantly increasing recurrence risk. Karyotyping parents is necessary to rule this out.
+        </p>
+    </div>
+
+    <!-- Question 68 -->
+    <div class="question-container" data-question-id="q68">
+        <p class="question-text"><span class="question-number">68.</span> A child presents with multiple bruises. Which of the following findings is most suggestive of non-accidental injury (child abuse) rather than accidental bruising?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Bruises on the shins and forehead</li>
+            <li class="option" data-correct="false">B. Bruises in various stages of healing</li>
+            <li class="option" data-correct="true">C. Bruises in the shape of objects like belts or cords</li>
+            <li class="option" data-correct="false">D. Bruises over bony prominences only</li>
+            <li class="option" data-correct="false">E. Single isolated bruise</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Patterned bruising (matching a belt, cord, or hand) is highly specific for abuse.<br>
+            a, d. Shins and forehead are common sites for accidental "play" bruises.
+        </p>
+    </div>
+
+    <!-- Question 69 -->
+    <div class="question-container" data-question-id="q69">
+        <p class="question-text"><span class="question-number">69.</span> A 6-month-old infant presents with poor weight gain, sweating during feeds, and recurrent respiratory infections. On examination, there is a loud pansystolic murmur heard at the lower left sternal border. Which of the following statements is incorrect?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. The infant likely has a large ventricular septal defect requiring treatment</li>
+            <li class="option" data-correct="false">B. Large VSDs commonly cause heart failure symptoms in infancy</li>
+            <li class="option" data-correct="false">C. Large VSDs produce loud pansystolic murmurs</li>
+            <li class="option" data-correct="false">D. Small VSDs often require no treatment and may close spontaneously</li>
+            <li class="option" data-correct="true">E. This infant has a small VSD that requires no treatment</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. This statement is incorrect. The infant has signs of heart failure (sweating, poor weight gain), which indicates a hemodynamically significant (large) defect requiring management. Small VSDs are asymptomatic.
+        </p>
+    </div>
+
+    <!-- Question 70 -->
+    <div class="question-container" data-question-id="q70">
+        <p class="question-text"><span class="question-number">70.</span> A previously healthy 8-year-old boy presents with fatigue, shortness of breath, and poor feeding one week after a viral upper respiratory tract infection. On examination, he has tachycardia, hepatomegaly, a displaced and diffuse apex beat, and an S3 heart sound. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Acute myocarditis</li>
+            <li class="option" data-correct="false">B. Rheumatic heart disease</li>
+            <li class="option" data-correct="false">C. Pericarditis</li>
+            <li class="option" data-correct="false">D. Congestive heart failure due to congenital heart disease</li>
+            <li class="option" data-correct="false">E. Endocarditis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. The history of a viral prodrome followed by signs of heart failure (S3, hepatomegaly) is the classic presentation of viral myocarditis.<br>
+            b. Usually involves murmurs and Jones criteria.<br>
+            c. Presents with friction rub and pain.
+        </p>
+    </div>
+
+    <!-- Question 71 -->
+    <div class="question-container" data-question-id="q71">
+        <p class="question-text"><span class="question-number">71.</span> A 2-year-old baby presents with a chronic cough, fever, and night sweats. The child lives in the same household as his grandfather, who has chronic pulmonary disease. What is the most appropriate initial test to confirm the diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Tuberculin skin test (Mantoux)</li>
+            <li class="option" data-correct="false">B. Chest X-ray</li>
+            <li class="option" data-correct="false">C. Sputum acid-fast bacilli (AFB) smear</li>
+            <li class="option" data-correct="false">D. Complete blood count</li>
+            <li class="option" data-correct="false">E. Bronchoscopy</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. The history strongly suggests Tuberculosis. The TST is the standard initial screening tool.<br>
+            b. Chest X-ray is done concurrent with TST, but TST establishes infection specifically.<br>
+            c. Sputum is difficult to obtain in a 2-year-old; gastric aspirates are used.
+        </p>
+    </div>
+
+    <!-- Question 72 -->
+    <div class="question-container" data-question-id="q72">
+        <p class="question-text"><span class="question-number">72.</span> A 7-year-old child presents with a 6-week history of swelling and stiffness in both knees. There are no systemic symptoms or complications. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Juvenile rheumatoid arthritis</li>
+            <li class="option" data-correct="false">B. Septic arthritis</li>
+            <li class="option" data-correct="false">C. Osteomyelitis</li>
+            <li class="option" data-correct="false">D. Hemophilia</li>
+            <li class="option" data-correct="false">E. Reactive arthritis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Arthritis persisting for >6 weeks in a child <16 years defines Juvenile Idiopathic Arthritis (JIA). Absence of systemic symptoms suggests Oligoarticular JIA.<br>
+            b, c. Typically acute, febrile, and very painful.
+        </p>
+    </div>
+
+    <!-- Question 73 -->
+    <div class="question-container" data-question-id="q73">
+        <p class="question-text"><span class="question-number">73.</span> A child with nephrotic syndrome presents with abdominal distension and tenderness. Paracentesis shows a high white blood cell count in the ascitic fluid. Which of the following organisms is the most likely cause?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Escherichia coli</li>
+            <li class="option" data-correct="true">B. Streptococcus pneumoniae</li>
+            <li class="option" data-correct="false">C. Klebsiella pneumoniae</li>
+            <li class="option" data-correct="false">D. Staphylococcus aureus</li>
+            <li class="option" data-correct="false">E. Pseudomonas aeruginosa</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Streptococcus pneumoniae is the most common cause of Spontaneous Bacterial Peritonitis (SBP) in children with Nephrotic Syndrome due to loss of immune factors.
+        </p>
+    </div>
+
+    <!-- Question 74 -->
+    <div class="question-container" data-question-id="q74">
+        <p class="question-text"><span class="question-number">74.</span> A child presents with persistent metabolic acidosis, uremia, and elevated serum creatinine levels despite medical management. What is the next best step in management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Increase oral hydration</li>
+            <li class="option" data-correct="true">B. Start peritoneal dialysis</li>
+            <li class="option" data-correct="false">C. Administer sodium bicarbonate only</li>
+            <li class="option" data-correct="false">D. Initiate hemodialysis immediately</li>
+            <li class="option" data-correct="false">E. Wait and observe</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Indications for renal replacement therapy are present. In pediatric chronic/subacute settings, Peritoneal Dialysis is often the preferred first-line modality.<br>
+            d. Hemodialysis is often reserved for acute crash situations or when PD fails.
+        </p>
+    </div>
+
+    <!-- Question 75 -->
+    <div class="question-container" data-question-id="q75">
+        <p class="question-text"><span class="question-number">75.</span> A child presents with muscle rigidity, lockjaw, and spasms following a contaminated wound. What is the appropriate management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Start oral antibiotics only</li>
+            <li class="option" data-correct="true">B. Administer tetanus immune globulin, tetanus toxoid vaccine, and start antibiotics (metronidazole or penicillin)</li>
+            <li class="option" data-correct="false">C. Observe and provide supportive care only</li>
+            <li class="option" data-correct="false">D. Give intravenous steroids</li>
+            <li class="option" data-correct="false">E. Administer only tetanus toxoid vaccine</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. This is the complete management for clinical Tetanus. TIG neutralizes toxin, vaccine boosts immunity, and antibiotics eradicate the bacteria.
+        </p>
+    </div>
+
+    <!-- Question 76 -->
+    <div class="question-container" data-question-id="q76">
+        <p class="question-text"><span class="question-number">76.</span> A girl presents with recurrent epistaxis and easy bruising. Her brother has similar symptoms. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Hemophilia A</li>
+            <li class="option" data-correct="true">B. von Willebrand disease</li>
+            <li class="option" data-correct="false">C. Idiopathic thrombocytopenic purpura</li>
+            <li class="option" data-correct="false">D. Leukemia</li>
+            <li class="option" data-correct="false">E. Vitamin K deficiency</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. von Willebrand disease is Autosomal Dominant (affecting both sexes) and presents with mucocutaneous bleeding.<br>
+            a. Hemophilia is X-linked recessive (rare in females).
+        </p>
+    </div>
+
+    <!-- Question 77 -->
+    <div class="question-container" data-question-id="q77">
+        <p class="question-text"><span class="question-number">77.</span> A child presents with bleeding symptoms such as bruising and mucosal bleeding. Laboratory tests show prolonged PT and PTT, while other investigations are normal. The child has not received any injections at birth and is exclusively breastfed. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Hemophilia A</li>
+            <li class="option" data-correct="true">B. Vitamin K deficiency bleeding</li>
+            <li class="option" data-correct="false">C. Von Willebrand disease</li>
+            <li class="option" data-correct="false">D. Disseminated intravascular coagulation</li>
+            <li class="option" data-correct="false">E. Liver failure</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Classic presentation of Vitamin K deficiency in a breastfed infant who missed the birth shot. Deficiency affects factors II, VII, IX, and X, prolonging both PT and PTT.
+        </p>
+    </div>
+
+    <!-- Question 79 -->
+    <div class="question-container" data-question-id="q79">
+        <p class="question-text"><span class="question-number">79.</span> A child presents with a sore throat and a thick gray pseudomembrane covering the tonsils. What is the most appropriate management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Supportive care only</li>
+            <li class="option" data-correct="true">B. Antitoxin administration and antibiotics</li>
+            <li class="option" data-correct="false">C. Corticosteroids and antivirals</li>
+            <li class="option" data-correct="false">D. Surgical removal of the pseudomembrane</li>
+            <li class="option" data-correct="false">E. No treatment needed, it will resolve spontaneously</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. The findings are classic for Diphtheria. Immediate treatment with Diphtheria Antitoxin (to neutralize toxin) and antibiotics is required.
+        </p>
+    </div>
+
+    <!-- Question 80 -->
+    <div class="question-container" data-question-id="q80">
+        <p class="question-text"><span class="question-number">80.</span> A neonate with respiratory distress syndrome (RDS) is on mechanical ventilation. The baby suddenly develops worsening dyspnea and on examination has hyper-resonant percussion on one side of the chest. What is the most likely complication?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Pulmonary hemorrhage</li>
+            <li class="option" data-correct="false">B. Pneumonia</li>
+            <li class="option" data-correct="true">C. Pneumothorax</li>
+            <li class="option" data-correct="false">D. Atelectasis</li>
+            <li class="option" data-correct="false">E. Bronchopulmonary dysplasia</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Sudden deterioration in a ventilated neonate with hyper-resonance indicates a pneumothorax (air leak syndrome).
+        </p>
+    </div>
+
+    <!-- Question 81 -->
+    <div class="question-container" data-question-id="q81">
+        <p class="question-text"><span class="question-number">81.</span> A child being treated with intravenous antibiotics for pneumonia shows persistent symptoms after 7 days. A chest X-ray reveals a well-defined fluid collection adjacent to the area of consolidation. What is the next best step in management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Continue antibiotics only</li>
+            <li class="option" data-correct="false">B. Start corticosteroids</li>
+            <li class="option" data-correct="true">C. Perform chest tube drainage</li>
+            <li class="option" data-correct="false">D. Order a CT scan of the chest</li>
+            <li class="option" data-correct="false">E. Begin antifungal therapy</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. A persistent fluid collection (likely empyema) that fails to resolve with antibiotics requires drainage for source control.
+        </p>
+    </div>
+
+    <!-- Question 82 -->
+    <div class="question-container" data-question-id="q82">
+        <p class="question-text"><span class="question-number">82.</span> An 11-year-old child presents with a decreased growth rate over the past 2 years, now falling below the 3rd percentile for height. There is no sign of puberty yet. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Growth hormone deficiency</li>
+            <li class="option" data-correct="false">B. Constitutional growth delay</li>
+            <li class="option" data-correct="false">C. Hypothyroidism</li>
+            <li class="option" data-correct="false">D. Chronic renal disease</li>
+            <li class="option" data-correct="false">E. Turner syndrome</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. "Decreased growth rate" (deceleration of velocity) causing the child to fall off the curve is a hallmark of GH deficiency.<br>
+            b. Constitutional delay usually maintains a normal velocity but on a lower curve, rather than decelerating.
+        </p>
+    </div>
+
+    <!-- Question 83 -->
+    <div class="question-container" data-question-id="q83">
+        <p class="question-text"><span class="question-number">83.</span> A young child with a history of cow’s milk allergy presents with signs of nutritional deficiency. Which of the following is most likely to be deficient?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Vitamin D</li>
+            <li class="option" data-correct="false">B. Calcium</li>
+            <li class="option" data-correct="true">C. Iron</li>
+            <li class="option" data-correct="false">D. Vitamin B12</li>
+            <li class="option" data-correct="false">E. Protein</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. Cow's milk allergy can cause allergic colitis leading to occult blood loss and iron deficiency. Excessive cow's milk intake is also a primary cause of iron deficiency anemia.
+        </p>
+    </div>
+
+    <!-- Question 85 -->
+    <div class="question-container" data-question-id="q85">
+        <p class="question-text"><span class="question-number">85.</span> A 15-month-old child who recently started walking and can say about 10–12 words is brought for assessment. How would you interpret this child’s developmental milestones?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Normal development</li>
+            <li class="option" data-correct="false">B. Delayed gross motor development</li>
+            <li class="option" data-correct="false">C. Delayed speech development</li>
+            <li class="option" data-correct="false">D. Autism spectrum disorder</li>
+            <li class="option" data-correct="false">E. Global developmental delay</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: A<br>
+            a. Walking is expected by 12-15 months. A vocabulary of 10-12 words at 15 months is within the normal range (typically 3-6 words is the minimum).
+        </p>
+    </div>
+
+    <!-- Question 86 -->
+    <div class="question-container" data-question-id="q86">
+        <p class="question-text"><span class="question-number">86.</span> A neonate delivered at home has been breastfed for 12 hours but has had no feeding since then. The baby now presents with lethargy and jerky movements. What is the most appropriate immediate management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Intravenous calcium gluconate</li>
+            <li class="option" data-correct="true">B. Intravenous glucose</li>
+            <li class="option" data-correct="false">C. Oral feeding only</li>
+            <li class="option" data-correct="false">D. Intravenous antibiotics</li>
+            <li class="option" data-correct="false">E. Observation and monitoring</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. The infant has not fed for a prolonged period and presents with neurological signs (lethargy, jitteriness). This suggests symptomatic hypoglycemia requiring immediate IV glucose.
+        </p>
+    </div>
+
+    <!-- Question 87 -->
+    <div class="question-container" data-question-id="q87">
+        <p class="question-text"><span class="question-number">87.</span> Parents are concerned about their child’s slow growth, measuring only 4 cm in the past 18 months. The father’s height is 165 cm and the mother’s is 150 cm. What is the next best step in evaluating this child’s growth?</p>
+        <ul class="options">
+            <li class="option" data-correct="true">A. Growth hormone provocation test</li>
+            <li class="option" data-correct="true">B. Bone age assessment</li>
+            <li class="option" data-correct="false">C. Reassure parents and observe</li>
+            <li class="option" data-correct="false">D. Thyroid function tests</li>
+            <li class="option" data-correct="false">E. Genetic testing for Turner syndrome</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Bone age is the standard initial investigation to differentiate between Familial Short Stature, Constitutional Delay, and pathological causes before moving to more invasive tests.
+        </p>
+    </div>
+
+    <!-- Question 88 -->
+    <div class="question-container" data-question-id="q88">
+        <p class="question-text"><span class="question-number">88.</span> A child presents with edema, hypertension, and cola-colored urine two weeks after a sore throat infection. Which pattern of complement level is most consistent with the diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Low C3 and low C4</li>
+            <li class="option" data-correct="true">B. Low C3 and normal C4</li>
+            <li class="option" data-correct="false">C. Normal C3 and low C4</li>
+            <li class="option" data-correct="false">D. Normal C3 and normal C4</li>
+            <li class="option" data-correct="false">E. High C3 and normal C4</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Low C3 and normal C4 is the characteristic complement profile for Acute Post-Streptococcal Glomerulonephritis (APSGN).
+        </p>
+    </div>
+
+    <!-- Question 89 -->
+    <div class="question-container" data-question-id="q89">
+        <p class="question-text"><span class="question-number">89.</span> A child recently recovered from gastroenteritis now presents with diarrhea that occurs immediately after feeding. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Primary lactose intolerance</li>
+            <li class="option" data-correct="true">B. Secondary lactose intolerance</li>
+            <li class="option" data-correct="false">C. Viral diarrhea</li>
+            <li class="option" data-correct="false">D. Bacterial enteritis</li>
+            <li class="option" data-correct="false">E. Irritable bowel syndrome</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Transient loss of lactase enzyme following mucosal injury (gastroenteritis) is common and causes secondary lactose intolerance.
+        </p>
+    </div>
+
+    <!-- Question 90 -->
+    <div class="question-container" data-question-id="q90">
+        <p class="question-text"><span class="question-number">90.</span> A patient with Epstein-Barr virus infection is on treatment. After initial fever relief, the patient develops neutropenia. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Drug-induced neutropenia</li>
+            <li class="option" data-correct="true">B. EBV-induced bone marrow suppression</li>
+            <li class="option" data-correct="false">C. Bacterial superinfection</li>
+            <li class="option" data-correct="false">D. Acute leukemia</li>
+            <li class="option" data-correct="false">E. Autoimmune neutropenia</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. EBV is known to cause transient bone marrow suppression, leading to neutropenia or thrombocytopenia.
+        </p>
+    </div>
+
+    <!-- Question 91 -->
+    <div class="question-container" data-question-id="q91">
+        <p class="question-text"><span class="question-number">91.</span> A child presents with a harsh, barking cough and inspiratory stridor. What is the next best step regarding investigations?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Obtain a chest X-ray</li>
+            <li class="option" data-correct="false">B. Perform a throat swab for culture</li>
+            <li class="option" data-correct="true">C. No further investigations are needed</li>
+            <li class="option" data-correct="false">D. Order a complete blood count</li>
+            <li class="option" data-correct="false">E. Request a neck X-ray</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. The presentation is classic for Croup. It is a clinical diagnosis; X-rays and labs are not required for typical cases.
+        </p>
+    </div>
+
+    <!-- Question 92 -->
+    <div class="question-container" data-question-id="q92">
+        <p class="question-text"><span class="question-number">92.</span> A child presents with diarrhea, vomiting, and signs of dehydration. Laboratory tests reveal elevated blood urea and creatinine levels, which decrease after fluid resuscitation. What is the most likely diagnosis?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Intrinsic renal failure</li>
+            <li class="option" data-correct="false">B. Post-renal failure</li>
+            <li class="option" data-correct="true">C. Pre-renal acute kidney injury</li>
+            <li class="option" data-correct="false">D. Chronic kidney disease</li>
+            <li class="option" data-correct="false">E. Nephrotic syndrome</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: C<br>
+            c. The rapid improvement (normalization of creatinine) with fluid resuscitation confirms the pre-renal etiology (hypoperfusion).
+        </p>
+    </div>
+
+    <!-- Question 93 -->
+    <div class="question-container" data-question-id="q93">
+        <p class="question-text"><span class="question-number">93.</span> A 6-year-old boy has a history of recurrent chest infections over the last 3 years. He recently presented with copious purulent sputum, mainly in the morning. On examination, he has finger clubbing and bilateral diffuse coarse crackles on chest auscultation. Which of the following is the least likely cause of his condition?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Cystic fibrosis</li>
+            <li class="option" data-correct="false">B. Bronchiectasis</li>
+            <li class="option" data-correct="false">C. Primary ciliary dyskinesia</li>
+            <li class="option" data-correct="false">D. Immunodeficiency</li>
+            <li class="option" data-correct="true">E. Epiglottitis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Epiglottitis is an acute, life-threatening infection of the upper airway. It does not cause chronic symptoms like clubbing or bronchiectasis.<br>
+            a, b, c, d. All are causes of chronic lung disease and bronchiectasis.
+        </p>
+    </div>
+
+    <!-- Question 94 -->
+    <div class="question-container" data-question-id="q94">
+        <p class="question-text"><span class="question-number">94.</span> A child presents with a barking cough. Which of the following is the least likely cause?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Croup</li>
+            <li class="option" data-correct="false">B. Foreign body aspiration</li>
+            <li class="option" data-correct="false">C. Allergic laryngitis</li>
+            <li class="option" data-correct="true">D. Bronchiolitis</li>
+            <li class="option" data-correct="false">E. Bacterial tracheitis</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. Bronchiolitis affects the lower airways (bronchioles) and presents with wheezing, not a barking cough.<br>
+            a, b, c, e. All can affect the upper airway and produce a croup-like cough.
+        </p>
+    </div>
+
+    <!-- Question 95 -->
+    <div class="question-container" data-question-id="q95">
+        <p class="question-text"><span class="question-number">95.</span> A child presents with pain and swelling of the hands and feet. On examination, there is mild pallor and splenomegaly, with normal growth and normal facial features. Which of the following findings helps differentiate this condition from other chronic anemias?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Mild pallor</li>
+            <li class="option" data-correct="false">B. Splenomegaly</li>
+            <li class="option" data-correct="false">C. Normal growth</li>
+            <li class="option" data-correct="false">D. Normal facial characteristics</li>
+            <li class="option" data-correct="true">E. Swollen hands and feet</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: E<br>
+            e. Swollen hands and feet (dactylitis) is a vaso-occlusive crisis specific to Sickle Cell Disease in young children.
+        </p>
+    </div>
+
+    <!-- Question 96 -->
+    <div class="question-container" data-question-id="q96">
+        <p class="question-text"><span class="question-number">96.</span> A neonate with jaundice is referred for phototherapy. What is the most likely complication of phototherapy?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Hypoglycemia</li>
+            <li class="option" data-correct="true">B. Dehydration due to insensible fluid loss</li>
+            <li class="option" data-correct="false">C. Electrolyte imbalance</li>
+            <li class="option" data-correct="false">D. Skin burns</li>
+            <li class="option" data-correct="false">E. Infection</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Phototherapy increases skin blood flow and evaporative water loss, leading to dehydration.
+        </p>
+    </div>
+
+    <!-- Question 97 -->
+    <div class="question-container" data-question-id="q97">
+        <p class="question-text"><span class="question-number">97.</span> A child presents with high fever, intermittent abdominal pain, bloody mucus diarrhea, and vomiting three times. Which of the following is the best initial investigation?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Blood culture</li>
+            <li class="option" data-correct="true">B. Stool examination and culture for bacteria</li>
+            <li class="option" data-correct="false">C. Stool culture for Giardia</li>
+            <li class="option" data-correct="false">D. Abdominal ultrasound for intussusception</li>
+            <li class="option" data-correct="false">E. Complete blood count</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. The symptoms suggest bacterial dysentery. Stool culture is the gold standard for diagnosis.
+        </p>
+    </div>
+
+    <!-- Question 98 -->
+    <div class="question-container" data-question-id="q98">
+        <p class="question-text"><span class="question-number">98.</span> Which of the following statements is true regarding the treatment of diabetic ketoacidosis (DKA)?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Start insulin infusion at 0.1 units/kg/hr regardless of glucose level</li>
+            <li class="option" data-correct="true">B. Insulin dose should be reduced to 0.05 units/kg/hr if glucose falls below 150 mg/dL</li>
+            <li class="option" data-correct="false">C. Do not administer insulin until potassium is corrected</li>
+            <li class="option" data-correct="false">D. Administer rapid bolus insulin at the start of treatment</li>
+            <li class="option" data-correct="false">E. Use only subcutaneous insulin for initial management</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. Insulin infusion rate may be reduced once blood glucose drops to prevent hypoglycemia while continuing to clear ketones.<br>
+            d. Bolus insulin is contraindicated in pediatric DKA due to cerebral edema risk.
+        </p>
+    </div>
+
+    <!-- Question 99 -->
+    <div class="question-container" data-question-id="q99">
+        <p class="question-text"><span class="question-number">99.</span> A 4-year-old boy presents with tea-colored urine and jaundice. His parents report he had a flu-like illness two weeks ago. On examination, he is alert, hemodynamically stable, and there are no signs of active bleeding. Laboratory results show hemoglobin level of 7.5 g/dL. What is the most appropriate next step in management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Immediate blood transfusion</li>
+            <li class="option" data-correct="false">B. Start iron supplementation</li>
+            <li class="option" data-correct="false">C. Bone marrow biopsy</li>
+            <li class="option" data-correct="true">D. Supportive care and hemoglobin monitoring</li>
+            <li class="option" data-correct="false">E. Start corticosteroids</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: D<br>
+            d. In a stable child with Hb of 7.5 g/dL due to acute hemolysis (likely G6PD or mild AIHA), observation and monitoring are appropriate.
+        </p>
+    </div>
+
+    <!-- Question 100 -->
+    <div class="question-container" data-question-id="q100">
+        <p class="question-text"><span class="question-number">100.</span> A 7-year-old child with a known history of moderate persistent asthma presents to the emergency department with acute shortness of breath, wheezing, and coughing. He was given short-acting beta-agonist (SABA) via nebulizer upon arrival. What is the next appropriate step in management?</p>
+        <ul class="options">
+            <li class="option" data-correct="false">A. Start long-acting beta-agonist</li>
+            <li class="option" data-correct="true">B. Administer oral corticosteroids</li>
+            <li class="option" data-correct="false">C. Begin inhaled corticosteroids</li>
+            <li class="option" data-correct="false">D. Perform chest X-ray</li>
+            <li class="option" data-correct="false">E. Prescribe antibiotics</li>
+        </ul>
+        <p class="explanation">
+            Correct answer: B<br>
+            b. In an acute moderate-to-severe asthma exacerbation, systemic corticosteroids are indicated early to reduce inflammation and prevent relapse.
+        </p>
+    </div>
+
+    <div class="section-score" id="score-section-1">Score: 0 / 49</div>
+</div>
+
+
+<!-- Add more sections here if needed, e.g. <div class="section" data-section-id="s2"> ... </div> -->
+
+
+
+
+
+
+
+
+
+<div class="bottom-nav-container">
+    <a href="#" class="main-button" id="home-button-subject">
+        <i class="fas fa-home"></i> Home
+    </a>
+    <button id="reset-button" class="main-button">
+        <i class="fas fa-sync-alt"></i> Reset Progress
+    </button>
+</div>
+
+<script>
+// ====== SUBJECT PAGE LOGIC (DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING) ======
+const PAGE_ID = window.SUBJECT_SETTINGS.PAGE_ID;
+const ANSWERS_KEY = `${PAGE_ID}_answers`;
+const SCORES_KEY = `${PAGE_ID}_scores`;
+
+document.getElementById('dynamic-title-subject').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+document.getElementById('subject-page-title-display').textContent = window.SUBJECT_SETTINGS.PAGE_TITLE;
+const homeBtnSubject = document.getElementById('home-button-subject');
+if (homeBtnSubject) homeBtnSubject.href = window.SUBJECT_SETTINGS.HOME_LINK;
+
+const allSections = document.querySelectorAll('.section');
+let sectionScores = {};
+
+function saveState(sectionId, questionId, selectedOptionIndex, currentScore, totalQuestionsInSection) {
+    let answers = JSON.parse(localStorage.getItem(ANSWERS_KEY)) || {};
+    if (!answers[sectionId]) answers[sectionId] = {};
+    answers[sectionId][questionId] = {
+        selectedOptionIndex: selectedOptionIndex,
+        answered: true
+    };
+    localStorage.setItem(ANSWERS_KEY, JSON.stringify(answers));
+
+    let scores = JSON.parse(localStorage.getItem(SCORES_KEY)) || {};
+    if (!scores[sectionId]) scores[sectionId] = { score: 0, total: 0}; // Initialize if not exists
+    scores[sectionId] = { score: currentScore, total: totalQuestionsInSection };
+
+    // Update overall total for the page if not already set or if it changed
+    let overallTotal = 0;
+    allSections.forEach(sec => {
+        const secId = sec.dataset.sectionId;
+        const numQs = sec.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        // Ensure section total is also up-to-date in the scores object if initializing
+        if (!scores[secId] || scores[secId].total !== numQs) {
+             scores[secId] = scores[secId] || {score:0}; // preserve score if exists
+             scores[secId].total = numQs;
+        }
+    });
+    scores['all'] = scores['all'] || {};
+    scores['all'].total = overallTotal;
+
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+function applyOptionSelectionLogic(optionElement, questionContainer, isLoadTime = false) {
+    const explanation = questionContainer.querySelector('.explanation');
+    const allOptionsInQuestion = questionContainer.querySelectorAll('.option');
+    const section = questionContainer.closest('.section');
+    const sectionId = section.dataset.sectionId;
+    const scoreDisplay = section.querySelector(`#score-section-${sectionId}`); // Ensure ID matches
+    const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+
+    if (questionContainer.classList.contains('answered') && !isLoadTime) return; // Prevent re-answering
+
+    questionContainer.classList.add('answered');
+    const isCorrect = optionElement.dataset.correct === 'true';
+
+    let feedbackSpan = optionElement.querySelector('.feedback');
+    if (!feedbackSpan) {
+        feedbackSpan = document.createElement('span');
+        feedbackSpan.className = 'feedback';
+        optionElement.appendChild(feedbackSpan);
+    }
+    feedbackSpan.style.display = 'inline'; // Make sure it's visible
+
+    if (isCorrect) {
+        optionElement.classList.add('correct');
+        feedbackSpan.textContent = ' ✓ Correct!';
+        if (!isLoadTime) {
+            sectionScores[sectionId] = (sectionScores[sectionId] || 0) + 1;
+        }
+    } else {
+        optionElement.classList.add('incorrect');
+        feedbackSpan.textContent = ' ✗ Incorrect.';
+        allOptionsInQuestion.forEach(opt => {
+            if (opt.dataset.correct === 'true') {
+                opt.classList.add('reveal-correct'); // Use a distinct class for just revealing
+                let correctFeedback = opt.querySelector('.feedback');
+                if (!correctFeedback) {
+                    correctFeedback = document.createElement('span');
+                    correctFeedback.className = 'feedback';
+                    opt.appendChild(correctFeedback);
+                }
+                correctFeedback.textContent = ' (Correct Answer)'; // Simpler feedback
+                correctFeedback.style.display = 'inline';
+            }
+        });
+    }
+
+    if (explanation) explanation.style.display = 'block';
+    allOptionsInQuestion.forEach(opt => {
+        opt.style.cursor = 'default'; // Disable further clicks by changing cursor
+        // To truly disable, you might remove event listeners or set pointer-events: none
+    });
+
+    if (scoreDisplay) {
+        scoreDisplay.textContent = `Score: ${sectionScores[sectionId] || 0} / ${totalQuestionsInSection}`;
+    }
+
+    if (!isLoadTime) {
+        const optionIndex = Array.from(allOptionsInQuestion).indexOf(optionElement);
+        saveState(sectionId, questionContainer.dataset.questionId, optionIndex, sectionScores[sectionId] || 0, totalQuestionsInSection);
+    }
+}
+
+function loadState() {
+    const savedAnswersData = JSON.parse(localStorage.getItem(ANSWERS_KEY));
+    const savedScoresData = JSON.parse(localStorage.getItem(SCORES_KEY));
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        sectionScores[sectionId] = (savedScoresData && savedScoresData[sectionId]) ? savedScoresData[sectionId].score : 0;
+
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: ${sectionScores[sectionId]} / ${totalQuestionsInSection}`;
+        }
+
+        if (savedAnswersData && savedAnswersData[sectionId]) {
+            const questionsInSection = section.querySelectorAll('.question-container');
+            questionsInSection.forEach(qc => {
+                const questionId = qc.dataset.questionId;
+                const qData = savedAnswersData[sectionId][questionId];
+                if (qData && qData.answered && typeof qData.selectedOptionIndex === 'number') {
+                    const optionsInQ = qc.querySelectorAll('.option');
+                    if (qData.selectedOptionIndex >= 0 && qData.selectedOptionIndex < optionsInQ.length) {
+                        const selectedOptionEl = optionsInQ[qData.selectedOptionIndex];
+                        if (selectedOptionEl) {
+                           applyOptionSelectionLogic(selectedOptionEl, qc, true); // True for isLoadTime
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function resetState() {
+    localStorage.removeItem(ANSWERS_KEY);
+    localStorage.removeItem(SCORES_KEY); // Also remove scores to reset counts
+
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Reset internal score tracking
+        const totalQuestionsInSection = section.querySelectorAll('.question-container').length;
+        const scoreDisplay = section.querySelector(`#score-section-${sectionId}`);
+
+        section.querySelectorAll('.question-container').forEach(qc => {
+            qc.classList.remove('answered');
+            const explanation = qc.querySelector('.explanation');
+            if (explanation) explanation.style.display = 'none';
+
+            qc.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('correct', 'incorrect', 'reveal-correct');
+                opt.style.cursor = 'pointer'; // Re-enable cursor
+                const feedback = opt.querySelector('.feedback');
+                if (feedback) {
+                    feedback.textContent = '';
+                    feedback.style.display = 'none'; // Hide feedback
+                }
+            });
+        });
+
+        if (scoreDisplay) {
+            scoreDisplay.textContent = `Score: 0 / ${totalQuestionsInSection}`;
+        }
+    });
+    // After resetting, re-initialize the total questions for the page in localStorage
+    initializePageTotalQuestions();
+}
+
+function initializePageTotalQuestions() {
+    let overallTotal = 0;
+    const scores = {}; // Start with a fresh scores object for initialization
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        const numQs = section.querySelectorAll('.question-container').length;
+        overallTotal += numQs;
+        scores[sectionId] = { score: 0, total: numQs }; // Initialize section scores
+    });
+    scores['all'] = { total: overallTotal };
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize sectionScores for all sections on the page
+    allSections.forEach(section => {
+        const sectionId = section.dataset.sectionId;
+        sectionScores[sectionId] = 0; // Initialize score to 0
+    });
+
+    // Attempt to load saved state
+    loadState();
+
+    // If no scores are loaded (e.g., first visit or after reset), initialize totals
+    if (!localStorage.getItem(SCORES_KEY)) {
+        initializePageTotalQuestions();
+    } else { // If scores exist, ensure 'all.total' is up-to-date
+        let existingScores = JSON.parse(localStorage.getItem(SCORES_KEY));
+        let currentOverallTotal = 0;
+        allSections.forEach(section => {
+            currentOverallTotal += section.querySelectorAll('.question-container').length;
+        });
+        if (!existingScores.all || existingScores.all.total !== currentOverallTotal) {
+            existingScores.all = existingScores.all || {};
+            existingScores.all.total = currentOverallTotal;
+            localStorage.setItem(SCORES_KEY, JSON.stringify(existingScores));
+        }
+    }
+
+
+    allSections.forEach(section => {
+        const options = section.querySelectorAll('.option');
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                const questionContainer = this.closest('.question-container');
+                if (!questionContainer.classList.contains('answered')) { // Only process if not answered
+                    applyOptionSelectionLogic(this, questionContainer, false); // False for isLoadTime
+                }
+            });
+        });
+    });
+
+    const resetButtonSubject = document.getElementById('reset-button');
+    if (resetButtonSubject) {
+        resetButtonSubject.addEventListener('click', resetState);
+    }
+});
+</script>
+<footer style="text-align: center; padding: 2em 1em 1em; font-size: 14px; color: #3a3a3a; width:100%; box-sizing:border-box;">
+    © <span id="currentYear"></span> Developed by
+    <a href="https://github.com/Philonoist7" target="_blank" class="footer-link">
+      <strong>Ali Hussein</strong>
+    </a>
+    <script>
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+    <style>
+      .footer-link {
+        color: #004992;
+        text-decoration: none;
+        transition: color 0.2s, border-bottom-color 0.2s;
+      }
+      .footer-link:hover {
+        color: #003366;
+        border-bottom: 1.5px solid #003366;
+      }
+    </style>
+    </footer>
+</body>
+</html>

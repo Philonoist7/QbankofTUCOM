@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ====== GROUP PAGE SETTINGS ====== -->
+<script>
+/*
+    ====== EDIT ONLY THIS BLOCK FOR NEW GROUPS ======
+    Change these variables for each new group page.
+*/
+(function() {
+    // Get filename without extension for GROUP_KEY
+    const path = window.location.pathname;
+    const file = path.substring(path.lastIndexOf('/') + 1) || path.substring(path.lastIndexOf('\\') + 1);
+    const groupKeyAuto = file.replace(/\.[^/.]+$/, ""); // Remove extension
+
+    window.GROUP_SETTINGS = {
+        GROUP_KEY: groupKeyAuto,            // Automatically set from filename
+        HOME_LINK: '../S6.html',          // <--- EDIT THIS: Path to the main menu page. (e.g., '../main.html' if in subfolder)
+        
+
+
+        GROUP_NAME: 'Surgery',           // <--- EDIT THIS: Displayed in title and summary
+        SUBJECTS: [
+            // --- EXAMPLE: Linking to a Subject Question Page (Neurosurgery) ---
+            {
+                name: 'وزاري 2025',          // <--- EDIT THIS: Display name for the subject box
+                link: 'wz25_page.html',     // <--- EDIT THIS: Path to the question_page.html for this subject
+                colorClass: 'iwz25',     // <--- EDIT THIS: Custom CSS class for styling this box (define in <style>)
+                pageId: 'wz25_page'         // <--- EDIT THIS: MUST MATCH the PAGE_ID from neurosurgery_page.html
+            }
+
+            // --- Add more subjects within this group below ---
+            /*
+            {
+                name: 'General Surgery MCQs',
+                link: 'general_surgery_page.html',
+                colorClass: 'gensurg',
+                pageId: 'gensurg_mcqs_2024' // MUST MATCH PAGE_ID in general_surgery_page.html
+            },
+            */
+            // Add more subjects here if needed
+        ]
+    };
+})();
+
+/* ====== END GROUP_SETTINGS ====== */
+</script>
+
+
+
+<style> 
+
+    /* ====== CUSTOM BOX COLORS FOR SUBJECTS IN THIS GROUP ====== */
+/* Add styles for 'colorClass' defined in GROUP_SETTINGS.SUBJECTS */
+/* Example: .box.your-subject-class { background-color: #yourcolor; } */
+
+.box.iwz25 { background-color: #ff8800; }
+
+
+
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<title id="dynamic-title-group"></title>
+<!-- Google Fonts - Montserrat -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Amiri Font for Arabic Text -->
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root {
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --secondary-color: #6c757d;
+    --background-color: #f8f9fa;
+    --card-background: #ffffff;
+    --text-color: #343a40;
+    --light-text-color: #ffffff;
+    --header-bg: #343a40;
+    --header-text: #f8f9fa;
+    --header-link: #00aeff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --border-radius: 12px;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--background-color);
+    padding-top: 80px; /* Space for fixed header */
+    color: var(--text-color);
+}
+.page-title-group {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 25px;
+    text-align: center;
+}
+.back-to-main-button {
+    display: inline-block;
+    margin-bottom: 30px;
+    padding: 12px 25px;
+    background-color: var(--secondary-color);
+    color: var(--light-text-color);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px var(--shadow-color);
+    cursor: pointer;
+}
+.back-to-main-button i { margin-right: 8px; }
+.back-to-main-button:hover {
+    background-color: #545b62;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.18);
+}
+.container {
+    display: flex;
+    gap: 30px;
+    padding: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 1200px;
+    width: 100%;
+}
+.box { /* This is for subject boxes within a group page */
+    width: 240px; /* Slightly wider */
+    height: 180px;
+    color: var(--light-text-color); /* Default text color for boxes */
+    background-color: var(--primary-color); /* Default background */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em; /* Slightly larger text */
+    font-weight: bold;
+    text-align: center;
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 15px var(--shadow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 20px; /* More padding */
+    box-sizing: border-box;
+}
+.box .progress-display {
+    font-size: 1em;
+    font-weight: normal;
+    margin-top: 15px; /* More space above progress */
+    color: rgba(255, 255, 255, 0.9); /* Brighter progress text */
+    background-color: rgba(0,0,0,0.25); /* Darker progress background for contrast */
+    padding: 6px 12px;
+    border-radius: 8px;
+    width: 70%; /* Progress bar width */
+    box-sizing: border-box;
+}
+.box:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--header-bg);
+    color: var(--header-text);
+    padding: 6px 0;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.fixed-header .made-by-prefix { color: #adb5bd; }
+.fixed-header a {
+    color: var(--header-link);
+    text-decoration: none;
+    font-weight: bold;
+}
+.fixed-header a:hover { text-decoration: underline; }
+.fixed-header .quran-verse {
+    display: inline-block;
+    font-family: 'Amiri', 'Scheherazade', serif;
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #ffae00;
+    letter-spacing: 0.5px;
+    padding: 0.2em 1em;
+    border-radius: 8px;
+    margin-left: 10px;
+    margin-right: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    direction: rtl;
+}
+@media (max-width: 600px) {
+    .fixed-header .quran-verse {
+        font-size: 1em;
+        padding: 0.2em 0.5em;
+    }
+}
+
+
+/* ====== END CUSTOM BOX COLORS ====== */
+
+#group-total-progress-container {
+    margin: 20px auto 10px auto;
+    padding: 15px 25px;
+    background-color: #e9f5ff; /* Light blue background */
+    border: 1px solid #b3d7ff; /* Blue border */
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    text-align: center;
+    max-width: 600px;
+}
+#group-total-progress-container #group-total-progress-title {
+    font-size: 1.1em;
+    color: #0056b3; /* Darker blue for title */
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+#group-total-progress-container #group-total-progress-value {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #007bff; /* Primary blue for value */
+}
+
+@media (max-width: 768px) {
+    .page-title-group { font-size: 2em; }
+    .container { gap: 20px; padding: 15px; }
+    .box { width: 200px; height: 160px; font-size: 1.1em; padding: 15px; }
+    #group-total-progress-container { max-width: 90%; font-size: 0.9em; }
+}
+@media (max-width: 480px) {
+    .page-title-group { font-size: 1.8em; }
+    .back-to-main-button { padding: 10px 20px; font-size: 0.9em; }
+    .container { gap: 15px; padding: 10px; }
+    .box { width: calc(50% - 20px); height: 150px; font-size: 1em; padding: 10px; } /* Two boxes per row */
+    .box .progress-display { font-size: 1em; padding: 5px 8px; width: 70%;}
+    #group-total-progress-container { font-size: 0.85em; padding: 10px 15px; }
+}
+
+</style>
+</head>
+<body>
+<div class="fixed-header">
+    <span class="quran-verse">وَقُل رَّبِّ زِدْنِي عِلْمًا</span>
+</div>
+
+<h1 class="page-title-group" id="group-page-title-display"></h1>
+
+<a href="#" class="back-to-main-button" id="main-home-link">
+    <i class="fas fa-arrow-left"></i> Back to Main Menu
+</a>
+
+<!-- Container for group total progress -->
+<div id="group-total-progress-container">
+    <div id="group-total-progress-title">Group Total Progress:</div>
+    <div id="group-total-progress-value">Loading...</div>
+</div>
+
+<div class="container" id="subjects-container-group">
+    <!-- Subject boxes will be generated here by JavaScript -->
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const GROUP = window.GROUP_SETTINGS;
+    document.getElementById('dynamic-title-group').textContent = `${GROUP.GROUP_NAME} QBank`;
+    document.getElementById('group-page-title-display').textContent = `${GROUP.GROUP_NAME} QBank`;
+    document.getElementById('main-home-link').href = GROUP.HOME_LINK;
+
+    const subjectsConfig = GROUP.SUBJECTS;
+    const groupKey = GROUP.GROUP_KEY;
+    const subjectsContainer = document.getElementById('subjects-container-group');
+
+    subjectsConfig.forEach(subject => {
+        const boxLink = document.createElement('a');
+        boxLink.href = subject.link;
+        boxLink.classList.add('box');
+        if (subject.colorClass) {
+            boxLink.classList.add(subject.colorClass);
+        }
+
+        const subjectNameTextNode = document.createTextNode(subject.name);
+        boxLink.appendChild(subjectNameTextNode);
+
+        const progressSpan = document.createElement('span');
+        progressSpan.classList.add('progress-display');
+        progressSpan.id = `${subject.pageId}-progress-group`; // Unique ID using pageId
+        progressSpan.textContent = 'Loading...';
+        boxLink.appendChild(progressSpan);
+
+        subjectsContainer.appendChild(boxLink);
+    });
+
+    function getPageProgress(pageId) {
+        let attempted = 0, total = 0;
+        const answersKey = `${pageId}_answers`;
+        const scoresKey = `${pageId}_scores`;
+        const savedAnswersData = localStorage.getItem(answersKey);
+        const savedScoresData = localStorage.getItem(scoresKey);
+
+        if (savedAnswersData) {
+            try {
+                const parsedAnswers = JSON.parse(savedAnswersData);
+                if (parsedAnswers && typeof parsedAnswers === 'object') {
+                    Object.values(parsedAnswers).forEach(sectionAnswers => {
+                        if (sectionAnswers && typeof sectionAnswers === 'object') {
+                            Object.values(sectionAnswers).forEach(qAnswer => {
+                                if (qAnswer && qAnswer.answered) {
+                                    attempted++;
+                                }
+                            });
+                        }
+                    });
+                }
+            } catch (e) { console.error(`Error parsing answers for ${pageId}:`, e); }
+        }
+
+        if (savedScoresData) {
+            try {
+                const parsedScores = JSON.parse(savedScoresData);
+                 if (parsedScores && parsedScores.all && typeof parsedScores.all.total === 'number') {
+                    total = parsedScores.all.total; // Prioritize 'all.total'
+                } else if (parsedScores && typeof parsedScores === 'object') {
+                    // Fallback: sum up section totals if 'all.total' is not present
+                    let sectionBasedTotal = 0;
+                    Object.values(parsedScores).forEach(sectionScoreData => {
+                        if (sectionScoreData && typeof sectionScoreData.total === 'number') {
+                            sectionBasedTotal += sectionScoreData.total;
+                        }
+                    });
+                    total = sectionBasedTotal;
+                }
+            } catch (e) { console.error(`Error parsing scores for ${pageId}:`, e); }
+        }
+        if (total < attempted && total === 0) {
+            // If total is 0 from source, but we have attempts, it might be that total isn't reported yet.
+            // For display on this page, showing attempted/0 is fine if total genuinely isn't available.
+        } else if (total < attempted) {
+            total = attempted;
+        }
+        return { attempted, total };
+    }
+
+    subjectsConfig.forEach(subject => {
+        const progressElement = document.getElementById(`${subject.pageId}-progress-group`);
+        if (!progressElement) return;
+
+        const { attempted, total } = getPageProgress(subject.pageId);
+
+        if (attempted === 0) {
+            progressElement.textContent = `Not Started`;
+        } else if (total > 0) {
+            progressElement.textContent = `${attempted} / ${total}`;
+        } else { // total is 0, but attempted > 0
+            progressElement.textContent = `${attempted} / ?`;
+        }
+    });
+
+    function updateAndShowGroupSummary() {
+        let totalAttemptedInGroup = 0;
+        let totalQuestionsFromStartedSubjects = 0; // This will be the denominator
+
+        subjectsConfig.forEach(subject => {
+            const { attempted, total } = getPageProgress(subject.pageId);
+            totalAttemptedInGroup += attempted; // Always sum all attempted questions
+
+            if (attempted > 0) { // Only sum total questions from subjects that have been started
+                totalQuestionsFromStartedSubjects += total;
+            }
+        });
+
+        localStorage.setItem(`${groupKey}_summary_scores`, JSON.stringify({ total: totalQuestionsFromStartedSubjects })); // Store the new total
+        localStorage.setItem(`${groupKey}_summary_answers`, JSON.stringify({ attempted: totalAttemptedInGroup }));
+
+        const groupTotalProgressValueEl = document.getElementById('group-total-progress-value');
+        if (groupTotalProgressValueEl) {
+            if (totalAttemptedInGroup === 0) {
+                groupTotalProgressValueEl.textContent = `Not Started`;
+            } else {
+                groupTotalProgressValueEl.textContent = `${totalAttemptedInGroup} / ${totalQuestionsFromStartedSubjects}`;
+            }
+        }
+        const groupTotalProgressTitleEl = document.getElementById('group-total-progress-title');
+         if (groupTotalProgressTitleEl) {
+            groupTotalProgressTitleEl.textContent = `${GROUP.GROUP_NAME} Total Progress:`;
+        }
+    }
+    updateAndShowGroupSummary();
+});
+</script>
+
+<footer style="text-align: center; padding: 2em 1em 1em; font-size: 14px; color: #3a3a3a; width:100%; box-sizing:border-box;">
+    © <span id="currentYear"></span> Developed by
+    <a href="https://github.com/Philonoist7" target="_blank" class="footer-link">
+      <strong>Ali Hussein</strong>
+    </a>
+    <script>
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+    <style>
+      .footer-link {
+        color: #004992;
+        text-decoration: none;
+        transition: color 0.2s, border-bottom-color 0.2s;
+      }
+      .footer-link:hover {
+        color: #003366;
+        border-bottom: 1.5px solid #003366;
+      }
+    </style>
+    </footer>
+</body>
+</html>
